@@ -1,14 +1,15 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\LaporanController;
+use App\Http\Controllers\NotifikasiController;
 use App\Http\Controllers\PbpdController;
 use App\Http\Controllers\PbpdUploadController;
 use App\Http\Controllers\PerluasanController;
-use App\Http\Controllers\VendorTiangController;
 use App\Http\Controllers\VendorKonstruksiController;
-use App\Http\Controllers\LaporanController;
-use App\Http\Controllers\NotifikasiController;
-use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\VendorTiangController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', fn () => redirect()->route('dashboard'));
@@ -23,15 +24,19 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-    Route::get('/dashboard', function () {
-        if (in_array(auth()->user()->role?->role_code, ['VENDOR_TIANG', 'VENDOR_TIANG2', '5180T1', '5180T2', '5180T3', '5180T4', '5180T5', '5180T6', '5180T7', '5180T8', '5180T9'], true)) {
+    
+    Route::get('/dashboard', function (Request $request) {
+        /** @var \App\Models\User $user */
+        $user = $request->user();
+
+        if (in_array($user->role?->role_code, ['VENDOR_TIANG', 'VENDOR_TIANG2', '5180T1', '5180T2', '5180T3', '5180T4', '5180T5', '5180T6', '5180T7', '5180T8', '5180T9'], true)) {
             return redirect()->route('vendor.tiang');
         }
-        if (in_array(auth()->user()->role?->role_code, ['VENDOR_KONSTRUKSI', 'VENDOR_KONSTRUKSI2', '5180K1', '5180K2'], true)) {
+        if (in_array($user->role?->role_code, ['VENDOR_KONSTRUKSI', 'VENDOR_KONSTRUKSI2', '5180K1', '5180K2'], true)) {
             return redirect()->route('vendor.konstruksi');
         }
 
-        abort_unless(auth()->user()->hasPermission('dashboard.view'), 403);
+        abort_unless($user->hasPermission('dashboard.view'), 403);
         return app(DashboardController::class)->index();
     })->name('dashboard');
     Route::get('/laporan', [LaporanController::class, 'index'])
