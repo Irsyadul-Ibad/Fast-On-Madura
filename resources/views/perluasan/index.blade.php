@@ -227,9 +227,9 @@
                             <td>{{ $row->tgl_mohon?->format('d/m/Y') ?? '-' }}</td>
                             <td>{{ $row->tgl_bayar?->format('d/m/Y') ?? '-' }}</td>
                             <td>{{ $row->tarif_lama }}</td>
-                            <td>{{ $row->daya_lama }} VA</td>
+                            <td>{{ filled($row->daya_lama) ? $row->daya_lama . ' VA' : '' }}</td>
                             <td><b>{{ $row->tarif_baru }}</b></td>
-                            <td><b>{{ $row->daya_baru }} VA</b></td>
+                            <td><b>{{ filled($row->daya_baru) ? $row->daya_baru . ' VA' : '' }}</b></td>
                             <td>{{ $row->keterangan }}</td>
                         </tr>
                     @empty
