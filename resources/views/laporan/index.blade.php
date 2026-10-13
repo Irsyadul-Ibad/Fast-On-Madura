@@ -7,7 +7,7 @@
         @foreach ($perJenis as $jenis => $jumlah)<div class="stat-card"><small>{{ $jenis ?: 'LAINNYA' }}</small><strong>{{ number_format($jumlah, 0, ',', '.') }}</strong></div>@endforeach
     </div>
     <div class="box">
-        <form class="filter" method="GET">@if (in_array(auth()->user()->role?->type, ['ULP', 'UP3'], true))<select name="tahap"><option value="">Semua tahap</option>@foreach ($tahapPilihan as $tahap => $label)<option value="{{ $tahap }}" @selected(request('tahap') === $tahap)>{{ $label }}</option>@endforeach</select>@endif<select name="jenis"><option value="">Semua transaksi</option>@foreach ($jenisPilihan as $jenis)<option value="{{ $jenis }}" @selected(request('jenis') === $jenis)>{{ $jenis }}</option>@endforeach</select><button type="submit" class="btn">Filter</button><a class="btn btn-excel" href="{{ route('laporan.export', request()->only(['tahap', 'jenis'])) }}">Export Excel</a></form>
+        <form class="filter" method="GET">@if (in_array(auth()->user()->role?->type, ['ULP', 'UP3'], true))<select name="tahap"><option value="">Semua tahap</option>@foreach ($tahapPilihan as $tahap => $label)<option value="{{ $tahap }}" @selected(request('tahap') === $tahap)>{{ $label }}</option>@endforeach</select>@endif<select name="jenis"><option value="">Semua transaksi</option>@foreach ($jenisPilihan as $jenis)<option value="{{ $jenis }}" @selected(request('jenis') === $jenis)>{{ $jenis }}</option>@endforeach</select><select name="status"><option value="">Semua status</option>@foreach ($statusPilihan as $status)<option value="{{ $status }}" @selected(request('status') === $status)>{{ $status }}</option>@endforeach</select><button type="submit" class="btn">Filter</button><a class="btn btn-excel" href="{{ route('laporan.export', request()->only(['tahap', 'jenis', 'status'])) }}">Export Excel</a></form>
         @php($showSyarat = ! in_array(auth()->user()->role?->type, ['UP3', 'ULP'], true))
         @php($processMap = $data->getCollection()->mapWithKeys(function ($row) {
             $material = $row->permintaan;
@@ -194,6 +194,7 @@
         })();
     </script>
     <style>
+        .tahap-filter{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0;padding:8px 10px;border:1px solid #cbd9e8;border-radius:9px;background:#f8fafc}.tahap-filter legend{padding:0 4px;color:#243b53;font-size:11px;font-weight:700}.tahap-filter label{display:inline-flex;align-items:center;gap:5px;color:#334e68;font-size:11px;font-weight:600;white-space:nowrap}.tahap-filter input{accent-color:#111c91}
         /* Keep report columns readable; allow horizontal scrolling instead of squeezing them. */
         .laporan-scroll{width:100%;max-width:100%;overflow-x:auto!important;overflow-y:visible!important;border-radius:12px!important;scrollbar-width:thin;scrollbar-color:#8aaed1 #edf3f9}
         .laporan-scroll::-webkit-scrollbar{height:10px}.laporan-scroll::-webkit-scrollbar-track{background:#edf3f9;border-radius:10px}.laporan-scroll::-webkit-scrollbar-thumb{background:#8aaed1;border-radius:10px}.laporan-scroll::-webkit-scrollbar-thumb:hover{background:#1e6fa8}

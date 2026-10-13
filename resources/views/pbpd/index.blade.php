@@ -73,14 +73,14 @@
             @endforeach
         </select>
 
-        @if (in_array(auth()->user()->role?->type, ['ULP', 'UP3'], true))
+        {{-- @if (in_array(auth()->user()->role?->type, ['ULP', 'UP3'], true))
             <select name="tahap">
                 <option value="">Semua tahap</option>
                 @foreach ($tahaps as $value => $label)
                     <option value="{{ $value }}" @selected(request('tahap') == $value)>{{ $label }}</option>
                 @endforeach
             </select>
-        @endif
+        @endif  --}}
 
         @if (request('import'))
             <input type="hidden" name="import" value="{{ request('import') }}">
