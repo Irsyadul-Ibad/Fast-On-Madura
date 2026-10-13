@@ -148,8 +148,10 @@
                                     data-detail-url="{{ route('pbpd.detail.update', $row->id) }}"
                                     data-jenis-tiang="{{ $m?->jenis_tiang }}"
                                     data-jml-tiang="{{ $m?->jml_tiang }}"
-                                    data-jenis-konduktor="{{ $m?->jenis_konduktor }}"
-                                    data-jml-konduktor="{{ $m?->jml_konduktor }}"
+                                    data-jenis-konduktor-tm="{{ $m?->jenis_konduktor_tm }}"
+                                    data-jml-konduktor-tm="{{ $m?->jml_konduktor_tm }}"
+                                    data-jenis-konduktor-tr="{{ $m?->jenis_konduktor_tr }}"
+                                    data-jml-konduktor-tr="{{ $m?->jml_konduktor_tr }}"
                                     data-jenis-trafo="{{ $m?->jenis_trafo }}"
                                     data-jml-trafo="{{ $m?->jml_trafo }}"
                                     data-jenis-kwh-meter="{{ $m?->jenis_kwh_meter }}"
@@ -288,10 +290,10 @@
                         <label>RAB <input id="rabInputPerluasan" name="rab" type="number" min="0" step="0.01" placeholder="Masukkan RAB" @disabled(!$canEditRab)></label>
                         <label>Jenis Tiang <select id="jenisTiangPerluasan" name="jenis_tiang" @disabled(!$canEditMaterial)><option value="">Pilih</option><option>9</option><option>11</option><option>13</option></select></label>
                         <label>Jumlah Tiang <input id="jmlTiangPerluasan" name="jml_tiang" type="number" min="0" @disabled(!$canEditMaterial)></label>
-                        <label>Jenis Konduktor TM<select id="jenisKonduktorPerluasan" name="jenis_konduktor" @disabled(!$canEditMaterial)><option value="">Pilih</option><option>AAAC-S 240</option><option>AAAC-S 150</option><option>AAAC-S 70</option><option>AAAC 40</option><option>AAAC 150</option><option>AAAC 70</option></select></label>
-                        <label>Jumlah Konduktor TM<input id="jmlKonduktorPerluasan" name="jml_konduktor" type="number" min="0" @disabled(!$canEditMaterial)></label>
-                        <label>Jenis Konduktor TR<select id="jenisKonduktorPerluasan" name="jenis_konduktor" @disabled(!$canEditMaterial)><option value="">Pilih</option><option>LVTC 3x70+1x70</option><option>LVTC 3x70+1x50</option></select></label>
-                        <label>Jumlah Konduktor TR<input id="jmlKonduktorPerluasan" name="jml_konduktor" type="number" min="0" @disabled(!$canEditMaterial)></label>
+                        <label>Jenis Konduktor TM<select id="jenisKonduktorTmPerluasan" name="jenis_konduktor_tm" @disabled(!$canEditMaterial)><option value="">Pilih</option><option>AAAC-S 240</option><option>AAAC-S 150</option><option>AAAC-S 70</option><option>AAAC 40</option><option>AAAC 150</option><option>AAAC 70</option></select></label>
+                        <label>Jumlah Konduktor TM<input id="jmlKonduktorTmPerluasan" name="jml_konduktor_tm" type="number" min="0" @disabled(!$canEditMaterial)></label>
+                        <label>Jenis Konduktor TR<select id="jenisKonduktorTrPerluasan" name="jenis_konduktor_tr" @disabled(!$canEditMaterial)><option value="">Pilih</option><option>LVTC 3x70+1x70</option><option>LVTC 3x70+1x50</option></select></label>
+                        <label>Jumlah Konduktor TR<input id="jmlKonduktorTrPerluasan" name="jml_konduktor_tr" type="number" min="0" @disabled(!$canEditMaterial)></label>
                         <label>Jenis Trafo <select id="jenisTrafoPerluasan" name="jenis_trafo" @disabled(!$canEditMaterial)><option value="">Pilih</option><option>0</option><option>50</option><option>100</option><option>160</option><option>200</option><option>250</option></select></label>
                         <label>Jumlah Trafo <input id="jmlTrafoPerluasan" name="jml_trafo" type="number" min="0" @disabled(!$canEditMaterial)></label>
                         <label>Jenis KWH Meter <select id="jenisKwhPerluasan" name="jenis_kwh_meter" @disabled(!$canEditMaterial)><option value="">Pilih</option><option>Prabayar</option><option>Pascabayar</option></select></label>
@@ -560,8 +562,10 @@
                         form.action = button.dataset.detailUrl;
                         document.getElementById('jenisTiangPerluasan').value = button.dataset.jenisTiang || '';
                         document.getElementById('jmlTiangPerluasan').value = button.dataset.jmlTiang || '';
-                        document.getElementById('jenisKonduktorPerluasan').value = button.dataset.jenisKonduktor || '';
-                        document.getElementById('jmlKonduktorPerluasan').value = button.dataset.jmlKonduktor || '';
+                        document.getElementById('jenisKonduktorTmPerluasan').value = button.dataset.jenisKonduktorTm || '';
+                        document.getElementById('jmlKonduktorTmPerluasan').value = button.dataset.jmlKonduktorTm || '';
+                        document.getElementById('jenisKonduktorTrPerluasan').value = button.dataset.jenisKonduktorTr || '';
+                        document.getElementById('jmlKonduktorTrPerluasan').value = button.dataset.jmlKonduktorTr || '';
                         document.getElementById('jenisTrafoPerluasan').value = button.dataset.jenisTrafo || '';
                         document.getElementById('jmlTrafoPerluasan').value = button.dataset.jmlTrafo || '';
                         document.getElementById('jenisKwhPerluasan').value = button.dataset.jenisKwhMeter || '';
