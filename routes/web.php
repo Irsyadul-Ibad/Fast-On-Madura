@@ -114,6 +114,8 @@ Route::middleware('auth')->group(function () {
         ->middleware('permission:perencanaan.process')->name('vendor.konstruksi.result.upload');
     Route::get('/vendor/konstruksi/{pelanggan}/laporan/{index}', [VendorKonstruksiController::class, 'laporanFile'])
         ->name('vendor.konstruksi.report.file');
+    Route::get('/vendor/konstruksi/{pelanggan}/berkas/{index}', [VendorKonstruksiController::class, 'deliveryFile'])
+        ->name('vendor.konstruksi.delivery.file');
     Route::post('/vendor/konstruksi/{pelanggan}/hasil-konstruksi', [VendorKonstruksiController::class, 'uploadHasilKonstruksi'])
         ->middleware('permission:konstruksi.process')->name('vendor.konstruksi.construction-result.upload');
     Route::get('/vendor/konstruksi/{pelanggan}/hasil-konstruksi/{index}', [VendorKonstruksiController::class, 'hasilKonstruksiFile'])

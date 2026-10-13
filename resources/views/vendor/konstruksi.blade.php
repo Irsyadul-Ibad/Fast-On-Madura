@@ -13,7 +13,9 @@
                     <div class="vendor-berkas">
                         <b>Berkas Pengiriman</b>
                         @foreach (($row->pengirimanKonstruksi?->berkas_paths ?? []) as $i => $path)
-                            <span>📄 Berkas {{ $i + 1 }}</span>
+                            <a class="vendor-file-link" href="{{ route('vendor.konstruksi.delivery.file', ['pelanggan' => $row->id, 'index' => $i]) }}" target="_blank" rel="noopener">
+                                📄 {{ basename($path) ?: 'Berkas ' . ($i + 1) }}
+                            </a>
                         @endforeach
                     </div>
                     <form class="vendor-report-form" method="POST" action="{{ route('vendor.konstruksi.report', $row->id) }}" enctype="multipart/form-data">
@@ -65,11 +67,14 @@
         @endforelse
     </div>
     <style>
-        .vendor-card { margin-top:16px; padding:18px; border:1px solid #ccd8e5; border-radius:10px; background:#f8fbfe; }
-        .vendor-card b,.vendor-card strong,.vendor-card>span { display:block; }.vendor-card strong{margin:5px 0;color:#0b3d6b}.vendor-card>span{color:#536477;font-size:13px}
-        .vendor-berkas{display:grid;gap:8px;margin-top:14px;padding:14px;border:1px solid #ccd8e5;border-radius:8px;background:#fff}.empty{text-align:center;padding:28px;color:#637487}
-        .vendor-report-form{display:grid;gap:8px;margin-top:14px;padding:14px;border:1px solid #ccd8e5;border-radius:8px;background:#fff}.vendor-report-form label{font-size:13px}.vendor-report-form textarea{min-height:70px;padding:8px;border:1px solid #ccd8e5;border-radius:5px}.vendor-report-form input[type=file]{padding:8px;border:1px solid #ccd8e5;border-radius:5px}
-        .history-item{display:flex;justify-content:space-between;gap:16px;padding:14px 0;border-bottom:1px solid #dce5ee}.history-item b,.history-item strong,.history-item div span{display:block}.history-item strong{margin:4px 0;color:#0b3d6b}.history-item div span{color:#637487;font-size:13px}
-        .history-edit-form{display:grid;gap:7px;margin-top:12px;padding:12px;border:1px solid #ccd8e5;border-radius:8px;background:#f8fbfe}.history-edit-form textarea{min-height:60px;padding:7px;border:1px solid #ccd8e5;border-radius:5px}.history-edit-form input[type=file]{padding:6px;border:1px solid #ccd8e5;border-radius:5px}.btn-hapus{margin-top:8px;background:#a61b1b!important}
+        .kartu{overflow:hidden;padding:0!important;border:1px solid #d8e3ef!important;border-radius:14px!important;background:#fff!important;box-shadow:0 6px 18px rgba(13,27,140,.07)!important}
+        .kartu-judul{display:flex;align-items:center;justify-content:space-between;min-height:48px;margin:0!important;padding:12px 18px!important;background:#0d1b8c!important;color:#fff!important;border-radius:13px 13px 0 0!important;font-size:14px;font-weight:800;letter-spacing:.03em}
+        .kartu-judul span{color:#fff!important}.vendor-card{margin:16px;padding:18px;border:1px solid #d8e3ef;border-radius:12px;background:#fff;box-shadow:0 4px 12px rgba(13,27,140,.05)}
+        .vendor-card b,.vendor-card strong,.vendor-card>span{display:block}.vendor-card>b{color:#263b53;font-size:14px}.vendor-card strong{margin:6px 0;color:#123b5d;font-size:16px}.vendor-card>span{color:#64748b;font-size:13px}
+        .vendor-berkas{display:grid;gap:8px;margin-top:16px;padding:14px;border:1px solid #d8e3ef;border-radius:10px;background:#f8fbff}.vendor-berkas b{color:#334155}.vendor-file-link{display:block;width:max-content;max-width:100%;overflow:hidden;color:#2563eb;font-size:13px;font-weight:600;text-decoration:none;text-overflow:ellipsis;white-space:nowrap}.vendor-file-link:hover{color:#1d4ed8;text-decoration:underline}.empty{text-align:center;padding:32px;color:#64748b}
+        .vendor-report-form,.history-edit-form{display:grid;gap:10px;margin-top:16px;padding:16px;border:1px solid #d8e3ef;border-radius:10px;background:#f8fbff}.vendor-report-form>b,.history-edit-form>b{color:#1e293b!important;font-size:14px}.vendor-report-form label,.history-edit-form label{display:flex;align-items:center;gap:8px;color:#334155!important;font-size:13px;font-weight:600}.vendor-report-form input[type=checkbox],.history-edit-form input[type=checkbox]{accent-color:#2563eb}
+        .vendor-report-form textarea,.history-edit-form textarea{width:100%;min-height:80px;padding:10px;border:1px solid #cbd5e1!important;border-radius:8px;background:#fff!important;color:#1e293b!important;resize:vertical}.vendor-report-form textarea::placeholder,.history-edit-form textarea::placeholder{color:#94a3b8!important}.vendor-report-form input[type=file],.history-edit-form input[type=file]{width:100%;padding:9px;border:1px solid #cbd5e1!important;border-radius:8px;background:#fff!important;color:#475569!important}
+        .vendor-report-form .btn,.history-edit-form .btn{min-height:38px;border:0;border-radius:8px;background:#2563eb!important;color:#fff!important;font-weight:700;box-shadow:0 4px 10px rgba(37,99,235,.2)}.vendor-report-form .btn:hover,.history-edit-form .btn:hover{background:#1d4ed8!important}
+        .history-item{display:flex;justify-content:space-between;gap:16px;margin:16px;padding:16px;border:1px solid #d8e3ef;border-radius:12px;background:#fff}.history-item b,.history-item strong,.history-item div span{display:block}.history-item strong{margin:5px 0;color:#123b5d}.history-item div span{color:#64748b;font-size:13px}.history-item .pill{align-self:flex-start;background:#dcfce7;color:#15803d;border:0}.btn-hapus{margin-top:8px;background:#dc2626!important}.btn-hapus:hover{background:#b91c1c!important}
     </style>
 @endsection

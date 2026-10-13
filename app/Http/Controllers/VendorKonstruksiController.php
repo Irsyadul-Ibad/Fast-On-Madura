@@ -144,6 +144,19 @@ class VendorKonstruksiController extends Controller
         return $this->publicFileResponse($path);
     }
 
+    public function deliveryFile(PelangganPbpd $pelanggan, int $index)
+    {
+        $this->authorizeVendor();
+        $pengiriman = $pelanggan->pengirimanKonstruksi()->with('vendor')->firstOrFail();
+        abort_unless($pengiriman->vendor?->jenis === 'KONSTRUKSI', 403);
+        abort_unless($pengiriman->vendor?->user_id === Auth::id(), 403);
+
+        $path = $this->paths($pengiriman->berkas_paths)[$index] ?? null;
+        abort_unless($path && Storage::disk('public')->exists($path), 404);
+
+        return $this->publicFileResponse($path);
+    }
+
     public function uploadHasilKonstruksi(Request $request, PelangganPbpd $pelanggan)
     {
         abort_unless($this->currentUser()->role?->role_code === '5180KON', 403);
