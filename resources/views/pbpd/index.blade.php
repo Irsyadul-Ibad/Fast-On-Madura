@@ -319,7 +319,8 @@
                     <label for="rabInput">RAB</label>
                     <div class="detail-rab-input">
                         <span>Rp</span>
-                        <input id="rabInput" name="rab" type="number" min="0" step="0.01" placeholder="Masukkan RAB">
+                        <input id="rabInput" name="rab_display" type="text" inputmode="numeric" autocomplete="off" placeholder="Masukkan RAB">
+                        <input id="rabValue" name="rab" type="hidden">
                     </div>
                     <button type="submit" class="btn">Simpan RAB</button>
                 </form>
@@ -374,6 +375,22 @@
         .tujuan-card-icon{display:grid;place-items:center;width:32px;height:32px;border-radius:50%;background:#e9edff;color:#293bc0;font-size:20px;font-weight:800;line-height:1}.tujuan-card-icon-green{background:#d9f8e9;color:#159447}.tujuan-card strong{font-size:11px;line-height:1.2}.tujuan-card small{max-width:120px;color:#8191aa;font-size:9px;line-height:1.2}
         #sendModal #expansionNeeds{margin-top:4px;padding:12px;border:1px solid #d9e2ec;border-radius:10px;background:#fff}#sendModal .kebutuhan-tabel{margin:0!important;border-radius:8px!important;background:#fff!important}#sendModal .kebutuhan-tabel th,#sendModal .kebutuhan-tabel td{padding:9px!important}#sendModal .kebutuhan-tabel select,#sendModal .kebutuhan-tabel input{min-height:32px!important;background:#fff8ee!important;border-radius:6px!important}
         #sendModal #sendForm>button[type="submit"]{width:100%;min-height:38px;margin-top:4px;background:#0d1b8c!important;color:#fff!important;border-radius:8px!important;font-weight:700!important}
+        #detailModal .detail-modal-box{width:min(620px,100%)!important;padding:0!important;border:1px solid #d8e3ef!important;border-radius:14px!important;overflow:auto!important;background:#f8fafc!important;box-shadow:0 12px 34px rgba(13,27,140,.18)!important}
+        #detailModal .detail-modal-box h3{margin:0!important;padding:16px 20px!important;background:#0d1b8c!important;color:#fff!important;font-size:15px!important;line-height:1.3!important}
+        #detailModal .detail-modal-close{top:9px!important;right:10px!important;border:0!important;border-radius:50%!important;background:#fff!important;color:#0d1b8c!important;font-size:20px!important;font-weight:800!important;line-height:26px!important;box-shadow:0 2px 7px rgba(0,0,0,.15)!important;cursor:pointer}
+        #detailModal .detail-grid{padding:20px 20px 0!important;gap:10px!important}
+        #detailModal .detail-grid div{padding:11px!important;border:1px solid #d8e3ef!important;border-radius:9px!important;background:#fff!important}
+        #detailModal .detail-grid small{margin-bottom:5px!important;color:#6b87a4!important;font-size:11px!important}
+        #detailModal .detail-grid b{color:#243b53!important;font-size:13px!important}
+        #detailModal .detail-rab-form{display:flex!important;align-items:flex-end!important;gap:10px!important;margin:16px 20px 20px!important;padding:13px!important;border:1px solid #d8e3ef!important;border-radius:10px!important;background:#fff!important}
+        #detailModal .detail-rab-form label{flex:0 0 auto!important;margin-bottom:10px!important;color:#56718d!important;font-size:12px!important;font-weight:800!important;text-transform:uppercase!important}
+        #detailModal .detail-rab-input{display:flex!important;align-items:center!important;flex:1!important;margin-top:0!important;border:1px solid #cbd9e8!important;border-radius:8px!important;background:#fff!important;overflow:hidden!important}
+        #detailModal .detail-rab-input span{padding:9px 10px!important;background:#0d1b8c!important;color:#fff!important;font-weight:700!important}
+        #detailModal .detail-rab-input input{width:100%!important;min-height:38px!important;padding:8px 10px!important;border:0!important;background:#fff!important;color:#243b53!important;font-size:13px!important;outline:0!important}
+        #detailModal .detail-rab-input:focus-within{border-color:#2b73fe!important;box-shadow:0 0 0 3px rgba(43,115,254,.13)!important}
+        #detailModal .detail-rab-form .btn{min-height:38px!important;border:0!important;border-radius:8px!important;background:#2b73fe!important;color:#fff!important;font-weight:700!important;box-shadow:0 4px 10px rgba(43,115,254,.2)!important;white-space:nowrap!important}
+        #detailModal .detail-rab-form .btn:hover{background:#1f5ed8!important}
+        @media (max-width:600px){#detailModal .detail-rab-form{align-items:stretch!important;flex-direction:column!important}#detailModal .detail-rab-form label{margin-bottom:0!important}}
         .ikon-syarat { padding:4px 8px; background:#e8eef5; color:#0b3d6b; }
         .syarat-files { display:grid; gap:8px; padding:12px; border:1px solid #d6e2ee; border-radius:6px; }
         .syarat-files a { color:#0b3d6b; overflow-wrap:anywhere; }
@@ -387,6 +404,20 @@
             const modal = document.getElementById('detailModal');
             const rabForm = document.getElementById('rabForm');
             const setText = (id, value) => { document.getElementById(id).textContent = value || '-'; };
+            const formatRupiah = (value) => {
+                const number = Number(value);
+                return Number.isFinite(number) && number > 0 ? Math.round(number).toLocaleString('id-ID') : '';
+            };
+            const formatRupiahInput = (value) => {
+                const digits = String(value ?? '').replace(/\D/g, '');
+                return digits ? Number(digits).toLocaleString('id-ID') : '';
+            };
+            const rabInput = document.getElementById('rabInput');
+            const rabValue = document.getElementById('rabValue');
+            rabInput?.addEventListener('input', () => { rabInput.value = formatRupiahInput(rabInput.value); });
+            rabForm?.addEventListener('submit', () => {
+                if (rabValue) rabValue.value = (rabInput?.value || '').replace(/\./g, '').replace(/,/g, '.');
+            });
 
             document.querySelectorAll('.tombol-detail').forEach((button) => {
                 button.addEventListener('click', () => {
@@ -402,7 +433,8 @@
                     setText('detailTglBayar', button.dataset.tglBayar ? new Date(button.dataset.tglBayar).toLocaleDateString('id-ID') : '-');
                     setText('detailRabValue', button.dataset.rab ? Number(button.dataset.rab).toLocaleString('id-ID') : '-');
                     if (rabForm) {
-                        document.getElementById('rabInput').value = button.dataset.rab || '';
+                        rabInput.value = formatRupiah(button.dataset.rab || '');
+                        rabValue.value = button.dataset.rab || '';
                         rabForm.action = button.dataset.rabUrl;
                     }
                     modal.hidden = false;

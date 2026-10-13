@@ -287,7 +287,7 @@
                 <form id="detailFormPerluasan" method="POST">
                     @csrf
                     <div class="detail-edit-table">
-                        <label>RAB <input id="rabInputPerluasan" name="rab" type="number" min="0" step="0.01" placeholder="Masukkan RAB" @disabled(!$canEditRab)></label>
+                        <label>RAB <input id="rabInputPerluasan" name="rab_display" type="text" inputmode="numeric" autocomplete="off" placeholder="Masukkan RAB" @disabled(!$canEditRab)><input id="rabValuePerluasan" name="rab" type="hidden"></label>
                         <label>Jenis Tiang <select id="jenisTiangPerluasan" name="jenis_tiang" @disabled(!$canEditMaterial)><option value="">Pilih</option><option>9</option><option>11</option><option>13</option></select></label>
                         <label>Jumlah Tiang <input id="jmlTiangPerluasan" name="jml_tiang" type="number" min="0" @disabled(!$canEditMaterial)></label>
                         <label>Jenis Konduktor TM<select id="jenisKonduktorTmPerluasan" name="jenis_konduktor_tm" @disabled(!$canEditMaterial)><option value="">Pilih</option><option>AAAC-S 240</option><option>AAAC-S 150</option><option>AAAC-S 70</option><option>AAAC 40</option><option>AAAC 150</option><option>AAAC 70</option></select></label>
@@ -368,7 +368,8 @@
                     <label for="tanpaRabInput">RAB</label>
                     <div class="detail-rab-input">
                         <span>Rp</span>
-                        <input id="tanpaRabInput" name="rab" type="number" min="0" step="0.01" placeholder="Masukkan RAB">
+                        <input id="tanpaRabInput" name="rab_display" type="text" inputmode="numeric" autocomplete="off" placeholder="Masukkan RAB">
+                        <input id="tanpaRabValue" name="rab" type="hidden">
                     </div>
                     <button type="submit" class="btn">Simpan RAB</button>
                 </form>
@@ -528,6 +529,22 @@
             const resultWaitingMessage = document.getElementById('resultWaitingMessage');
             const setText = (id, value) => { document.getElementById(id).textContent = value || '-'; };
             const money = (value) => value ? Number(value).toLocaleString('id-ID') : '-';
+            const formatRupiah = (value) => {
+                const number = Number(value);
+                return Number.isFinite(number) && number > 0 ? Math.round(number).toLocaleString('id-ID') : '';
+            };
+            const formatRupiahInput = (value) => {
+                const digits = String(value ?? '').replace(/\D/g, '');
+                return digits ? Number(digits).toLocaleString('id-ID') : '';
+            };
+            const rabInputPerluasan = document.getElementById('rabInputPerluasan');
+            const rabValuePerluasan = document.getElementById('rabValuePerluasan');
+            const tanpaRabInput = document.getElementById('tanpaRabInput');
+            const tanpaRabValue = document.getElementById('tanpaRabValue');
+            rabInputPerluasan?.addEventListener('input', () => { rabInputPerluasan.value = formatRupiahInput(rabInputPerluasan.value); });
+            tanpaRabInput?.addEventListener('input', () => { tanpaRabInput.value = formatRupiahInput(tanpaRabInput.value); });
+            form?.addEventListener('submit', () => { if (rabValuePerluasan) rabValuePerluasan.value = (rabInputPerluasan?.value || '').replace(/\./g, '').replace(/,/g, '.'); });
+            tanpaRabForm?.addEventListener('submit', () => { if (tanpaRabValue) tanpaRabValue.value = (tanpaRabInput?.value || '').replace(/\./g, '').replace(/,/g, '.'); });
             const date = (value) => value ? new Date(value).toLocaleDateString('id-ID') : '-';
             const setProcess = (name, done, value) => {
                 const status = document.getElementById(`proses${name}Status`);
@@ -558,7 +575,8 @@
                     modal.hidden = false;
                     if (resultUploadForm) document.getElementById('resultPelangganId').value = button.dataset.id;
                     if (form) {
-                        document.getElementById('rabInputPerluasan').value = button.dataset.rab || '';
+                        rabInputPerluasan.value = formatRupiah(button.dataset.rab || '');
+                        rabValuePerluasan.value = button.dataset.rab || '';
                         form.action = button.dataset.detailUrl;
                         document.getElementById('jenisTiangPerluasan').value = button.dataset.jenisTiang || '';
                         document.getElementById('jmlTiangPerluasan').value = button.dataset.jmlTiang || '';
@@ -574,7 +592,8 @@
                         document.getElementById('jmlPanelPerluasan').value = button.dataset.jmlPanelMeter || '';
                     }
                     if (tanpaRabForm) {
-                        document.getElementById('tanpaRabInput').value = button.dataset.rab || '';
+                        tanpaRabInput.value = formatRupiah(button.dataset.rab || '');
+                        tanpaRabValue.value = button.dataset.rab || '';
                         tanpaRabForm.action = button.dataset.rabUrl;
                     }
                     if (vendorForm) {
