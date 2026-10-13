@@ -1,0 +1,139 @@
+- generic [ref=e2]:
+  - complementary [ref=e3]:
+    - heading "FAST ON 360" [level=2] [ref=e4]
+    - generic [ref=e5]: Pelayanan UP3
+    - link "Dashboard" [ref=e6] [cursor=pointer]:
+      - /url: http://localhost:8000/dashboard
+    - link "Laporan" [ref=e12] [cursor=pointer]:
+      - /url: http://localhost:8000/laporan
+    - link "Data PB/PD" [ref=e18] [cursor=pointer]:
+      - /url: http://localhost:8000/pbpd
+    - link "Perluasan JTM" [ref=e25] [cursor=pointer]:
+      - /url: http://localhost:8000/perluasan/jtm
+    - link "Perluasan JTR" [ref=e31] [cursor=pointer]:
+      - /url: http://localhost:8000/perluasan/jtr
+    - link "Tanpa perluasan" [ref=e37] [cursor=pointer]:
+      - /url: http://localhost:8000/tanpa/perluasan
+    - link "Upload Data PB/PD" [ref=e42] [cursor=pointer]:
+      - /url: http://localhost:8000/pbpd-upload
+    - link "Pencarian" [ref=e47] [cursor=pointer]:
+      - /url: http://localhost:8000/pencarian
+    - link "Notifikasi 0" [ref=e52] [cursor=pointer]:
+      - /url: http://localhost:8000/notifikasi
+      - text: Notifikasi
+      - generic [ref=e56]: "0"
+  - generic [ref=e57]:
+    - banner [ref=e58]:
+      - strong [ref=e60]: Data PB/PD
+      - button "Keluar" [ref=e62] [cursor=pointer]
+    - main [ref=e63]:
+      - generic [ref=e64]:
+        - generic [ref=e65]:
+          - generic [ref=e66]: TOTAL DATA
+          - strong [ref=e67]: "26"
+        - generic [ref=e68]:
+          - generic [ref=e69]: ULP Babat
+          - strong [ref=e70]: "0"
+          - generic [ref=e71]: Data dikirim ULP
+        - generic [ref=e72]:
+          - generic [ref=e73]: ULP Bojonegoro
+          - strong [ref=e74]: "0"
+          - generic [ref=e75]: Data dikirim ULP
+        - generic [ref=e76]:
+          - generic [ref=e77]: ULP Brondon
+          - strong [ref=e78]: "0"
+          - generic [ref=e79]: Data dikirim ULP
+        - generic [ref=e80]:
+          - generic [ref=e81]: ULP Jatirogo
+          - strong [ref=e82]: "0"
+          - generic [ref=e83]: Data dikirim ULP
+        - generic [ref=e84]:
+          - generic [ref=e85]: ULP Lamongan
+          - strong [ref=e86]: "0"
+          - generic [ref=e87]: Data dikirim ULP
+        - generic [ref=e88]:
+          - generic [ref=e89]: ULP Padangan
+          - strong [ref=e90]: "0"
+          - generic [ref=e91]: Data dikirim ULP
+        - generic [ref=e92]:
+          - generic [ref=e93]: ULP Sumberrejo
+          - strong [ref=e94]: "0"
+          - generic [ref=e95]: Data dikirim ULP
+        - generic [ref=e96]:
+          - generic [ref=e97]: ULP Tuban
+          - strong [ref=e98]: "0"
+          - generic [ref=e99]: Data dikirim ULP
+      - generic [ref=e100]:
+        - text: DAFTAR TRANSAKSI
+        - textbox "Cari nama / no agenda / alamat" [ref=e101]: "518039912608077483"
+        - combobox [ref=e102]:
+          - option "Semua ULP" [selected]
+          - option "ULP Bojonegoro"
+          - option "ULP Tuban"
+          - option "ULP Lamongan"
+          - option "ULP Babat"
+          - option "ULP Padangan"
+          - option "ULP Brondon"
+          - option "ULP Jatirogo"
+          - option "ULP Sumberrejo"
+        - combobox [ref=e103]:
+          - option "Semua jenis transaksi" [selected]
+          - option "Perubahan Daya"
+          - option "Pasang Baru"
+        - combobox [ref=e104]:
+          - option "Semua status" [selected]
+          - option "BAYAR"
+          - option "CETAK PK"
+          - option "PDL AWAL"
+          - option "PENGESAHAN PDL"
+        - button "Filter" [ref=e105] [cursor=pointer]
+        - link "Reset" [ref=e106] [cursor=pointer]:
+          - /url: http://localhost:8000/pbpd
+        - text: Daftar Transaksi PB/PD
+      - generic [ref=e107]:
+        - table [ref=e109]:
+          - rowgroup [ref=e110]:
+            - row [ref=e111]:
+              - columnheader "RECORD, JUMLAH TRANSAKSI PB/PD" [ref=e112]
+            - row [ref=e115]:
+              - columnheader "NO." [ref=e116]
+              - columnheader "ASAL ULP" [ref=e117]
+              - columnheader "DETAIL" [ref=e118]
+              - columnheader "TRANSAKSI" [ref=e119]
+              - columnheader "STATUS" [ref=e120]
+              - columnheader "NO AGENDA" [ref=e121]
+              - columnheader "NAMA PELANGGAN" [ref=e122]
+              - columnheader "IDPEL" [ref=e123]
+              - columnheader "TOTAL BIAYA" [ref=e124]
+              - columnheader "TANGGAL MOHON" [ref=e125]
+              - columnheader "TANGGAL BAYAR" [ref=e126]
+              - columnheader "LAMA" [ref=e127]
+              - columnheader "BARU" [ref=e128]
+              - columnheader "DURASI HARI KERJA" [ref=e129]
+            - row [ref=e130]:
+              - columnheader "TARIF" [ref=e131]
+              - columnheader "DAYA" [ref=e132]
+              - columnheader "TARIF" [ref=e133]
+              - columnheader "DAYA" [ref=e134]
+          - rowgroup [ref=e135]:
+            - row [ref=e136]:
+              - cell "1." [ref=e137]
+              - cell "LAMONGAN" [ref=e138]
+              - cell [ref=e139]:
+                - button "Detail" [ref=e140] [cursor=pointer]
+              - cell "Pasang Baru" [ref=e144]
+              - cell "Bayar" [ref=e146]
+              - cell "518039912608077483" [ref=e148]
+              - cell "WORKSHOP ABIJAYA MANDIRI" [ref=e149]
+              - cell "518032032024" [ref=e150]
+              - cell "26.092.000" [ref=e151]
+              - cell "07/08/2026" [ref=e152]
+              - cell "07/08/2026" [ref=e153]
+              - cell [ref=e154]
+              - cell "VA" [ref=e155]
+              - cell "B2" [ref=e156]
+              - cell "23000 VA" [ref=e157]
+              - cell "2" [ref=e158]
+        - generic [ref=e159]:
+          - generic [ref=e160]: Records 1 to 1 of 1
+          - generic [ref=e161]: Halaman 1 dari 1

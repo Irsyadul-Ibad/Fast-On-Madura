@@ -21,6 +21,7 @@ class VendorTiangController extends Controller
         $this->authorizeVendor();
 
         $data = PelangganPbpd::with(['ulp', 'pengirimanVendor.vendor', 'laporanVendor'])
+            ->statusTampil()
             ->where('tahap', 'VENDOR_TIANG')
             ->whereHas('pengirimanVendor', fn ($q) => $q->whereHas('vendor', fn ($v) => $v
                 ->where('jenis', 'TIANG')
@@ -30,6 +31,7 @@ class VendorTiangController extends Controller
             ->get();
 
         $riwayat = PelangganPbpd::with(['ulp', 'pengirimanVendor.vendor', 'laporanVendor'])
+            ->statusTampil()
             ->whereHas('laporanVendor')
             ->whereHas('pengirimanVendor.vendor', fn ($q) => $q
                 ->where('jenis', 'TIANG')
@@ -46,6 +48,7 @@ class VendorTiangController extends Controller
         $this->authorizeVendor();
 
         $riwayat = PelangganPbpd::with(['ulp', 'pengirimanVendor.vendor', 'laporanVendor'])
+            ->statusTampil()
             ->whereHas('laporanVendor')
             ->whereHas('pengirimanVendor.vendor', fn ($q) => $q
                 ->where('jenis', 'TIANG')

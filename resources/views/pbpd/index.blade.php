@@ -19,16 +19,16 @@
             </div>
             @if ($isUlpSummary)
                 @foreach ([
-                    'CETAK PK' => 'Cetak PK',
                     'PASANG BARU' => 'Pasang Baru',
                     'PERUBAHAN DAYA' => 'Perubahan Daya',
-                    'PENGESAHAN PDL' => 'Pengesahan PDL',
-                    'PDL AWAL' => 'PDL Awal',
                 ] as $key => $label)
                     <div class="summary-card">
                         <span class="summary-card-label">{{ $label }}</span>
                         <strong>{{ $summaryByJenis[$key] ?? 0 }}</strong>
                     </div>
+                @endforeach
+                @foreach (['CETAK PK' => 'Cetak PK', 'BAYAR' => 'Bayar', 'PENGESAHAN PDL' => 'Pengesahan PDL', 'PDL AWAL' => 'PDL Awal'] as $key => $label)
+                    <div class="summary-card"><span class="summary-card-label">{{ $label }}</span><strong>{{ $summaryByStatus[$key] ?? 0 }}</strong></div>
                 @endforeach
             @else
                 @forelse ($summarySentByUlp as $sentUlp)
@@ -64,9 +64,6 @@
             <option value="">Semua jenis transaksi</option>
             <option value="PERUBAHAN DAYA" @selected(request('jenis') == 'PERUBAHAN DAYA')>Perubahan Daya</option>
             <option value="PASANG BARU" @selected(request('jenis') == 'PASANG BARU')>Pasang Baru</option>
-            <option value="CETAK PK" @selected(request('jenis') == 'CETAK PK')>Cetak PK</option>
-            <option value="PENGESAHAN PDL" @selected(request('jenis') == 'PENGESAHAN PDL')>Pengesahan PDL</option>
-            <option value="PDL AWAL" @selected(request('jenis') == 'PDL AWAL')>PDL Awal</option>
         </select>
 
         <select name="status">
@@ -76,11 +73,11 @@
             @endforeach
         </select>
 
-        @if (auth()->user()->role?->type !== 'UP3')
+        @if (in_array(auth()->user()->role?->type, ['ULP', 'UP3'], true))
             <select name="tahap">
                 <option value="">Semua tahap</option>
-                @foreach ($tahaps as $t)
-                    <option value="{{ $t }}" @selected(request('tahap') == $t)>{{ $t }}</option>
+                @foreach ($tahaps as $value => $label)
+                    <option value="{{ $value }}" @selected(request('tahap') == $value)>{{ $label }}</option>
                 @endforeach
             </select>
         @endif
@@ -186,9 +183,6 @@
                                         'BN' => 'Balik Nama',
                                         'PASANG BARU' => 'Pasang Baru',
                                         'PERUBAHAN DAYA' => 'Perubahan Daya',
-                                        'CETAK PK' => 'Cetak PK',
-                                        'PENGESAHAN PDL' => 'Pengesahan PDL',
-                                        'PDL AWAL' => 'PDL Awal',
                                     ][$row->jenis_transaksi] ?? $row->jenis_transaksi }}
                                 </span>
                             </td>
@@ -262,8 +256,14 @@
                                     <td>BUAH</td>
                                 </tr>
                                 <tr>
-                                    <th>JUMLAH KONDUKTOR</th>
-                                    <td><select name="jenis_konduktor"><option value="">Pilih</option><option>AAAC-S 240</option><option>AAAC-S 150</option><option>AAAC-S 70</option><option>LVTC 3x70+1x70</option></select></td>
+                                    <th>JUMLAH KONDUKTOR TM</th>
+                                    <td><select name="jenis_konduktor"><option value="">Pilih</option><option>AAAC-S 240</option><option>AAAC-S 150</option><option>AAAC-S 70</option><option>AAAC 40</option><option>AAAC 150</option><option>AAAC 70</option></select></td>
+                                    <td><input name="jml_konduktor" type="number" min="0" placeholder="Isi jumlah meter"></td>
+                                    <td>METER</td>
+                                </tr>
+                                <tr>
+                                    <th>JUMLAH KONDUKTOR TR</th>
+                                    <td><select name="jenis_konduktor"><option value="">Pilih</option><><option>LVTC 3x70+1x70</option>><option>LVTC 3x70+1x50</option></select></td>
                                     <td><input name="jml_konduktor" type="number" min="0" placeholder="Isi jumlah meter"></td>
                                     <td>METER</td>
                                 </tr>
@@ -281,7 +281,7 @@
                                 </tr>
                                 <tr>
                                     <th>JUMLAH PANEL METER</th>
-                                    <td><select name="jenis_panel_meter"><option value="">Pilih</option><option>53 kva</option><option>66 kva</option><option>105 kva</option><option>164 kva</option><option>197 kva</option></select></td>
+                                    <td><select name="jenis_panel_meter"><option value="">Pilih</option><option>Umum</option><option>53 kva</option><option>66 kva</option><option>105 kva</option><option>164 kva</option><option>197 kva</option></select></td>
                                     <td><input name="jml_panel_meter" type="number" min="0" placeholder="Isi jumlah buah"></td>
                                     <td>BUAH</td>
                                 </tr>

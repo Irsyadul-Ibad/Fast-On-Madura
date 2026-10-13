@@ -19,6 +19,7 @@ class VendorKonstruksiController extends Controller
     {
         $this->authorizeVendor();
         $data = PelangganPbpd::with(['ulp', 'pengirimanKonstruksi.vendor', 'pengirimanKonstruksi.dikirimOleh.role'])
+            ->statusTampil()
             ->where('tahap', 'VENDOR_KONSTRUKSI')
             ->whereHas('pengirimanKonstruksi', fn ($q) => $q
                 ->whereHas('vendor', fn ($v) => $v->where('jenis', 'KONSTRUKSI')->where('user_id', Auth::id()))
@@ -33,6 +34,7 @@ class VendorKonstruksiController extends Controller
     {
         $this->authorizeVendor();
         $riwayat = PelangganPbpd::with(['ulp', 'pengirimanKonstruksi.vendor', 'pengirimanKonstruksi.dikirimOleh.role'])
+            ->statusTampil()
             ->whereHas('pengirimanKonstruksi', fn ($q) => $q
                 ->whereHas('vendor', fn ($v) => $v->where('jenis', 'KONSTRUKSI')->where('user_id', Auth::id()))
                 ->whereHas('dikirimOleh.role', fn ($r) => $r->where('role_code', '5180KON'))

@@ -24,10 +24,23 @@ class PerluasanController extends Controller
         $canUploadJaringan = $role?->role_code === '5180JAR';
         $canViewMaterial = $canEditRab || in_array($role?->role_code, ['5180KON', '5180TEL', '5180JAR'], true);
         $showBerkasUlp = $role?->type === 'UP3';
-        // ULP tetap melihat data miliknya setelah diteruskan ke tahap/vendor berikutnya.
+        // ULP dan UP3 dapat memfilter seluruh alur proses. Tahap SELESAI
+        // merepresentasikan jaringan dan tidak berlaku untuk Tanpa Perluasan.
+        $tahapLabels = [
+            'ULP' => 'ULP',
+            'PERENCANAAN' => 'PERENCANAAN',
+            'VENDOR_TIANG' => 'KONSTRUKSI (TIANG)',
+            'VENDOR_KONSTRUKSI' => 'KONSTRUKSI',
+            'PENGOPERASIAN' => 'TRANSAKSI',
+            'SELESAI' => 'JARINGAN',
+        ];
         $visibleTahaps = in_array($role?->type, ['UP3', 'ULP'], true)
-            ? ['PERENCANAAN', 'VENDOR_TIANG', 'VENDOR_KONSTRUKSI', 'SELESAI']
+            ? array_keys($tahapLabels)
             : ['PERENCANAAN'];
+        if ($tujuan === 'TANPA_PERLUASAN') {
+            unset($tahapLabels['SELESAI']);
+            $visibleTahaps = array_values(array_diff($visibleTahaps, ['SELESAI']));
+        }
         $judul = match ($tujuan) {
             'JTM' => 'Perluasan JTM',
             'JTR' => 'Perluasan JTR',
@@ -35,6 +48,7 @@ class PerluasanController extends Controller
         };
 
         $query = PelangganPbpd::with(['ulp', 'permintaan', 'pengirimanVendor.vendor', 'laporanVendor', 'pengirimanKonstruksi.vendor'])
+            ->statusTampil()
             ->whereIn('tahap', $visibleTahaps)
             // Data lama bisa tersimpan dengan spasi, sedangkan kiriman baru
             // menggunakan underscore. Samakan format saat ditampilkan.
@@ -58,6 +72,7 @@ class PerluasanController extends Controller
             ->withQueryString();
 
         $summaryBase = PelangganPbpd::query()
+            ->statusTampil()
             ->whereIn('tahap', $visibleTahaps)
             ->whereRaw("UPPER(REPLACE(tujuan_perluasan, ' ', '_')) = ?", [$tujuan])
             ->when($ulpUser, fn ($q) => $q->where('ulp_id', $ulpUser));
@@ -66,17 +81,25 @@ class PerluasanController extends Controller
             ->whereNotNull('jenis_transaksi')
             ->groupByRaw('UPPER(TRIM(jenis_transaksi))')
             ->pluck('jumlah', 'jenis');
+        $summaryByStatusRaw = (clone $summaryBase)
+            ->selectRaw('UPPER(TRIM(status)) AS status, COUNT(*) AS jumlah')
+            ->statusTampil()
+            ->groupByRaw('UPPER(TRIM(status))')->pluck('jumlah', 'status');
         $summaryByJenis = collect([
-            'CETAK PK' => (int) ($summaryByJenisRaw['CETAK PK'] ?? 0),
             'PASANG BARU' => (int) (($summaryByJenisRaw['PASANG BARU'] ?? 0) + ($summaryByJenisRaw['PB'] ?? 0)),
             'PERUBAHAN DAYA' => (int) (($summaryByJenisRaw['PERUBAHAN DAYA'] ?? 0) + ($summaryByJenisRaw['PD'] ?? 0)),
-            'PENGESAHAN PDL' => (int) ($summaryByJenisRaw['PENGESAHAN PDL'] ?? 0),
-            'PDL AWAL' => (int) ($summaryByJenisRaw['PDL AWAL'] ?? 0),
+        ]);
+        $summaryByStatus = collect([
+            'CETAK PK' => (int) ($summaryByStatusRaw['CETAK PK'] ?? 0),
+            'BAYAR' => (int) ($summaryByStatusRaw['BAYAR'] ?? 0),
+            'PENGESAHAN PDL' => (int) ($summaryByStatusRaw['PENGESAHAN PDL'] ?? 0),
+            'PDL AWAL' => (int) ($summaryByStatusRaw['PDL AWAL'] ?? 0),
         ]);
         $isUlpSummary = $role?->type === 'ULP' && (bool) $role?->ulp_id;
         $showSummaryCards = in_array($role?->type, ['ULP', 'UP3'], true);
         $summaryTotal = (clone $summaryBase)->count();
         $summarySentBase = PelangganPbpd::query()
+            ->statusTampil()
             ->whereRaw("UPPER(REPLACE(tujuan_perluasan, ' ', '_')) = ?", [$tujuan])
             ->whereNotNull('tahap')
             ->where('tahap', '!=', 'ULP')
@@ -95,11 +118,11 @@ class PerluasanController extends Controller
             : Ulp::orderBy('nama')->get();
         $jenisPilihan = (clone $query)->select('jenis_transaksi')->whereNotNull('jenis_transaksi')->distinct()->orderBy('jenis_transaksi')->pluck('jenis_transaksi');
         $statusPilihan = (clone $query)->select('status')->whereNotNull('status')->distinct()->orderBy('status')->pluck('status');
-        $tahapPilihan = collect($visibleTahaps);
+        $tahapPilihan = collect($tahapLabels)->only($visibleTahaps);
 
         $vendors = Vendor::with('user')->where('jenis', 'TIANG')->orderBy('nama')->get();
         $vendorsKonstruksi = Vendor::with('user')->where('jenis', 'KONSTRUKSI')->orderBy('nama')->get();
 
-        return view('perluasan.index', compact('data', 'judul', 'tujuan', 'canEditRab', 'canEditMaterial', 'canViewMaterial', 'canSendVendor', 'canSendKonstruksi', 'canUploadTransaksi', 'canUploadJaringan', 'vendors', 'vendorsKonstruksi', 'ulps', 'jenisPilihan', 'statusPilihan', 'tahapPilihan', 'showSummaryCards', 'isUlpSummary', 'summaryTotal', 'summarySentByUlp', 'summaryUlpNames', 'summaryByJenis', 'showBerkasUlp'));
+        return view('perluasan.index', compact('data', 'judul', 'tujuan', 'canEditRab', 'canEditMaterial', 'canViewMaterial', 'canSendVendor', 'canSendKonstruksi', 'canUploadTransaksi', 'canUploadJaringan', 'vendors', 'vendorsKonstruksi', 'ulps', 'jenisPilihan', 'statusPilihan', 'tahapPilihan', 'showSummaryCards', 'isUlpSummary', 'summaryTotal', 'summarySentByUlp', 'summaryUlpNames', 'summaryByJenis', 'summaryByStatus', 'showBerkasUlp'));
     }
 }

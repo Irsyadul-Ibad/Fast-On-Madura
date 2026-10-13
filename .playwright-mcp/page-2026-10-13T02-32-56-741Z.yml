@@ -1,0 +1,77 @@
+- generic [ref=f13e2]:
+  - complementary [ref=f13e3]:
+    - heading "FAST ON 360" [level=2] [ref=f13e4]
+    - generic [ref=f13e5]: Pelayanan UP3
+    - link "Dashboard" [ref=f13e6] [cursor=pointer]:
+      - /url: http://localhost:8000/dashboard
+    - link "Laporan" [ref=f13e12] [cursor=pointer]:
+      - /url: http://localhost:8000/laporan
+    - link "Data PB/PD" [ref=f13e18] [cursor=pointer]:
+      - /url: http://localhost:8000/pbpd
+    - link "Perluasan JTM" [ref=f13e25] [cursor=pointer]:
+      - /url: http://localhost:8000/perluasan/jtm
+    - link "Perluasan JTR" [ref=f13e31] [cursor=pointer]:
+      - /url: http://localhost:8000/perluasan/jtr
+    - link "Tanpa perluasan" [ref=f13e37] [cursor=pointer]:
+      - /url: http://localhost:8000/tanpa/perluasan
+    - link "Upload Data PB/PD" [ref=f13e42] [cursor=pointer]:
+      - /url: http://localhost:8000/pbpd-upload
+    - link "Pencarian" [ref=f13e47] [cursor=pointer]:
+      - /url: http://localhost:8000/pencarian
+    - link "Notifikasi 0" [ref=f13e52] [cursor=pointer]:
+      - /url: http://localhost:8000/notifikasi
+      - text: Notifikasi
+      - generic [ref=f13e56]: "0"
+  - generic [ref=f13e57]:
+    - banner [ref=f13e58]:
+      - strong [ref=f13e60]: Upload Data PB/PD
+      - button "Keluar" [ref=f13e62] [cursor=pointer]
+    - main [ref=f13e63]:
+      - generic [ref=f13e64]:
+        - text: "Upload selesai: 186 data baru, 1 diperbarui, 0 dilewati."
+        - link "Lihat & filter data ini" [ref=f13e65] [cursor=pointer]:
+          - /url: http://localhost:8000/pbpd?import=5
+      - generic [ref=f13e66]:
+        - button "Choose File" [ref=f13e67]
+        - combobox [ref=f13e68]:
+          - option "ULP dari kolom Excel" [selected]
+          - option "ULP Bojonegoro (jika kolom ULP kosong)"
+          - option "ULP Tuban (jika kolom ULP kosong)"
+          - option "ULP Lamongan (jika kolom ULP kosong)"
+          - option "ULP Babat (jika kolom ULP kosong)"
+          - option "ULP Padangan (jika kolom ULP kosong)"
+          - option "ULP Brondon (jika kolom ULP kosong)"
+          - option "ULP Jatirogo (jika kolom ULP kosong)"
+          - option "ULP Sumberrejo (jika kolom ULP kosong)"
+        - button "Upload" [ref=f13e69] [cursor=pointer]
+      - generic [ref=f13e70]:
+        - text: Riwayat upload
+        - table [ref=f13e72]:
+          - rowgroup [ref=f13e73]:
+            - row [ref=f13e74]:
+              - columnheader "Waktu" [ref=f13e75]
+              - columnheader "File" [ref=f13e76]
+              - columnheader "Oleh (user id)" [ref=f13e77]
+              - columnheader [ref=f13e78]
+          - rowgroup [ref=f13e79]:
+            - row [ref=f13e80]:
+              - cell "13/10/2026 02:32" [ref=f13e81]
+              - cell "GV53-test.xls" [ref=f13e82]
+              - cell "20" [ref=f13e83]
+              - cell [ref=f13e84]:
+                - link "Lihat data" [ref=f13e85] [cursor=pointer]:
+                  - /url: http://localhost:8000/pbpd?import=5
+            - row [ref=f13e86]:
+              - cell "13/10/2026 02:22" [ref=f13e87]
+              - cell "GV (53).xls" [ref=f13e88]
+              - cell "20" [ref=f13e89]
+              - cell [ref=f13e90]:
+                - link "Lihat data" [ref=f13e91] [cursor=pointer]:
+                  - /url: http://localhost:8000/pbpd?import=2
+            - row [ref=f13e92]:
+              - cell "13/10/2026 02:17" [ref=f13e93]
+              - cell "GV (53).xls" [ref=f13e94]
+              - cell "20" [ref=f13e95]
+              - cell [ref=f13e96]:
+                - link "Lihat data" [ref=f13e97] [cursor=pointer]:
+                  - /url: http://localhost:8000/pbpd?import=1

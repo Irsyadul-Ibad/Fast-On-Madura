@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class PelangganPbpd extends Model
 {
+    public const STATUS_TAMPIL = ['CETAK PK', 'BAYAR', 'PENGESAHAN PDL', 'PDL AWAL'];
+
     protected $table = 'pelanggan_pbpd';
     protected $guarded = [];
 
@@ -40,6 +42,16 @@ class PelangganPbpd extends Model
     public function konstruksi()  { return $this->hasOne(KonstruksiData::class, 'pelanggan_id'); }
     public function checklist()   { return $this->hasMany(ChecklistVendor::class, 'pelanggan_id'); }
     public function berkas()      { return $this->hasMany(Berkas::class, 'pelanggan_id'); }
+
+    public function scopeStatusTampil($query)
+    {
+        return $query
+            ->whereIn($this->qualifyColumn('status'), self::STATUS_TAMPIL)
+            ->where(function ($q) {
+                $q->whereNull($this->qualifyColumn('jenis_transaksi'))
+                    ->orWhereNotIn($this->qualifyColumn('jenis_transaksi'), ['PS', 'PENERANGAN SEMENTARA']);
+            });
+    }
 
     /** Pindah tahap. Pencatatan riwayat belum digunakan karena tabel riwayat belum tersedia. */
     public function pindahTahap(string $ke, ?int $userId = null): void

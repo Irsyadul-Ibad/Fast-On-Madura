@@ -1,0 +1,11 @@
+- generic [ref=e2]:
+  - generic [ref=e3]: FAST ON ™
+  - generic [ref=e4]:
+    - generic [ref=e5]:
+      - heading "Login" [level=1] [ref=e6]
+      - paragraph [ref=e7]: Silakan masuk dengan akun yang diberikan
+    - generic [ref=e8]:
+      - textbox "User ID" [active] [ref=e11]
+      - textbox "Password" [ref=e14]
+      - button "Masuk" [ref=e15] [cursor=pointer]
+    - generic [ref=e16]: Fast Acceleration & Service Tracking ON 360°

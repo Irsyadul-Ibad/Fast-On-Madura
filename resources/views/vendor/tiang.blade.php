@@ -39,10 +39,10 @@
                 <form method="POST" action="{{ route('vendor.tiang.report', $row->id) }}" enctype="multipart/form-data" class="vendor-report">
                     @csrf
                     <b>Kirim Laporan</b>
-                    <label><input type="checkbox" name="pekerjaan_lengkap" value="1"> Dokumen pekerjaan lengkap</label>
-                    <label><input type="checkbox" name="pekerjaan_sesuai_wo" value="1"> Pekerjaan sesuai WO</label>
-                    <label><input type="checkbox" name="foto_terlampir" value="1"> Foto dokumentasi terlampir</label>
-                    <label><input type="checkbox" name="siap_dilanjutkan" value="1"> Siap ditindaklanjuti Perencanaan</label>
+                    <label><input type="checkbox" name="pekerjaan_lengkap" value="1"> Foto Pengiriman tiang</label>
+                    <label><input type="checkbox" name="pekerjaan_sesuai_wo" value="1"> Foto penanaman tiang</label>
+                    <label><input type="checkbox" name="foto_terlampir" value="1"> Foto tiang berdiri</label>
+                    <label><input type="checkbox" name="siap_dilanjutkan" value="1"> Foto pekerjaan selesai</label>
                     <textarea name="catatan" placeholder="Catatan (opsional)"></textarea>
                     <input type="file" name="berkas[]" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png">
                     <button type="submit" class="btn">Kirim ke Perencanaan</button>

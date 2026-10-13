@@ -11,9 +11,10 @@ class DashboardController extends Controller
     {
         $ulpId = $this->currentUser()->ulpId();
         $base = PelangganPbpd::query()
+            ->statusTampil()
             ->when($ulpId, fn ($q) => $q->where('ulp_id', $ulpId))
             ->where('status', '!=', 'MOHON')
-            ->whereNotIn('jenis_transaksi', ['BN', 'BALIK NAMA', 'PS', 'PENERANGAN SEMENTARA']);
+            ;
 
         $rows = (clone $base)->with('ulp')->orderByDesc('id')->get();
         $tahapLabel = function ($value): string {

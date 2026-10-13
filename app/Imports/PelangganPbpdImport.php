@@ -106,11 +106,19 @@ class PelangganPbpdImport implements ToCollection
                 ' ',
                 trim((string) $this->ambil($d, ['statuspermohonan']))
             ));
-            $statusTransaksi = ['CETAK PK', 'PENGESAHAN PDL', 'PDL AWAL'];
-            $transaksi = $jenis;
-            if ($jenis !== 'PS' && in_array($statusPermohonan, $statusTransaksi, true)) {
-                $transaksi = $statusPermohonan;
-            }
+            // TGLBAYAR hanya tanggal pembayaran. Status diambil dari
+            // STATUS_PERMOHONAN (mis. CETAK PK, PENGESAHAN PDL, PDL AWAL).
+            // Jangan membuat status sintetis BAYAR/MOHON karena nilai itu
+            // tidak terdapat sebagai kolom/status pada file sumber.
+            $statusKhusus = ['CETAK PK', 'PENGESAHAN PDL', 'PDL AWAL'];
+            $status = $statusPermohonan !== ''
+                ? $statusPermohonan
+                : (in_array($jenis, $statusKhusus, true) ? $jenis : null);
+            $transaksi = match ($jenis) {
+                'PASANG BARU', 'PERUBAHAN DAYA', 'PS', 'BN' => $jenis,
+                'PENERANGAN SEMENTARA' => 'PS',
+                default => null,
+            };
 
             $data = [
                 'import_id'       => $this->importId,
@@ -122,7 +130,7 @@ class PelangganPbpdImport implements ToCollection
                 'tgl_bayar'       => $this->tanggal($bayar),
                 'asal_ulp'        => preg_replace('/^ULP\s+/i', '', trim((string) $this->ambil($d, ['namaup']))) ?: null,
                 'jenis_transaksi' => $transaksi,
-                'status'          => $bayar ? 'BAYAR' : 'MOHON',
+                'status'          => $status,
                 'nama_pelanggan'  => $this->ambil($d, ['nama', 'namapelanggan']),
                 'alamat'          => preg_replace('/\s+/', ' ', trim((string) $this->ambil($d, ['alamat']))) ?: null,
                 'tarif_lama'      => $this->ambil($d, ['tariflama', 'lamatarif']),
@@ -134,8 +142,16 @@ class PelangganPbpdImport implements ToCollection
 
             // Nomor agenda dapat sama pada ULP berbeda. Kunci update harus memakai
             // kombinasi nomor agenda dan ULP agar data antar-ULP tidak tertimpa.
+            // Nomor agenda dari beberapa file Excel tersimpan sebagai angka
+            // ilmiah dan dapat sama untuk beberapa pelanggan berbeda. IDPEL
+            // menjadi bagian kunci agar baris pelanggan tidak saling timpa.
+            $idPelanggan = $data['id_pelanggan'];
             $ada = PelangganPbpd::where('no_agenda', $noAgenda)
                 ->where('ulp_id', $ulpId)
+                ->when($idPelanggan, fn ($q) => $q->where('id_pelanggan', $idPelanggan), function ($q) use ($data) {
+                    $q->where('nama_pelanggan', $data['nama_pelanggan'])
+                        ->where('alamat', $data['alamat']);
+                })
                 ->first();
             if ($ada) {
                 $ada->update($data); // tahap tidak diubah
@@ -164,7 +180,27 @@ class PelangganPbpdImport implements ToCollection
     private function angka($v): ?string
     {
         if ($v === null || $v === '') return null;
-        $s = is_numeric($v) ? sprintf('%.0f', $v) : preg_replace('/\D/', '', (string) $v);
+        // Nomor agenda dan IDPEL dapat memiliki 18-20 digit. Jangan
+        // mengubahnya ke float karena akan membulatkan digit terakhir dan
+        // membuat beberapa baris Excel menimpa agenda yang berbeda.
+        $sumber = trim((string) $v);
+        if (preg_match('/^([+-]?)(\d+)(?:\.(\d+))?[eE]([+-]?\d+)$/', $sumber, $m)) {
+            $digits = ltrim($m[2] . ($m[3] ?? ''), '0') ?: '0';
+            $scale = (int) $m[4] - strlen($m[3] ?? '');
+            if ($scale >= 0) {
+                $s = $digits . str_repeat('0', $scale);
+            } else {
+                $cut = strlen($digits) + $scale;
+                $s = $cut > 0
+                    ? substr($digits, 0, $cut) . '.' . substr($digits, $cut)
+                    : '0.' . str_repeat('0', -$cut) . $digits;
+            }
+            $s = preg_replace('/\D/', '', $s);
+        } elseif (preg_match('/^\d+(?:\.0+)?$/', $sumber, $m)) {
+            $s = explode('.', $m[0], 2)[0];
+        } else {
+            $s = preg_replace('/\D/', '', $sumber);
+        }
         return $s === '' ? null : $s;
     }
 

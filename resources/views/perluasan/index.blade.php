@@ -12,16 +12,16 @@
             </div>
             @if ($isUlpSummary)
                 @foreach ([
-                    'CETAK PK' => 'Cetak PK',
                     'PASANG BARU' => 'Pasang Baru',
                     'PERUBAHAN DAYA' => 'Perubahan Daya',
-                    'PENGESAHAN PDL' => 'Pengesahan PDL',
-                    'PDL AWAL' => 'PDL Awal',
                 ] as $key => $label)
                     <div class="summary-card">
                         <span class="summary-card-label">{{ $label }}</span>
                         <strong>{{ $summaryByJenis[$key] ?? 0 }}</strong>
                     </div>
+                @endforeach
+                @foreach (['CETAK PK' => 'Cetak PK', 'BAYAR' => 'Bayar', 'PENGESAHAN PDL' => 'Pengesahan PDL', 'PDL AWAL' => 'PDL Awal'] as $key => $label)
+                    <div class="summary-card"><span class="summary-card-label">{{ $label }}</span><strong>{{ $summaryByStatus[$key] ?? 0 }}</strong></div>
                 @endforeach
             @else
                 @forelse ($summarySentByUlp as $sentUlp)
@@ -63,8 +63,8 @@
         @if (auth()->user()->role?->type !== 'UP3')
             <select name="tahap">
                 <option value="">Semua tahap</option>
-                @foreach ($tahapPilihan as $tahapOption)
-                    <option value="{{ $tahapOption }}" @selected(request('tahap') === $tahapOption)>{{ $tahapOption }}</option>
+                    @foreach ($tahapPilihan as $tahapOption => $tahapLabel)
+                        <option value="{{ $tahapOption }}" @selected(request('tahap') === $tahapOption)>{{ $tahapLabel }}</option>
                 @endforeach
             </select>
         @endif
@@ -214,9 +214,6 @@
                                         'PD' => 'Perubahan Daya',
                                         'PASANG BARU' => 'Pasang Baru',
                                         'PERUBAHAN DAYA' => 'Perubahan Daya',
-                                        'CETAK PK' => 'Cetak PK',
-                                        'PENGESAHAN PDL' => 'Pengesahan PDL',
-                                        'PDL AWAL' => 'PDL Awal',
                                     ][$row->jenis_transaksi] ?? $row->jenis_transaksi }}
                                 </span>
                             </td>
@@ -291,13 +288,15 @@
                         <label>RAB <input id="rabInputPerluasan" name="rab" type="number" min="0" step="0.01" placeholder="Masukkan RAB" @disabled(!$canEditRab)></label>
                         <label>Jenis Tiang <select id="jenisTiangPerluasan" name="jenis_tiang" @disabled(!$canEditMaterial)><option value="">Pilih</option><option>9</option><option>11</option><option>13</option></select></label>
                         <label>Jumlah Tiang <input id="jmlTiangPerluasan" name="jml_tiang" type="number" min="0" @disabled(!$canEditMaterial)></label>
-                        <label>Jenis Konduktor <select id="jenisKonduktorPerluasan" name="jenis_konduktor" @disabled(!$canEditMaterial)><option value="">Pilih</option><option>AAAC-S 240</option><option>AAAC-S 150</option><option>AAAC-S 70</option><option>LVTC 3x70+1x70</option></select></label>
-                        <label>Jumlah Konduktor <input id="jmlKonduktorPerluasan" name="jml_konduktor" type="number" min="0" @disabled(!$canEditMaterial)></label>
+                        <label>Jenis Konduktor TM<select id="jenisKonduktorPerluasan" name="jenis_konduktor" @disabled(!$canEditMaterial)><option value="">Pilih</option><option>AAAC-S 240</option><option>AAAC-S 150</option><option>AAAC-S 70</option><option>AAAC 40</option><option>AAAC 150</option><option>AAAC 70</option></select></label>
+                        <label>Jumlah Konduktor TM<input id="jmlKonduktorPerluasan" name="jml_konduktor" type="number" min="0" @disabled(!$canEditMaterial)></label>
+                        <label>Jenis Konduktor TR<select id="jenisKonduktorPerluasan" name="jenis_konduktor" @disabled(!$canEditMaterial)><option value="">Pilih</option><option>LVTC 3x70+1x70</option><option>LVTC 3x70+1x50</option></select></label>
+                        <label>Jumlah Konduktor TR<input id="jmlKonduktorPerluasan" name="jml_konduktor" type="number" min="0" @disabled(!$canEditMaterial)></label>
                         <label>Jenis Trafo <select id="jenisTrafoPerluasan" name="jenis_trafo" @disabled(!$canEditMaterial)><option value="">Pilih</option><option>0</option><option>50</option><option>100</option><option>160</option><option>200</option><option>250</option></select></label>
                         <label>Jumlah Trafo <input id="jmlTrafoPerluasan" name="jml_trafo" type="number" min="0" @disabled(!$canEditMaterial)></label>
                         <label>Jenis KWH Meter <select id="jenisKwhPerluasan" name="jenis_kwh_meter" @disabled(!$canEditMaterial)><option value="">Pilih</option><option>Prabayar</option><option>Pascabayar</option></select></label>
                         <label>Jumlah KWH Meter <input id="jmlKwhPerluasan" name="jml_kwh_meter" type="number" min="0" @disabled(!$canEditMaterial)></label>
-                        <label>Jenis Panel Meter <select id="jenisPanelPerluasan" name="jenis_panel_meter" @disabled(!$canEditMaterial)><option value="">Pilih</option><option>53 kva</option><option>66 kva</option><option>105 kva</option><option>164 kva</option><option>197 kva</option></select></label>
+                        <label>Jenis Panel Meter <select id="jenisPanelPerluasan" name="jenis_panel_meter" @disabled(!$canEditMaterial)><option value="">Pilih</option><option>Umum</option><option>53 kva</option><option>66 kva</option><option>105 kva</option><option>164 kva</option><option>197 kva</option></select></label>
                         <label>Jumlah Panel Meter <input id="jmlPanelPerluasan" name="jml_panel_meter" type="number" min="0" @disabled(!$canEditMaterial)></label>
                     </div>
                     @if ($canEditRab)
@@ -352,10 +351,10 @@
             @if ($canSendVendor)
                 <div class="vendor-report-result" id="vendorReportResult">
                     <h4>Laporan dari Vendor</h4>
-                    <div><span>Dokumen pekerjaan lengkap</span><b id="laporanLengkap">-</b></div>
-                    <div><span>Pekerjaan sesuai WO</span><b id="laporanSesuai">-</b></div>
-                    <div><span>Foto dokumentasi terlampir</span><b id="laporanFoto">-</b></div>
-                    <div><span>Siap ditindaklanjuti Perencanaan</span><b id="laporanSiap">-</b></div>
+                    <div><span>Foto Pengiriman tiang</span><b id="laporanLengkap">-</b></div>
+                    <div><span>Foto penanaman tiang</span><b id="laporanSesuai">-</b></div>
+                    <div><span>Foto tiang berdiri</span><b id="laporanFoto">-</b></div>
+                    <div><span>Foto pekerjaan selesai</span><b id="laporanSiap">-</b></div>
                     <div><span>Catatan</span><b id="laporanCatatan">-</b></div>
                     <div><span>Berkas laporan</span><b id="laporanFiles">-</b></div>
                 </div>

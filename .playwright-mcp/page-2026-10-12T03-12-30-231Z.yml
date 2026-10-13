@@ -1,0 +1,484 @@
+- generic [ref=f4e2]:
+  - complementary [ref=f4e3]:
+    - heading "FAST ON 360" [level=2] [ref=f4e4]
+    - generic [ref=f4e5]: Administrator
+    - link "Dashboard" [ref=f4e6] [cursor=pointer]:
+      - /url: http://127.0.0.1:8000/dashboard
+    - link "Laporan" [ref=f4e12] [cursor=pointer]:
+      - /url: http://127.0.0.1:8000/laporan
+    - link "Data PB/PD" [ref=f4e18] [cursor=pointer]:
+      - /url: http://127.0.0.1:8000/pbpd
+    - link "Perluasan JTM" [ref=f4e25] [cursor=pointer]:
+      - /url: http://127.0.0.1:8000/perluasan/jtm
+    - link "Perluasan JTR" [ref=f4e31] [cursor=pointer]:
+      - /url: http://127.0.0.1:8000/perluasan/jtr
+    - link "Tanpa perluasan" [ref=f4e37] [cursor=pointer]:
+      - /url: http://127.0.0.1:8000/tanpa/perluasan
+    - link "Pengoperasian" [ref=f4e42] [cursor=pointer]:
+      - /url: http://127.0.0.1:8000/pengoperasian
+    - link "Pencarian" [ref=f4e47] [cursor=pointer]:
+      - /url: http://127.0.0.1:8000/pencarian
+    - link "Notifikasi 8" [ref=f4e52] [cursor=pointer]:
+      - /url: http://127.0.0.1:8000/notifikasi
+      - text: Notifikasi
+      - generic [ref=f4e56]: "8"
+  - generic [ref=f4e57]:
+    - banner [ref=f4e58]:
+      - strong [ref=f4e60]: Data PB/PD
+      - button "Keluar" [ref=f4e62] [cursor=pointer]
+    - main [ref=f4e63]:
+      - generic [ref=f4e64]:
+        - generic [ref=f4e65]:
+          - generic [ref=f4e66]: TOTAL DATA
+          - strong [ref=f4e67]: "73"
+        - generic [ref=f4e68]:
+          - generic [ref=f4e69]: ULP Babat
+          - strong [ref=f4e70]: "0"
+          - generic [ref=f4e71]: Data dikirim ULP
+        - generic [ref=f4e72]:
+          - generic [ref=f4e73]: ULP Bojonegoro
+          - strong [ref=f4e74]: "0"
+          - generic [ref=f4e75]: Data dikirim ULP
+        - generic [ref=f4e76]:
+          - generic [ref=f4e77]: ULP Brondon
+          - strong [ref=f4e78]: "0"
+          - generic [ref=f4e79]: Data dikirim ULP
+        - generic [ref=f4e80]:
+          - generic [ref=f4e81]: ULP Jatirogo
+          - strong [ref=f4e82]: "0"
+          - generic [ref=f4e83]: Data dikirim ULP
+        - generic [ref=f4e84]:
+          - generic [ref=f4e85]: ULP Lamongan
+          - strong [ref=f4e86]: "1"
+          - generic [ref=f4e87]: Data dikirim ULP
+        - generic [ref=f4e88]:
+          - generic [ref=f4e89]: ULP Padangan
+          - strong [ref=f4e90]: "0"
+          - generic [ref=f4e91]: Data dikirim ULP
+        - generic [ref=f4e92]:
+          - generic [ref=f4e93]: ULP Sumberrejo
+          - strong [ref=f4e94]: "0"
+          - generic [ref=f4e95]: Data dikirim ULP
+        - generic [ref=f4e96]:
+          - generic [ref=f4e97]: ULP Tuban
+          - strong [ref=f4e98]: "0"
+          - generic [ref=f4e99]: Data dikirim ULP
+      - generic [ref=f4e100]:
+        - text: DAFTAR TRANSAKSI
+        - textbox "Cari nama / no agenda / alamat" [ref=f4e101]
+        - combobox [ref=f4e102]:
+          - option "Semua ULP" [selected]
+          - option "ULP Bojonegoro"
+          - option "ULP Tuban"
+          - option "ULP Lamongan"
+          - option "ULP Babat"
+          - option "ULP Padangan"
+          - option "ULP Brondon"
+          - option "ULP Jatirogo"
+          - option "ULP Sumberrejo"
+        - combobox [ref=f4e103]:
+          - option "Semua jenis transaksi" [selected]
+          - option "Perubahan Daya"
+          - option "Pasang Baru"
+          - option "Cetak PK"
+          - option "Pengesahan PDL"
+          - option "PDL Awal"
+        - combobox [ref=f4e104]:
+          - option "Semua status" [selected]
+          - option "BAYAR"
+        - button "Filter" [ref=f4e105] [cursor=pointer]
+        - link "Reset" [ref=f4e106] [cursor=pointer]:
+          - /url: http://127.0.0.1:8000/pbpd
+        - text: Daftar Transaksi PB/PD
+      - generic [ref=f4e107]:
+        - table [ref=f4e109]:
+          - rowgroup [ref=f4e110]:
+            - row [ref=f4e111]:
+              - columnheader "RECORD, JUMLAH TRANSAKSI PB/PD" [ref=f4e112]
+            - row [ref=f4e115]:
+              - columnheader "NO." [ref=f4e116]
+              - columnheader "ASAL ULP" [ref=f4e117]
+              - columnheader "DETAIL" [ref=f4e118]
+              - columnheader "TRANSAKSI" [ref=f4e119]
+              - columnheader "STATUS" [ref=f4e120]
+              - columnheader "NO AGENDA" [ref=f4e121]
+              - columnheader "NAMA PELANGGAN" [ref=f4e122]
+              - columnheader "IDPEL" [ref=f4e123]
+              - columnheader "TOTAL BIAYA" [ref=f4e124]
+              - columnheader "TANGGAL MOHON" [ref=f4e125]
+              - columnheader "TANGGAL BAYAR" [ref=f4e126]
+              - columnheader "LAMA" [ref=f4e127]
+              - columnheader "BARU" [ref=f4e128]
+              - columnheader "DURASI HARI KERJA" [ref=f4e129]
+            - row [ref=f4e130]:
+              - columnheader "TARIF" [ref=f4e131]
+              - columnheader "DAYA" [ref=f4e132]
+              - columnheader "TARIF" [ref=f4e133]
+              - columnheader "DAYA" [ref=f4e134]
+          - rowgroup [ref=f4e135]:
+            - row [ref=f4e136]:
+              - cell "1." [ref=f4e137]
+              - cell "TUBAN" [ref=f4e138]
+              - cell [ref=f4e139]:
+                - button "Detail" [ref=f4e140] [cursor=pointer]
+              - cell "Pasang Baru" [ref=f4e144]
+              - cell "Bayar" [ref=f4e146]
+              - cell "518039912608077376" [ref=f4e148]
+              - cell "RUKO 3" [ref=f4e149]
+              - cell "518032032129" [ref=f4e150]
+              - cell "863.000" [ref=f4e151]
+              - cell "07/08/2026" [ref=f4e152]
+              - cell "09/08/2026" [ref=f4e153]
+              - cell [ref=f4e154]
+              - cell "VA" [ref=f4e155]
+              - cell "B1T" [ref=f4e156]
+              - cell "900 VA" [ref=f4e157]
+              - cell "1" [ref=f4e158]
+            - row [ref=f4e159]:
+              - cell "2." [ref=f4e160]
+              - cell "TUBAN" [ref=f4e161]
+              - cell [ref=f4e162]:
+                - button "Detail" [ref=f4e163] [cursor=pointer]
+              - cell "Cetak PK" [ref=f4e167]
+              - cell "Bayar" [ref=f4e169]
+              - cell "518039912608117504" [ref=f4e171]
+              - cell "FIRZAH ANDANI" [ref=f4e172]
+              - cell "518032032393" [ref=f4e173]
+              - cell "863.000" [ref=f4e174]
+              - cell "11/08/2026" [ref=f4e175]
+              - cell "11/08/2026" [ref=f4e176]
+              - cell [ref=f4e177]
+              - cell "VA" [ref=f4e178]
+              - cell "R1MT" [ref=f4e179]
+              - cell "900 VA" [ref=f4e180]
+              - cell "0" [ref=f4e181]
+            - row [ref=f4e182]:
+              - cell "3." [ref=f4e183]
+              - cell "TUBAN" [ref=f4e184]
+              - cell [ref=f4e185]:
+                - button "Detail" [ref=f4e186] [cursor=pointer]
+              - cell "Perubahan Daya" [ref=f4e190]
+              - cell "Bayar" [ref=f4e192]
+              - cell "518039922608080384" [ref=f4e194]
+              - cell "RUKO GRAND MAHKOTA 05" [ref=f4e195]
+              - cell "518032018141" [ref=f4e196]
+              - cell "1.070.900" [ref=f4e197]
+              - cell "08/08/2026" [ref=f4e198]
+              - cell "09/08/2026" [ref=f4e199]
+              - cell "B1T" [ref=f4e200]
+              - cell "2200 VA" [ref=f4e201]
+              - cell "B1T" [ref=f4e202]
+              - cell "4400 VA" [ref=f4e203]
+              - cell "0" [ref=f4e204]
+            - row [ref=f4e205]:
+              - cell "4." [ref=f4e206]
+              - cell "TUBAN" [ref=f4e207]
+              - cell [ref=f4e208]:
+                - button "Detail" [ref=f4e209] [cursor=pointer]
+              - cell "Perubahan Daya" [ref=f4e213]
+              - cell "Bayar" [ref=f4e215]
+              - cell "518039922608070400" [ref=f4e217]
+              - cell "SRI WILUDJENG" [ref=f4e218]
+              - cell "518030933978" [ref=f4e219]
+              - cell "20.000" [ref=f4e220]
+              - cell "07/08/2026" [ref=f4e221]
+              - cell "08/08/2026" [ref=f4e222]
+              - cell "R1" [ref=f4e223]
+              - cell "1300 VA" [ref=f4e224]
+              - cell "R1T" [ref=f4e225]
+              - cell "1300 VA" [ref=f4e226]
+              - cell "0" [ref=f4e227]
+            - row [ref=f4e228]:
+              - cell "5." [ref=f4e229]
+              - cell "TUBAN" [ref=f4e230]
+              - cell [ref=f4e231]:
+                - button "Detail" [ref=f4e232] [cursor=pointer]
+              - cell "Cetak PK" [ref=f4e236]
+              - cell "Bayar" [ref=f4e238]
+              - cell "518030522608100416" [ref=f4e240]
+              - cell "SURAJI" [ref=f4e241]
+              - cell "518030137888" [ref=f4e242]
+              - cell "5.000" [ref=f4e243]
+              - cell "10/08/2026" [ref=f4e244]
+              - cell "10/08/2026" [ref=f4e245]
+              - cell "R1" [ref=f4e246]
+              - cell "450 VA" [ref=f4e247]
+              - cell "R1T" [ref=f4e248]
+              - cell "450 VA" [ref=f4e249]
+              - cell "1" [ref=f4e250]
+            - row [ref=f4e251]:
+              - cell "6." [ref=f4e252]
+              - cell "TUBAN" [ref=f4e253]
+              - cell [ref=f4e254]:
+                - button "Detail" [ref=f4e255] [cursor=pointer]
+              - cell "Cetak PK" [ref=f4e259]
+              - cell "Bayar" [ref=f4e261]
+              - cell "518039922608100416" [ref=f4e263]
+              - cell "WARNI" [ref=f4e264]
+              - cell "518030320805" [ref=f4e265]
+              - cell "394.800" [ref=f4e266]
+              - cell "10/08/2026" [ref=f4e267]
+              - cell "11/08/2026" [ref=f4e268]
+              - cell "R1M" [ref=f4e269]
+              - cell "900 VA" [ref=f4e270]
+              - cell "R1T" [ref=f4e271]
+              - cell "1300 VA" [ref=f4e272]
+              - cell "0" [ref=f4e273]
+            - row [ref=f4e274]:
+              - cell "7." [ref=f4e275]
+              - cell "TUBAN" [ref=f4e276]
+              - cell [ref=f4e277]:
+                - button "Detail" [ref=f4e278] [cursor=pointer]
+              - cell "Pasang Baru" [ref=f4e282]
+              - cell "Bayar" [ref=f4e284]
+              - cell "518039912608087488" [ref=f4e286]
+              - cell "KOST 1" [ref=f4e287]
+              - cell "518032032186" [ref=f4e288]
+              - cell "1.238.000" [ref=f4e289]
+              - cell "08/08/2026" [ref=f4e290]
+              - cell "09/08/2026" [ref=f4e291]
+              - cell [ref=f4e292]
+              - cell "VA" [ref=f4e293]
+              - cell "R1T" [ref=f4e294]
+              - cell "1300 VA" [ref=f4e295]
+              - cell "1" [ref=f4e296]
+            - row [ref=f4e297]:
+              - cell "8." [ref=f4e298]
+              - cell "TUBAN" [ref=f4e299]
+              - cell [ref=f4e300]:
+                - button "Detail" [ref=f4e301] [cursor=pointer]
+              - cell "Pasang Baru" [ref=f4e305]
+              - cell "Bayar" [ref=f4e307]
+              - cell "518039912608067520" [ref=f4e309]
+              - cell "AKHMAD SYAFII" [ref=f4e310]
+              - cell "518032031923" [ref=f4e311]
+              - cell "863.000" [ref=f4e312]
+              - cell "06/08/2026" [ref=f4e313]
+              - cell "07/08/2026" [ref=f4e314]
+              - cell [ref=f4e315]
+              - cell "VA" [ref=f4e316]
+              - cell "R1T" [ref=f4e317]
+              - cell "900 VA" [ref=f4e318]
+              - cell "0" [ref=f4e319]
+            - row [ref=f4e320]:
+              - cell "9." [ref=f4e321]
+              - cell "TUBAN" [ref=f4e322]
+              - cell [ref=f4e323]:
+                - button "Detail" [ref=f4e324] [cursor=pointer]
+              - cell "Perubahan Daya" [ref=f4e328]
+              - cell "Bayar" [ref=f4e330]
+              - cell "518039922608070272" [ref=f4e332]
+              - cell "GALIH ADI KARA" [ref=f4e333]
+              - cell "518031719741" [ref=f4e334]
+              - cell "426.650" [ref=f4e335]
+              - cell "07/08/2026" [ref=f4e336]
+              - cell "07/08/2026" [ref=f4e337]
+              - cell "R1T" [ref=f4e338]
+              - cell "1300 VA" [ref=f4e339]
+              - cell "R1T" [ref=f4e340]
+              - cell "2200 VA" [ref=f4e341]
+              - cell "0" [ref=f4e342]
+            - row [ref=f4e343]:
+              - cell "10." [ref=f4e344]
+              - cell "TUBAN" [ref=f4e345]
+              - cell [ref=f4e346]:
+                - button "Detail" [ref=f4e347] [cursor=pointer]
+              - cell "Perubahan Daya" [ref=f4e351]
+              - cell "Bayar" [ref=f4e353]
+              - cell "518039922608060416" [ref=f4e355]
+              - cell "NITAM" [ref=f4e356]
+              - cell "518030782161" [ref=f4e357]
+              - cell "466.200" [ref=f4e358]
+              - cell "06/08/2026" [ref=f4e359]
+              - cell "07/08/2026" [ref=f4e360]
+              - cell "R1" [ref=f4e361]
+              - cell "450 VA" [ref=f4e362]
+              - cell "R1" [ref=f4e363]
+              - cell "900 VA" [ref=f4e364]
+              - cell "0" [ref=f4e365]
+            - row [ref=f4e366]:
+              - cell "11." [ref=f4e367]
+              - cell "TUBAN" [ref=f4e368]
+              - cell [ref=f4e369]:
+                - button "Detail" [ref=f4e370] [cursor=pointer]
+              - cell "Pasang Baru" [ref=f4e374]
+              - cell "Bayar" [ref=f4e376]
+              - cell "518039912608077504" [ref=f4e378]
+              - cell "PENTOL BAROKAH 354" [ref=f4e379]
+              - cell "518032032040" [ref=f4e380]
+              - cell "2.082.000" [ref=f4e381]
+              - cell "07/08/2026" [ref=f4e382]
+              - cell "08/08/2026" [ref=f4e383]
+              - cell [ref=f4e384]
+              - cell "VA" [ref=f4e385]
+              - cell "B1T" [ref=f4e386]
+              - cell "2200 VA" [ref=f4e387]
+              - cell "0" [ref=f4e388]
+            - row [ref=f4e389]:
+              - cell "12." [ref=f4e390]
+              - cell "TUBAN" [ref=f4e391]
+              - cell [ref=f4e392]:
+                - button "Detail" [ref=f4e393] [cursor=pointer]
+              - cell "Cetak PK" [ref=f4e397]
+              - cell "Bayar" [ref=f4e399]
+              - cell "518030122608040320" [ref=f4e401]
+              - cell "DAPUR MBG WARUKULON" [ref=f4e402]
+              - cell "518031983426" [ref=f4e403]
+              - cell "2.948.400" [ref=f4e404]
+              - cell "04/08/2026" [ref=f4e405]
+              - cell "04/08/2026" [ref=f4e406]
+              - cell "B2" [ref=f4e407]
+              - cell "10600 VA" [ref=f4e408]
+              - cell "B2" [ref=f4e409]
+              - cell "13200 VA" [ref=f4e410]
+              - cell "5" [ref=f4e411]
+            - row [ref=f4e412]:
+              - cell "13." [ref=f4e413]
+              - cell "TUBAN" [ref=f4e414]
+              - cell [ref=f4e415]:
+                - button "Detail" [ref=f4e416] [cursor=pointer]
+              - cell "Perubahan Daya" [ref=f4e420]
+              - cell "Bayar" [ref=f4e422]
+              - cell "518039922608020416" [ref=f4e424]
+              - cell "ABDULLOH MUHAMMAD" [ref=f4e425]
+              - cell "518031750865" [ref=f4e426]
+              - cell "50.000" [ref=f4e427]
+              - cell "02/08/2026" [ref=f4e428]
+              - cell "05/08/2026" [ref=f4e429]
+              - cell "R2T" [ref=f4e430]
+              - cell "3500 VA" [ref=f4e431]
+              - cell "R1T" [ref=f4e432]
+              - cell "2200 VA" [ref=f4e433]
+              - cell "1" [ref=f4e434]
+            - row [ref=f4e435]:
+              - cell "14." [ref=f4e436]
+              - cell "TUBAN" [ref=f4e437]
+              - cell [ref=f4e438]:
+                - button "Detail" [ref=f4e439] [cursor=pointer]
+              - cell "Cetak PK" [ref=f4e443]
+              - cell "Bayar" [ref=f4e445]
+              - cell "518039912608027392" [ref=f4e447]
+              - cell "DINDA NURFIKA APRILIA" [ref=f4e448]
+              - cell "518032031446" [ref=f4e449]
+              - cell "893.000" [ref=f4e450]
+              - cell "02/08/2026" [ref=f4e451]
+              - cell "03/08/2026" [ref=f4e452]
+              - cell [ref=f4e453]
+              - cell "VA" [ref=f4e454]
+              - cell "R1T" [ref=f4e455]
+              - cell "900 VA" [ref=f4e456]
+              - cell "6" [ref=f4e457]
+            - row [ref=f4e458]:
+              - cell "15." [ref=f4e459]
+              - cell "TUBAN" [ref=f4e460]
+              - cell [ref=f4e461]:
+                - button "Detail" [ref=f4e462] [cursor=pointer]
+              - cell "Pasang Baru" [ref=f4e466]
+              - cell "Bayar" [ref=f4e468]
+              - cell "518039912608037376" [ref=f4e470]
+              - cell "TOKO TANI SEJAHTERA" [ref=f4e471]
+              - cell "518032031558" [ref=f4e472]
+              - cell "1.238.000" [ref=f4e473]
+              - cell "03/08/2026" [ref=f4e474]
+              - cell "04/08/2026" [ref=f4e475]
+              - cell [ref=f4e476]
+              - cell "VA" [ref=f4e477]
+              - cell "B1T" [ref=f4e478]
+              - cell "1300 VA" [ref=f4e479]
+              - cell "0" [ref=f4e480]
+            - row [ref=f4e481]:
+              - cell "16." [ref=f4e482]
+              - cell "TUBAN" [ref=f4e483]
+              - cell [ref=f4e484]:
+                - button "Detail" [ref=f4e485] [cursor=pointer]
+              - cell "Perubahan Daya" [ref=f4e489]
+              - cell "Bayar" [ref=f4e491]
+              - cell "518039922608050432" [ref=f4e493]
+              - cell "SRIATUN" [ref=f4e494]
+              - cell "518030367986" [ref=f4e495]
+              - cell "259.875" [ref=f4e496]
+              - cell "05/08/2026" [ref=f4e497]
+              - cell "07/08/2026" [ref=f4e498]
+              - cell "R1" [ref=f4e499]
+              - cell "450 VA" [ref=f4e500]
+              - cell "R1M" [ref=f4e501]
+              - cell "900 VA" [ref=f4e502]
+              - cell "0" [ref=f4e503]
+            - row [ref=f4e504]:
+              - cell "17." [ref=f4e505]
+              - cell "TUBAN" [ref=f4e506]
+              - cell [ref=f4e507]:
+                - button "Detail" [ref=f4e508] [cursor=pointer]
+              - cell "Perubahan Daya" [ref=f4e512]
+              - cell "Bayar" [ref=f4e514]
+              - cell "518039922608030272" [ref=f4e516]
+              - cell "EDI PUJI SANTOSO" [ref=f4e517]
+              - cell "518032019375" [ref=f4e518]
+              - cell "1.264.700" [ref=f4e519]
+              - cell "03/08/2026" [ref=f4e520]
+              - cell "03/08/2026" [ref=f4e521]
+              - cell "R1T" [ref=f4e522]
+              - cell "2200 VA" [ref=f4e523]
+              - cell "R2T" [ref=f4e524]
+              - cell "3500 VA" [ref=f4e525]
+              - cell "1" [ref=f4e526]
+            - row [ref=f4e527]:
+              - cell "18." [ref=f4e528]
+              - cell "TUBAN" [ref=f4e529]
+              - cell [ref=f4e530]:
+                - button "Detail" [ref=f4e531] [cursor=pointer]
+              - cell "Perubahan Daya" [ref=f4e535]
+              - cell "Bayar" [ref=f4e537]
+              - cell "518030522608040320" [ref=f4e539]
+              - cell "NAFIYAZ PLAYGROUND" [ref=f4e540]
+              - cell "518030102976" [ref=f4e541]
+              - cell "150.000" [ref=f4e542]
+              - cell "04/08/2026" [ref=f4e543]
+              - cell "05/08/2026" [ref=f4e544]
+              - cell "R1T" [ref=f4e545]
+              - cell "1300 VA" [ref=f4e546]
+              - cell "B1T" [ref=f4e547]
+              - cell "1300 VA" [ref=f4e548]
+              - cell "2" [ref=f4e549]
+            - row [ref=f4e550]:
+              - cell "19." [ref=f4e551]
+              - cell "TUBAN" [ref=f4e552]
+              - cell [ref=f4e553]:
+                - button "Detail" [ref=f4e554] [cursor=pointer]
+              - cell "Pasang Baru" [ref=f4e558]
+              - cell "Bayar" [ref=f4e560]
+              - cell "518039912608047424" [ref=f4e562]
+              - cell "GATOT PRASTIYO" [ref=f4e563]
+              - cell "518032031629" [ref=f4e564]
+              - cell "1.238.000" [ref=f4e565]
+              - cell "04/08/2026" [ref=f4e566]
+              - cell "04/08/2026" [ref=f4e567]
+              - cell [ref=f4e568]
+              - cell "VA" [ref=f4e569]
+              - cell "R1T" [ref=f4e570]
+              - cell "1300 VA" [ref=f4e571]
+              - cell "1" [ref=f4e572]
+            - row [ref=f4e573]:
+              - cell "20." [ref=f4e574]
+              - cell "TUBAN" [ref=f4e575]
+              - cell [ref=f4e576]:
+                - button "Detail" [ref=f4e577] [cursor=pointer]
+              - cell "Perubahan Daya" [ref=f4e581]
+              - cell "Bayar" [ref=f4e583]
+              - cell "518030522608050432" [ref=f4e585]
+              - cell "IR.LINGGO S/ NUR S" [ref=f4e586]
+              - cell "518030922218" [ref=f4e587]
+              - cell "10.000" [ref=f4e588]
+              - cell "05/08/2026" [ref=f4e589]
+              - cell "06/08/2026" [ref=f4e590]
+              - cell "R1M" [ref=f4e591]
+              - cell "900 VA" [ref=f4e592]
+              - cell "R1MT" [ref=f4e593]
+              - cell "900 VA" [ref=f4e594]
+              - cell "0" [ref=f4e595]
+        - generic [ref=f4e596]:
+          - generic [ref=f4e597]: Records 1 to 20 of 73
+          - generic [ref=f4e598]:
+            - generic [ref=f4e599]: Halaman 1 dari 4
+            - link "Berikutnya »" [ref=f4e600] [cursor=pointer]:
+              - /url: http://127.0.0.1:8000/pbpd?page=2

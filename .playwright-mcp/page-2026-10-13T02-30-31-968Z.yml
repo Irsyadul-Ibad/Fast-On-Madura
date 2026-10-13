@@ -1,0 +1,160 @@
+- generic [ref=f9e2]:
+  - complementary [ref=f9e3]:
+    - heading "FAST ON 360" [level=2] [ref=f9e4]
+    - generic [ref=f9e5]: Administrator
+    - link "Dashboard" [ref=f9e6] [cursor=pointer]:
+      - /url: http://localhost:8000/dashboard
+    - link "Laporan" [ref=f9e12] [cursor=pointer]:
+      - /url: http://localhost:8000/laporan
+    - link "Data PB/PD" [ref=f9e18] [cursor=pointer]:
+      - /url: http://localhost:8000/pbpd
+    - link "Perluasan JTM" [ref=f9e25] [cursor=pointer]:
+      - /url: http://localhost:8000/perluasan/jtm
+    - link "Perluasan JTR" [ref=f9e31] [cursor=pointer]:
+      - /url: http://localhost:8000/perluasan/jtr
+    - link "Tanpa perluasan" [ref=f9e37] [cursor=pointer]:
+      - /url: http://localhost:8000/tanpa/perluasan
+    - link "Pengoperasian" [ref=f9e42] [cursor=pointer]:
+      - /url: http://localhost:8000/pengoperasian
+    - link "Pencarian" [ref=f9e47] [cursor=pointer]:
+      - /url: http://localhost:8000/pencarian
+    - link "Notifikasi 0" [ref=f9e52] [cursor=pointer]:
+      - /url: http://localhost:8000/notifikasi
+      - text: Notifikasi
+      - generic [ref=f9e56]: "0"
+  - generic [ref=f9e57]:
+    - banner [ref=f9e58]:
+      - strong [ref=f9e60]: Dashboard
+      - button "Keluar" [ref=f9e62] [cursor=pointer]
+    - main [ref=f9e63]:
+      - generic [ref=f9e64]:
+        - generic [ref=f9e65]:
+          - generic [ref=f9e66]:
+            - generic [ref=f9e67]: FAST ON / OVERVIEW
+            - heading "Selamat datang, UP3 Bojonegoro ✦" [level=1] [ref=f9e68]
+            - paragraph [ref=f9e69]: Berikut ringkasan proses PB/PD yang sedang berjalan.
+          - link "Buka laporan →" [ref=f9e70] [cursor=pointer]:
+            - /url: http://localhost:8000/laporan
+        - generic [ref=f9e71]:
+          - generic [ref=f9e72]:
+            - generic [ref=f9e73]: Total data
+            - strong [ref=f9e79]: "6"
+            - text: Dalam cakupan Anda
+          - generic [ref=f9e82]:
+            - generic [ref=f9e83]: Belum diproses
+            - strong [ref=f9e89]: "6"
+            - text: Menunggu pengiriman ULP
+          - generic [ref=f9e92]:
+            - generic [ref=f9e93]: Sedang diproses
+            - strong [ref=f9e99]: "0"
+            - text: Sedang diproses
+          - generic [ref=f9e101]:
+            - generic [ref=f9e102]: Selesai
+            - strong [ref=f9e108]: "0"
+            - text: Proses selesai
+        - generic [ref=f9e110]:
+          - generic [ref=f9e111]:
+            - generic [ref=f9e112]:
+              - generic [ref=f9e113]:
+                - generic [ref=f9e114]:
+                  - heading "Aktivitas terbaru" [level=2] [ref=f9e115]
+                  - paragraph [ref=f9e116]: Data PB/PD terakhir yang masuk dalam sistem
+                - link "Lihat semua" [ref=f9e117] [cursor=pointer]:
+                  - /url: http://localhost:8000/pbpd
+              - table [ref=f9e119]:
+                - rowgroup [ref=f9e120]:
+                  - row [ref=f9e121]:
+                    - columnheader "AGENDA" [ref=f9e122]
+                    - columnheader "PELANGGAN" [ref=f9e123]
+                    - columnheader "TRANSAKSI" [ref=f9e124]
+                    - columnheader "TAHAP" [ref=f9e125]
+                    - columnheader "STATUS" [ref=f9e126]
+                - rowgroup [ref=f9e127]:
+                  - row [ref=f9e128]:
+                    - cell "518030532608060032" [ref=f9e129]
+                    - cell "AGUS SUTRISNO TOKO ROTI LAMONGAN" [ref=f9e130]:
+                      - generic [ref=f9e131]: AGUS SUTRISNO TOKO ROTI
+                      - generic [ref=f9e132]: LAMONGAN
+                    - cell [ref=f9e133]
+                    - cell "BELUM DIPROSES" [ref=f9e134]
+                    - cell "CETAK PK" [ref=f9e136]
+                  - row [ref=f9e138]:
+                    - cell "518039912608117504" [ref=f9e139]
+                    - cell "FIRZAH ANDANI LAMONGAN" [ref=f9e140]:
+                      - generic [ref=f9e141]: FIRZAH ANDANI
+                      - generic [ref=f9e142]: LAMONGAN
+                    - cell "PASANG BARU" [ref=f9e143]
+                    - cell "BELUM DIPROSES" [ref=f9e144]
+                    - cell "CETAK PK" [ref=f9e146]
+                  - row [ref=f9e148]:
+                    - cell "518030522608100352" [ref=f9e149]
+                    - cell "SURAJI LAMONGAN" [ref=f9e150]:
+                      - generic [ref=f9e151]: SURAJI
+                      - generic [ref=f9e152]: LAMONGAN
+                    - cell "PERUBAHAN DAYA" [ref=f9e153]
+                    - cell "BELUM DIPROSES" [ref=f9e154]
+                    - cell "CETAK PK" [ref=f9e156]
+                  - row [ref=f9e158]:
+                    - cell "518039922608100352" [ref=f9e159]
+                    - cell "WARNI LAMONGAN" [ref=f9e160]:
+                      - generic [ref=f9e161]: WARNI
+                      - generic [ref=f9e162]: LAMONGAN
+                    - cell "PERUBAHAN DAYA" [ref=f9e163]
+                    - cell "BELUM DIPROSES" [ref=f9e164]
+                    - cell "CETAK PK" [ref=f9e166]
+                  - row [ref=f9e168]:
+                    - cell "518030122608040320" [ref=f9e169]
+                    - cell "DAPUR MBG WARUKULON LAMONGAN" [ref=f9e170]:
+                      - generic [ref=f9e171]: DAPUR MBG WARUKULON
+                      - generic [ref=f9e172]: LAMONGAN
+                    - cell "PERUBAHAN DAYA" [ref=f9e173]
+                    - cell "BELUM DIPROSES" [ref=f9e174]
+                    - cell "CETAK PK" [ref=f9e176]
+                  - row [ref=f9e178]:
+                    - cell "518039912608027392" [ref=f9e179]
+                    - cell "DINDA NURFIKA APRILIA LAMONGAN" [ref=f9e180]:
+                      - generic [ref=f9e181]: DINDA NURFIKA APRILIA
+                      - generic [ref=f9e182]: LAMONGAN
+                    - cell "PASANG BARU" [ref=f9e183]
+                    - cell "BELUM DIPROSES" [ref=f9e184]
+                    - cell "CETAK PK" [ref=f9e186]
+            - generic [ref=f9e188]:
+              - generic [ref=f9e190]:
+                - heading "Distribusi tahap proses" [level=2] [ref=f9e191]
+                - paragraph [ref=f9e192]: Perbandingan status data saat ini
+              - generic [ref=f9e194]:
+                - generic [ref=f9e195]: BELUM DIPROSES
+                - generic [ref=f9e198]: "6"
+          - complementary [ref=f9e199]:
+            - generic [ref=f9e200]:
+              - generic [ref=f9e202]:
+                - heading "Tujuan proses" [level=2] [ref=f9e203]
+                - paragraph [ref=f9e204]: Distribusi pengiriman
+              - generic [ref=f9e205]:
+                - generic [ref=f9e207]:
+                  - generic [ref=f9e208]: "6"
+                  - generic [ref=f9e209]: data
+                - generic [ref=f9e211]:
+                  - generic [ref=f9e213]: BELUM DIKIRIM
+                  - generic [ref=f9e214]: "6"
+            - generic [ref=f9e215]:
+              - generic [ref=f9e217]:
+                - heading "Jenis transaksi" [level=2] [ref=f9e218]
+                - paragraph [ref=f9e219]: Ringkasan permohonan
+              - generic [ref=f9e220]:
+                - generic [ref=f9e221]:
+                  - generic [ref=f9e222]: PERUBAHAN DAYA
+                  - generic [ref=f9e223]: "3"
+                - generic [ref=f9e224]:
+                  - generic [ref=f9e225]: PASANG BARU
+                  - generic [ref=f9e226]: "2"
+                - generic [ref=f9e227]:
+                  - generic [ref=f9e228]: LAINNYA
+                  - generic [ref=f9e229]: "1"
+            - generic [ref=f9e230]:
+              - generic [ref=f9e232]:
+                - heading "Per ULP" [level=2] [ref=f9e233]
+                - paragraph [ref=f9e234]: Data pada seluruh ULP
+              - generic [ref=f9e236]:
+                - generic [ref=f9e237]: LAMONGAN
+                - generic [ref=f9e238]: "6"

@@ -24,11 +24,11 @@ class PbpdController extends Controller
         $canEditRab = $canKirim || $role?->role_code === '5180REN';
 
         $data = PelangganPbpd::with('ulp')
+            ->statusTampil()
             ->when($ulpUser, fn ($q) => $q->where('ulp_id', $ulpUser))
             ->when(! $ulpUser && $request->filled('ulp'), fn ($q) => $q->where('ulp_id', $request->ulp))
-            ->when($role?->type === 'ULP' && ! $request->filled('import'), fn ($q) => $q->whereIn('tahap', ['ULP', 'SELESAI']))
+            ->when($isUlpRole, fn ($q) => $q->where('tahap', 'ULP'))
             ->where('status', '!=', 'MOHON')
-            ->whereNotIn('jenis_transaksi', ['BN', 'BALIK NAMA', 'PS', 'PENERANGAN SEMENTARA'])
             ->when($request->filled('import'), fn ($q) => $q->where('import_id', $request->import))
             ->when($request->filled('jenis'), fn ($q) => $q->where('jenis_transaksi', $request->jenis))
             ->when($request->filled('status'), fn ($q) => $q->where('status', $request->status))
@@ -46,23 +46,28 @@ class PbpdController extends Controller
             ->withQueryString();
 
         $summaryBase = PelangganPbpd::query()
+            ->statusTampil()
             ->when($ulpUser, fn ($q) => $q->where('ulp_id', $ulpUser))
-            ->when($role?->type === 'ULP' && ! $request->filled('import'), fn ($q) => $q->whereIn('tahap', ['ULP', 'SELESAI']))
+            ->when($isUlpRole, fn ($q) => $q->where('tahap', 'ULP'))
             ->when($request->filled('import'), fn ($q) => $q->where('import_id', $request->import))
             ->where('status', '!=', 'MOHON')
-            ->whereNotIn('jenis_transaksi', ['BN', 'BALIK NAMA', 'PS', 'PENERANGAN SEMENTARA']);
+            ;
 
         $summaryByJenisRaw = (clone $summaryBase)
             ->selectRaw('UPPER(TRIM(jenis_transaksi)) AS jenis, COUNT(*) AS jumlah')
             ->whereNotNull('jenis_transaksi')
             ->groupByRaw('UPPER(TRIM(jenis_transaksi))')
             ->pluck('jumlah', 'jenis');
+        $summaryByStatus = PelangganPbpd::query()
+            ->when($ulpUser, fn ($q) => $q->where('ulp_id', $ulpUser))
+            ->when($isUlpRole, fn ($q) => $q->where('tahap', 'ULP'))
+            ->when($request->filled('import'), fn ($q) => $q->where('import_id', $request->import))
+            ->statusTampil()
+            ->selectRaw('UPPER(TRIM(status)) AS status, COUNT(*) AS jumlah')
+            ->groupByRaw('UPPER(TRIM(status))')->pluck('jumlah', 'status');
         $summaryByJenis = collect([
-            'CETAK PK' => (int) ($summaryByJenisRaw['CETAK PK'] ?? 0),
             'PASANG BARU' => (int) (($summaryByJenisRaw['PASANG BARU'] ?? 0) + ($summaryByJenisRaw['PB'] ?? 0)),
             'PERUBAHAN DAYA' => (int) (($summaryByJenisRaw['PERUBAHAN DAYA'] ?? 0) + ($summaryByJenisRaw['PD'] ?? 0)),
-            'PENGESAHAN PDL' => (int) ($summaryByJenisRaw['PENGESAHAN PDL'] ?? 0),
-            'PDL AWAL' => (int) ($summaryByJenisRaw['PDL AWAL'] ?? 0),
         ]);
         $isUlpSummary = $isUlpRole;
         $showSummaryCards = in_array($role?->type, ['ULP', 'UP3'], true);
@@ -84,17 +89,28 @@ class PbpdController extends Controller
             'canUploadSyarat' => $canKirim,
             'showSyarat' => $role?->type !== 'UP3',
             'ulps'    => $ulpUser ? collect() : Ulp::orderBy('kode')->get(),
-            'statuss' => PelangganPbpd::whereNotNull('status')
-                ->where('status', '!=', 'MOHON')
+            'statuss' => PelangganPbpd::whereIn('status', PelangganPbpd::STATUS_TAMPIL)
                 ->distinct()->orderBy('status')->pluck('status'),
-            'tahaps'  => ['ULP', 'PERENCANAAN', 'VENDOR_TIANG', 'KONSTRUKSI',
-                          'VENDOR_KONSTRUKSI', 'PENGOPERASIAN', 'SELESAI'],
+            'tahaps'  => [
+                'ULP' => 'ULP',
+                'PERENCANAAN' => 'PERENCANAAN',
+                'VENDOR_TIANG' => 'KONSTRUKSI (TIANG)',
+                'VENDOR_KONSTRUKSI' => 'KONSTRUKSI',
+                'PENGOPERASIAN' => 'TRANSAKSI',
+                'SELESAI' => 'JARINGAN',
+            ],
             'showSummaryCards' => $showSummaryCards,
             'isUlpSummary' => $isUlpSummary,
             'summaryTotal' => $summaryTotal,
             'summarySentByUlp' => $summarySentByUlp,
             'summaryUlpNames' => $summaryUlpNames,
             'summaryByJenis' => $summaryByJenis,
+            'summaryByStatus' => collect([
+                'CETAK PK' => (int) ($summaryByStatus['CETAK PK'] ?? 0),
+                'BAYAR' => (int) ($summaryByStatus['BAYAR'] ?? 0),
+                'PENGESAHAN PDL' => (int) ($summaryByStatus['PENGESAHAN PDL'] ?? 0),
+                'PDL AWAL' => (int) ($summaryByStatus['PDL AWAL'] ?? 0),
+            ]),
         ]);
     }
 

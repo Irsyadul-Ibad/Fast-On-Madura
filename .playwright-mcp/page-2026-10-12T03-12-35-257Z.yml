@@ -1,0 +1,121 @@
+- generic [ref=f6e2]:
+  - complementary [ref=f6e3]:
+    - heading "FAST ON 360" [level=2] [ref=f6e4]
+    - generic [ref=f6e5]: Administrator
+    - link "Dashboard" [ref=f6e6] [cursor=pointer]:
+      - /url: http://127.0.0.1:8000/dashboard
+    - link "Laporan" [ref=f6e12] [cursor=pointer]:
+      - /url: http://127.0.0.1:8000/laporan
+    - link "Data PB/PD" [ref=f6e18] [cursor=pointer]:
+      - /url: http://127.0.0.1:8000/pbpd
+    - link "Perluasan JTM" [ref=f6e25] [cursor=pointer]:
+      - /url: http://127.0.0.1:8000/perluasan/jtm
+    - link "Perluasan JTR" [ref=f6e31] [cursor=pointer]:
+      - /url: http://127.0.0.1:8000/perluasan/jtr
+    - link "Tanpa perluasan" [ref=f6e37] [cursor=pointer]:
+      - /url: http://127.0.0.1:8000/tanpa/perluasan
+    - link "Pengoperasian" [ref=f6e42] [cursor=pointer]:
+      - /url: http://127.0.0.1:8000/pengoperasian
+    - link "Pencarian" [ref=f6e47] [cursor=pointer]:
+      - /url: http://127.0.0.1:8000/pencarian
+    - link "Notifikasi 8" [ref=f6e52] [cursor=pointer]:
+      - /url: http://127.0.0.1:8000/notifikasi
+      - text: Notifikasi
+      - generic [ref=f6e56]: "8"
+  - generic [ref=f6e57]:
+    - banner [ref=f6e58]:
+      - strong [ref=f6e60]: Perluasan JTM
+      - button "Keluar" [ref=f6e62] [cursor=pointer]
+    - main [ref=f6e63]:
+      - generic [ref=f6e64]:
+        - generic [ref=f6e65]:
+          - generic [ref=f6e66]: TOTAL DATA
+          - strong [ref=f6e67]: "0"
+        - generic [ref=f6e68]:
+          - generic [ref=f6e69]: ULP Babat
+          - strong [ref=f6e70]: "0"
+          - generic [ref=f6e71]: Data dikirim ULP
+        - generic [ref=f6e72]:
+          - generic [ref=f6e73]: ULP Bojonegoro
+          - strong [ref=f6e74]: "0"
+          - generic [ref=f6e75]: Data dikirim ULP
+        - generic [ref=f6e76]:
+          - generic [ref=f6e77]: ULP Brondon
+          - strong [ref=f6e78]: "0"
+          - generic [ref=f6e79]: Data dikirim ULP
+        - generic [ref=f6e80]:
+          - generic [ref=f6e81]: ULP Jatirogo
+          - strong [ref=f6e82]: "0"
+          - generic [ref=f6e83]: Data dikirim ULP
+        - generic [ref=f6e84]:
+          - generic [ref=f6e85]: ULP Lamongan
+          - strong [ref=f6e86]: "0"
+          - generic [ref=f6e87]: Data dikirim ULP
+        - generic [ref=f6e88]:
+          - generic [ref=f6e89]: ULP Padangan
+          - strong [ref=f6e90]: "0"
+          - generic [ref=f6e91]: Data dikirim ULP
+        - generic [ref=f6e92]:
+          - generic [ref=f6e93]: ULP Sumberrejo
+          - strong [ref=f6e94]: "0"
+          - generic [ref=f6e95]: Data dikirim ULP
+        - generic [ref=f6e96]:
+          - generic [ref=f6e97]: ULP Tuban
+          - strong [ref=f6e98]: "0"
+          - generic [ref=f6e99]: Data dikirim ULP
+      - generic [ref=f6e100]:
+        - text: DAFTAR TRANSAKSI
+        - textbox "Cari nama / no agenda / alamat" [ref=f6e101]
+        - combobox [ref=f6e102]:
+          - option "Semua ULP" [selected]
+          - option "ULP Babat"
+          - option "ULP Bojonegoro"
+          - option "ULP Brondon"
+          - option "ULP Jatirogo"
+          - option "ULP Lamongan"
+          - option "ULP Padangan"
+          - option "ULP Sumberrejo"
+          - option "ULP Tuban"
+        - combobox [ref=f6e103]:
+          - option "Semua jenis transaksi" [selected]
+        - combobox [ref=f6e104]:
+          - option "Semua status" [selected]
+        - button "Filter" [ref=f6e105] [cursor=pointer]
+        - link "Reset" [ref=f6e106] [cursor=pointer]:
+          - /url: http://127.0.0.1:8000/perluasan/jtm
+        - text: Daftar Transaksi PERLUASAN JTM
+      - generic [ref=f6e107]:
+        - generic [ref=f6e108]:
+          - generic [ref=f6e109]: DATA PERLUASAN JTM
+          - generic [ref=f6e110]: 0 data
+        - table [ref=f6e112]:
+          - rowgroup [ref=f6e113]:
+            - row [ref=f6e114]:
+              - columnheader [ref=f6e115]:
+                - checkbox "Pilih semua" [ref=f6e116]
+              - columnheader "NO." [ref=f6e117]
+              - columnheader "ULP PENGIRIM" [ref=f6e118]
+              - columnheader "DETAIL" [ref=f6e119]
+              - columnheader "BERKAS" [ref=f6e120]
+              - columnheader "TRANSAKSI" [ref=f6e121]
+              - columnheader "STATUS" [ref=f6e122]
+              - columnheader "NO AGENDA" [ref=f6e123]
+              - columnheader "NAMA PELANGGAN" [ref=f6e124]
+              - columnheader "IDPEL" [ref=f6e125]
+              - columnheader "TOTAL BIAYA" [ref=f6e126]
+              - columnheader "TANGGAL MOHON" [ref=f6e127]
+              - columnheader "TANGGAL BAYAR" [ref=f6e128]
+              - columnheader "LAMA" [ref=f6e129]
+              - columnheader "BARU" [ref=f6e130]
+              - columnheader "DURASI HARI KERJA" [ref=f6e131]
+            - row [ref=f6e132]:
+              - columnheader "TARIF" [ref=f6e133]
+              - columnheader "DAYA" [ref=f6e134]
+              - columnheader "TARIF" [ref=f6e135]
+              - columnheader "DAYA" [ref=f6e136]
+          - rowgroup [ref=f6e137]:
+            - row [ref=f6e138]:
+              - cell "Belum ada data dikirim." [ref=f6e139]
+        - generic [ref=f6e140]:
+          - generic [ref=f6e141]: Records 0 to 0 of 0
+          - generic [ref=f6e142]: Halaman 1 dari 1

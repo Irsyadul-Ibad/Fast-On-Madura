@@ -1,0 +1,485 @@
+- generic [ref=f14e2]:
+  - complementary [ref=f14e3]:
+    - heading "FAST ON 360" [level=2] [ref=f14e4]
+    - generic [ref=f14e5]: Pelayanan UP3
+    - link "Dashboard" [ref=f14e6] [cursor=pointer]:
+      - /url: http://localhost:8000/dashboard
+    - link "Laporan" [ref=f14e12] [cursor=pointer]:
+      - /url: http://localhost:8000/laporan
+    - link "Data PB/PD" [ref=f14e18] [cursor=pointer]:
+      - /url: http://localhost:8000/pbpd
+    - link "Perluasan JTM" [ref=f14e25] [cursor=pointer]:
+      - /url: http://localhost:8000/perluasan/jtm
+    - link "Perluasan JTR" [ref=f14e31] [cursor=pointer]:
+      - /url: http://localhost:8000/perluasan/jtr
+    - link "Tanpa perluasan" [ref=f14e37] [cursor=pointer]:
+      - /url: http://localhost:8000/tanpa/perluasan
+    - link "Upload Data PB/PD" [ref=f14e42] [cursor=pointer]:
+      - /url: http://localhost:8000/pbpd-upload
+    - link "Pencarian" [ref=f14e47] [cursor=pointer]:
+      - /url: http://localhost:8000/pencarian
+    - link "Notifikasi 0" [ref=f14e52] [cursor=pointer]:
+      - /url: http://localhost:8000/notifikasi
+      - text: Notifikasi
+      - generic [ref=f14e56]: "0"
+  - generic [ref=f14e57]:
+    - banner [ref=f14e58]:
+      - strong [ref=f14e60]: Data PB/PD
+      - button "Keluar" [ref=f14e62] [cursor=pointer]
+    - main [ref=f14e63]:
+      - generic [ref=f14e64]:
+        - generic [ref=f14e65]:
+          - generic [ref=f14e66]: TOTAL DATA
+          - strong [ref=f14e67]: "28"
+        - generic [ref=f14e68]:
+          - generic [ref=f14e69]: ULP Babat
+          - strong [ref=f14e70]: "0"
+          - generic [ref=f14e71]: Data dikirim ULP
+        - generic [ref=f14e72]:
+          - generic [ref=f14e73]: ULP Bojonegoro
+          - strong [ref=f14e74]: "0"
+          - generic [ref=f14e75]: Data dikirim ULP
+        - generic [ref=f14e76]:
+          - generic [ref=f14e77]: ULP Brondon
+          - strong [ref=f14e78]: "0"
+          - generic [ref=f14e79]: Data dikirim ULP
+        - generic [ref=f14e80]:
+          - generic [ref=f14e81]: ULP Jatirogo
+          - strong [ref=f14e82]: "0"
+          - generic [ref=f14e83]: Data dikirim ULP
+        - generic [ref=f14e84]:
+          - generic [ref=f14e85]: ULP Lamongan
+          - strong [ref=f14e86]: "0"
+          - generic [ref=f14e87]: Data dikirim ULP
+        - generic [ref=f14e88]:
+          - generic [ref=f14e89]: ULP Padangan
+          - strong [ref=f14e90]: "0"
+          - generic [ref=f14e91]: Data dikirim ULP
+        - generic [ref=f14e92]:
+          - generic [ref=f14e93]: ULP Sumberrejo
+          - strong [ref=f14e94]: "0"
+          - generic [ref=f14e95]: Data dikirim ULP
+        - generic [ref=f14e96]:
+          - generic [ref=f14e97]: ULP Tuban
+          - strong [ref=f14e98]: "0"
+          - generic [ref=f14e99]: Data dikirim ULP
+      - generic [ref=f14e100]:
+        - text: DAFTAR TRANSAKSI
+        - textbox "Cari nama / no agenda / alamat" [ref=f14e101]
+        - combobox [ref=f14e102]:
+          - option "Semua ULP" [selected]
+          - option "ULP Bojonegoro"
+          - option "ULP Tuban"
+          - option "ULP Lamongan"
+          - option "ULP Babat"
+          - option "ULP Padangan"
+          - option "ULP Brondon"
+          - option "ULP Jatirogo"
+          - option "ULP Sumberrejo"
+        - combobox [ref=f14e103]:
+          - option "Semua jenis transaksi" [selected]
+          - option "Perubahan Daya"
+          - option "Pasang Baru"
+        - combobox [ref=f14e104]:
+          - option "Semua status" [selected]
+          - option "BAYAR"
+          - option "CETAK PK"
+          - option "PDL AWAL"
+          - option "PENGESAHAN PDL"
+        - generic [ref=f14e105]: "File upload #5"
+        - button "Filter" [ref=f14e106] [cursor=pointer]
+        - link "Reset" [ref=f14e107] [cursor=pointer]:
+          - /url: http://localhost:8000/pbpd
+        - text: Daftar Transaksi PB/PD
+      - generic [ref=f14e108]:
+        - table [ref=f14e110]:
+          - rowgroup [ref=f14e111]:
+            - row [ref=f14e112]:
+              - columnheader "RECORD, JUMLAH TRANSAKSI PB/PD" [ref=f14e113]
+            - row [ref=f14e116]:
+              - columnheader "NO." [ref=f14e117]
+              - columnheader "ASAL ULP" [ref=f14e118]
+              - columnheader "DETAIL" [ref=f14e119]
+              - columnheader "TRANSAKSI" [ref=f14e120]
+              - columnheader "STATUS" [ref=f14e121]
+              - columnheader "NO AGENDA" [ref=f14e122]
+              - columnheader "NAMA PELANGGAN" [ref=f14e123]
+              - columnheader "IDPEL" [ref=f14e124]
+              - columnheader "TOTAL BIAYA" [ref=f14e125]
+              - columnheader "TANGGAL MOHON" [ref=f14e126]
+              - columnheader "TANGGAL BAYAR" [ref=f14e127]
+              - columnheader "LAMA" [ref=f14e128]
+              - columnheader "BARU" [ref=f14e129]
+              - columnheader "DURASI HARI KERJA" [ref=f14e130]
+            - row [ref=f14e131]:
+              - columnheader "TARIF" [ref=f14e132]
+              - columnheader "DAYA" [ref=f14e133]
+              - columnheader "TARIF" [ref=f14e134]
+              - columnheader "DAYA" [ref=f14e135]
+          - rowgroup [ref=f14e136]:
+            - row "1. LAMONGAN Cetak pk 518030532608060002 AGUS SUTRISNO TOKO ROTI 13.816.046 06/08/2026 06/08/2026 L 10600 VA L 10600 VA 0" [ref=f14e137]:
+              - cell "1." [ref=f14e138]
+              - cell "LAMONGAN" [ref=f14e139]
+              - cell [ref=f14e140]:
+                - button "Detail" [ref=f14e141] [cursor=pointer]
+              - cell [ref=f14e145]
+              - cell "Cetak pk" [ref=f14e147]
+              - cell "518030532608060002" [ref=f14e149]
+              - cell "AGUS SUTRISNO TOKO ROTI" [ref=f14e150]
+              - cell [ref=f14e151]
+              - cell "13.816.046" [ref=f14e152]
+              - cell "06/08/2026" [ref=f14e153]
+              - cell "06/08/2026" [ref=f14e154]
+              - cell "L" [ref=f14e155]
+              - cell "10600 VA" [ref=f14e156]
+              - cell "L" [ref=f14e157]
+              - cell "10600 VA" [ref=f14e158]
+              - cell "0" [ref=f14e159]
+            - row "2. LAMONGAN Cetak pk 518030532608060001 SOUND FEST ISWANTO 7.173.515 06/08/2026 06/08/2026 L 33000 VA L 33000 VA 0" [ref=f14e160]:
+              - cell "2." [ref=f14e161]
+              - cell "LAMONGAN" [ref=f14e162]
+              - cell [ref=f14e163]:
+                - button "Detail" [ref=f14e164] [cursor=pointer]
+              - cell [ref=f14e168]
+              - cell "Cetak pk" [ref=f14e170]
+              - cell "518030532608060001" [ref=f14e172]
+              - cell "SOUND FEST ISWANTO" [ref=f14e173]
+              - cell [ref=f14e174]
+              - cell "7.173.515" [ref=f14e175]
+              - cell "06/08/2026" [ref=f14e176]
+              - cell "06/08/2026" [ref=f14e177]
+              - cell "L" [ref=f14e178]
+              - cell "33000 VA" [ref=f14e179]
+              - cell "L" [ref=f14e180]
+              - cell "33000 VA" [ref=f14e181]
+              - cell "0" [ref=f14e182]
+            - row [ref=f14e183]:
+              - cell "3." [ref=f14e184]
+              - cell "LAMONGAN" [ref=f14e185]
+              - cell [ref=f14e186]:
+                - button "Detail" [ref=f14e187] [cursor=pointer]
+              - cell "Pasang Baru" [ref=f14e191]
+              - cell "Cetak pk" [ref=f14e193]
+              - cell "518039912608077479" [ref=f14e195]
+              - cell "POS KAMLING" [ref=f14e196]
+              - cell "518032032280" [ref=f14e197]
+              - cell "863.000" [ref=f14e198]
+              - cell "07/08/2026" [ref=f14e199]
+              - cell "10/08/2026" [ref=f14e200]
+              - cell [ref=f14e201]
+              - cell "VA" [ref=f14e202]
+              - cell "P1T" [ref=f14e203]
+              - cell "900 VA" [ref=f14e204]
+              - cell "1" [ref=f14e205]
+            - row [ref=f14e206]:
+              - cell "4." [ref=f14e207]
+              - cell "LAMONGAN" [ref=f14e208]
+              - cell [ref=f14e209]:
+                - button "Detail" [ref=f14e210] [cursor=pointer]
+              - cell "Pasang Baru" [ref=f14e214]
+              - cell "Cetak pk" [ref=f14e216]
+              - cell "518039912608117518" [ref=f14e218]
+              - cell "FIRZAH ANDANI" [ref=f14e219]
+              - cell "518032032393" [ref=f14e220]
+              - cell "863.000" [ref=f14e221]
+              - cell "11/08/2026" [ref=f14e222]
+              - cell "11/08/2026" [ref=f14e223]
+              - cell [ref=f14e224]
+              - cell "VA" [ref=f14e225]
+              - cell "R1MT" [ref=f14e226]
+              - cell "900 VA" [ref=f14e227]
+              - cell "0" [ref=f14e228]
+            - row [ref=f14e229]:
+              - cell "5." [ref=f14e230]
+              - cell "LAMONGAN" [ref=f14e231]
+              - cell [ref=f14e232]:
+                - button "Detail" [ref=f14e233] [cursor=pointer]
+              - cell "Perubahan Daya" [ref=f14e237]
+              - cell "Cetak pk" [ref=f14e239]
+              - cell "518039922608100381" [ref=f14e241]
+              - cell "WARNI" [ref=f14e242]
+              - cell "518030320805" [ref=f14e243]
+              - cell "394.800" [ref=f14e244]
+              - cell "10/08/2026" [ref=f14e245]
+              - cell "11/08/2026" [ref=f14e246]
+              - cell "R1M" [ref=f14e247]
+              - cell "900 VA" [ref=f14e248]
+              - cell "R1T" [ref=f14e249]
+              - cell "1300 VA" [ref=f14e250]
+              - cell "0" [ref=f14e251]
+            - row [ref=f14e252]:
+              - cell "6." [ref=f14e253]
+              - cell "LAMONGAN" [ref=f14e254]
+              - cell [ref=f14e255]:
+                - button "Detail" [ref=f14e256] [cursor=pointer]
+              - cell "Pasang Baru" [ref=f14e260]
+              - cell "Cetak pk" [ref=f14e262]
+              - cell "518039912608117519" [ref=f14e264]
+              - cell "SUNADA" [ref=f14e265]
+              - cell "518032032310" [ref=f14e266]
+              - cell "863.000" [ref=f14e267]
+              - cell "11/08/2026" [ref=f14e268]
+              - cell "11/08/2026" [ref=f14e269]
+              - cell [ref=f14e270]
+              - cell "VA" [ref=f14e271]
+              - cell "R1MT" [ref=f14e272]
+              - cell "900 VA" [ref=f14e273]
+              - cell "0" [ref=f14e274]
+            - row [ref=f14e275]:
+              - cell "7." [ref=f14e276]
+              - cell "LAMONGAN" [ref=f14e277]
+              - cell [ref=f14e278]:
+                - button "Detail" [ref=f14e279] [cursor=pointer]
+              - cell "Pasang Baru" [ref=f14e283]
+              - cell "Cetak pk" [ref=f14e285]
+              - cell "518039912608107516" [ref=f14e287]
+              - cell "MOCH KADAFI" [ref=f14e288]
+              - cell "518032032344" [ref=f14e289]
+              - cell "863.000" [ref=f14e290]
+              - cell "10/08/2026" [ref=f14e291]
+              - cell "11/08/2026" [ref=f14e292]
+              - cell [ref=f14e293]
+              - cell "VA" [ref=f14e294]
+              - cell "R1T" [ref=f14e295]
+              - cell "900 VA" [ref=f14e296]
+              - cell "0" [ref=f14e297]
+            - row [ref=f14e298]:
+              - cell "8." [ref=f14e299]
+              - cell "LAMONGAN" [ref=f14e300]
+              - cell [ref=f14e301]:
+                - button "Detail" [ref=f14e302] [cursor=pointer]
+              - cell "Pasang Baru" [ref=f14e306]
+              - cell "Cetak pk" [ref=f14e308]
+              - cell "518039912608117517" [ref=f14e310]
+              - cell "MADASIR" [ref=f14e311]
+              - cell "518032032369" [ref=f14e312]
+              - cell "863.000" [ref=f14e313]
+              - cell "11/08/2026" [ref=f14e314]
+              - cell "11/08/2026" [ref=f14e315]
+              - cell [ref=f14e316]
+              - cell "VA" [ref=f14e317]
+              - cell "R1MT" [ref=f14e318]
+              - cell "900 VA" [ref=f14e319]
+              - cell "0" [ref=f14e320]
+            - row [ref=f14e321]:
+              - cell "9." [ref=f14e322]
+              - cell "LAMONGAN" [ref=f14e323]
+              - cell [ref=f14e324]:
+                - button "Detail" [ref=f14e325] [cursor=pointer]
+              - cell "Perubahan Daya" [ref=f14e329]
+              - cell "Cetak pk" [ref=f14e331]
+              - cell "518030522608070363" [ref=f14e333]
+              - cell "SRIYATUN" [ref=f14e334]
+              - cell "518031331517" [ref=f14e335]
+              - cell "100.000" [ref=f14e336]
+              - cell "07/08/2026" [ref=f14e337]
+              - cell "11/08/2026" [ref=f14e338]
+              - cell "R1T" [ref=f14e339]
+              - cell "1300 VA" [ref=f14e340]
+              - cell "R1MT" [ref=f14e341]
+              - cell "900 VA" [ref=f14e342]
+              - cell "0" [ref=f14e343]
+            - row [ref=f14e344]:
+              - cell "10." [ref=f14e345]
+              - cell "LAMONGAN" [ref=f14e346]
+              - cell [ref=f14e347]:
+                - button "Detail" [ref=f14e348] [cursor=pointer]
+              - cell "Pasang Baru" [ref=f14e352]
+              - cell "Cetak pk" [ref=f14e354]
+              - cell "518039912608107513" [ref=f14e356]
+              - cell "YOVA MART" [ref=f14e357]
+              - cell "518032032351" [ref=f14e358]
+              - cell "2.082.000" [ref=f14e359]
+              - cell "10/08/2026" [ref=f14e360]
+              - cell "11/08/2026" [ref=f14e361]
+              - cell [ref=f14e362]
+              - cell "VA" [ref=f14e363]
+              - cell "B1T" [ref=f14e364]
+              - cell "2200 VA" [ref=f14e365]
+              - cell "0" [ref=f14e366]
+            - row [ref=f14e367]:
+              - cell "11." [ref=f14e368]
+              - cell "LAMONGAN" [ref=f14e369]
+              - cell [ref=f14e370]:
+                - button "Detail" [ref=f14e371] [cursor=pointer]
+              - cell "Perubahan Daya" [ref=f14e375]
+              - cell "Pengesahan pdl" [ref=f14e377]
+              - cell "518030522608070368" [ref=f14e379]
+              - cell "ALBARY STORE ONLINE" [ref=f14e380]
+              - cell "518032027745" [ref=f14e381]
+              - cell "150.000" [ref=f14e382]
+              - cell "07/08/2026" [ref=f14e383]
+              - cell "10/08/2026" [ref=f14e384]
+              - cell "R2T" [ref=f14e385]
+              - cell "5500 VA" [ref=f14e386]
+              - cell "B1T" [ref=f14e387]
+              - cell "5500 VA" [ref=f14e388]
+              - cell "1" [ref=f14e389]
+            - row [ref=f14e390]:
+              - cell "12." [ref=f14e391]
+              - cell "LAMONGAN" [ref=f14e392]
+              - cell [ref=f14e393]:
+                - button "Detail" [ref=f14e394] [cursor=pointer]
+              - cell "Perubahan Daya" [ref=f14e398]
+              - cell "Cetak pk" [ref=f14e400]
+              - cell "518030522608100378" [ref=f14e402]
+              - cell "SURAJI" [ref=f14e403]
+              - cell "518030137888" [ref=f14e404]
+              - cell "5.000" [ref=f14e405]
+              - cell "10/08/2026" [ref=f14e406]
+              - cell "10/08/2026" [ref=f14e407]
+              - cell "R1" [ref=f14e408]
+              - cell "450 VA" [ref=f14e409]
+              - cell "R1T" [ref=f14e410]
+              - cell "450 VA" [ref=f14e411]
+              - cell "1" [ref=f14e412]
+            - row [ref=f14e413]:
+              - cell "13." [ref=f14e414]
+              - cell "LAMONGAN" [ref=f14e415]
+              - cell [ref=f14e416]:
+                - button "Detail" [ref=f14e417] [cursor=pointer]
+              - cell "Pasang Baru" [ref=f14e421]
+              - cell "Cetak pk" [ref=f14e423]
+              - cell "518039912608107515" [ref=f14e425]
+              - cell "KHOIRUL AFANDI" [ref=f14e426]
+              - cell "518032032385" [ref=f14e427]
+              - cell "1.238.000" [ref=f14e428]
+              - cell "10/08/2026" [ref=f14e429]
+              - cell "11/08/2026" [ref=f14e430]
+              - cell [ref=f14e431]
+              - cell "VA" [ref=f14e432]
+              - cell "R1T" [ref=f14e433]
+              - cell "1300 VA" [ref=f14e434]
+              - cell "0" [ref=f14e435]
+            - row [ref=f14e436]:
+              - cell "14." [ref=f14e437]
+              - cell "LAMONGAN" [ref=f14e438]
+              - cell [ref=f14e439]:
+                - button "Detail" [ref=f14e440] [cursor=pointer]
+              - cell "Pasang Baru" [ref=f14e444]
+              - cell "Cetak pk" [ref=f14e446]
+              - cell "518039912608107514" [ref=f14e448]
+              - cell "TOKO DEVANADA" [ref=f14e449]
+              - cell "518032032377" [ref=f14e450]
+              - cell "2.082.000" [ref=f14e451]
+              - cell "10/08/2026" [ref=f14e452]
+              - cell "11/08/2026" [ref=f14e453]
+              - cell [ref=f14e454]
+              - cell "VA" [ref=f14e455]
+              - cell "B1T" [ref=f14e456]
+              - cell "2200 VA" [ref=f14e457]
+              - cell "0" [ref=f14e458]
+            - row [ref=f14e459]:
+              - cell "15." [ref=f14e460]
+              - cell "LAMONGAN" [ref=f14e461]
+              - cell [ref=f14e462]:
+                - button "Detail" [ref=f14e463] [cursor=pointer]
+              - cell "Pasang Baru" [ref=f14e467]
+              - cell "Cetak pk" [ref=f14e469]
+              - cell "518039912608077480" [ref=f14e471]
+              - cell "SUPARNADI" [ref=f14e472]
+              - cell "518032032336" [ref=f14e473]
+              - cell "863.000" [ref=f14e474]
+              - cell "07/08/2026" [ref=f14e475]
+              - cell "11/08/2026" [ref=f14e476]
+              - cell [ref=f14e477]
+              - cell "VA" [ref=f14e478]
+              - cell "R1MT" [ref=f14e479]
+              - cell "900 VA" [ref=f14e480]
+              - cell "0" [ref=f14e481]
+            - row [ref=f14e482]:
+              - cell "16." [ref=f14e483]
+              - cell "LAMONGAN" [ref=f14e484]
+              - cell [ref=f14e485]:
+                - button "Detail" [ref=f14e486] [cursor=pointer]
+              - cell "Pasang Baru" [ref=f14e490]
+              - cell "Cetak pk" [ref=f14e492]
+              - cell "518039912608107512" [ref=f14e494]
+              - cell "TOTONG SUPENDI" [ref=f14e495]
+              - cell "518032032302" [ref=f14e496]
+              - cell "863.000" [ref=f14e497]
+              - cell "10/08/2026" [ref=f14e498]
+              - cell "11/08/2026" [ref=f14e499]
+              - cell [ref=f14e500]
+              - cell "VA" [ref=f14e501]
+              - cell "R1MT" [ref=f14e502]
+              - cell "900 VA" [ref=f14e503]
+              - cell "0" [ref=f14e504]
+            - row [ref=f14e505]:
+              - cell "17." [ref=f14e506]
+              - cell "LAMONGAN" [ref=f14e507]
+              - cell [ref=f14e508]:
+                - button "Detail" [ref=f14e509] [cursor=pointer]
+              - cell "Pasang Baru" [ref=f14e513]
+              - cell "Bayar" [ref=f14e515]
+              - cell "518039912608077483" [ref=f14e517]
+              - cell "WORKSHOP ABIJAYA MANDIRI" [ref=f14e518]
+              - cell "518032032024" [ref=f14e519]
+              - cell "26.092.000" [ref=f14e520]
+              - cell "07/08/2026" [ref=f14e521]
+              - cell "07/08/2026" [ref=f14e522]
+              - cell [ref=f14e523]
+              - cell "VA" [ref=f14e524]
+              - cell "B2" [ref=f14e525]
+              - cell "23000 VA" [ref=f14e526]
+              - cell "2" [ref=f14e527]
+            - row [ref=f14e528]:
+              - cell "18." [ref=f14e529]
+              - cell "LAMONGAN" [ref=f14e530]
+              - cell [ref=f14e531]:
+                - button "Detail" [ref=f14e532] [cursor=pointer]
+              - cell "Pasang Baru" [ref=f14e536]
+              - cell "Pdl awal" [ref=f14e538]
+              - cell "518039912608077476" [ref=f14e540]
+              - cell "ALI MUJTAHIDIN ROHMAT" [ref=f14e541]
+              - cell "518032032272" [ref=f14e542]
+              - cell "863.000" [ref=f14e543]
+              - cell "07/08/2026" [ref=f14e544]
+              - cell "10/08/2026" [ref=f14e545]
+              - cell [ref=f14e546]
+              - cell "VA" [ref=f14e547]
+              - cell "R1T" [ref=f14e548]
+              - cell "900 VA" [ref=f14e549]
+              - cell "0" [ref=f14e550]
+            - row [ref=f14e551]:
+              - cell "19." [ref=f14e552]
+              - cell "LAMONGAN" [ref=f14e553]
+              - cell [ref=f14e554]:
+                - button "Detail" [ref=f14e555] [cursor=pointer]
+              - cell "Pasang Baru" [ref=f14e559]
+              - cell "Bayar" [ref=f14e561]
+              - cell "518039912608097495" [ref=f14e563]
+              - cell "KDKMP KEDUNGBANJAR" [ref=f14e564]
+              - cell "518032032231" [ref=f14e565]
+              - cell "16.098.500" [ref=f14e566]
+              - cell "09/08/2026" [ref=f14e567]
+              - cell "10/08/2026" [ref=f14e568]
+              - cell [ref=f14e569]
+              - cell "VA" [ref=f14e570]
+              - cell "B2T" [ref=f14e571]
+              - cell "16500 VA" [ref=f14e572]
+              - cell "1" [ref=f14e573]
+            - row [ref=f14e574]:
+              - cell "20." [ref=f14e575]
+              - cell "LAMONGAN" [ref=f14e576]
+              - cell [ref=f14e577]:
+                - button "Detail" [ref=f14e578] [cursor=pointer]
+              - cell "Perubahan Daya" [ref=f14e582]
+              - cell "Cetak pk" [ref=f14e584]
+              - cell "518039922608100379" [ref=f14e586]
+              - cell "ALEX SUJONO" [ref=f14e587]
+              - cell "518031351826" [ref=f14e588]
+              - cell "426.650" [ref=f14e589]
+              - cell "10/08/2026" [ref=f14e590]
+              - cell "10/08/2026" [ref=f14e591]
+              - cell "R1T" [ref=f14e592]
+              - cell "450 VA" [ref=f14e593]
+              - cell "R1MT" [ref=f14e594]
+              - cell "900 VA" [ref=f14e595]
+              - cell "1" [ref=f14e596]
+        - generic [ref=f14e597]:
+          - generic [ref=f14e598]: Records 1 to 20 of 28
+          - generic [ref=f14e599]:
+            - generic [ref=f14e600]: Halaman 1 dari 2
+            - link "Berikutnya »" [ref=f14e601] [cursor=pointer]:
+              - /url: http://localhost:8000/pbpd?import=5&page=2
