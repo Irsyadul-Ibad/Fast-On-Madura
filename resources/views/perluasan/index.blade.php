@@ -511,6 +511,24 @@
         .proses-tabel tr:last-child td { border-bottom:0; }
         .proses-selesai { color:#159447; font-weight:600; }
         .proses-belum { color:#d33; font-weight:600; }
+        /* Tema warna baru untuk modal Tanpa Perluasan; ukuran dan susunan tetap. */
+        #detailModalPerluasan .detail-modal-box{background:#f8fafc!important;border-color:#d8e3ef!important}
+        #detailModalPerluasan .detail-modal-box h3{background:#0d1b8c!important;color:#fff!important}
+        #detailModalPerluasan .detail-modal-close{background:#fff!important;color:#0d1b8c!important}
+        #detailModalPerluasan .detail-grid div{background:#fff!important;border-color:#d8e3ef!important}
+        #detailModalPerluasan .detail-grid small{color:#6b87a4!important}
+        #detailModalPerluasan .detail-grid b{color:#243b53!important}
+        #detailModalPerluasan .proses-box{background:#fff!important;border-color:#d8e3ef!important}
+        #detailModalPerluasan .proses-box h4{color:#123b5d!important}
+        #detailModalPerluasan .proses-tabel{border-color:#d8e3ef!important;background:#fff!important}
+        #detailModalPerluasan .proses-tabel th{background:#edf4ff!important;color:#123b5d!important}
+        #detailModalPerluasan .detail-rab-form{background:#fff!important;border-color:#d8e3ef!important}
+        #detailModalPerluasan .detail-rab-form label{color:#56718d!important}
+        #detailModalPerluasan .detail-rab-input{background:#fff!important;border-color:#cbd9e8!important}
+        #detailModalPerluasan .detail-rab-input span{background:#0d1b8c!important;color:#fff!important}
+        #detailModalPerluasan .detail-rab-input input{background:#fff!important;color:#243b53!important}
+        #detailModalPerluasan .detail-rab-form .btn{background:#2b73fe!important;color:#fff!important}
+        #detailModalPerluasan .detail-rab-form .btn:hover{background:#1f5ed8!important}
         @media (max-width:600px) { .perluasan-filter{padding:64px 12px 14px!important}.perluasan-filter::before{padding-left:12px}.perluasan-filter::after{left:12px}.perluasan-filter>*{flex:1 1 100%}.detail-grid { grid-template-columns:1fr; } .detail-full { grid-column:auto; } .detail-rab-form { align-items:stretch; flex-direction:column; } }
     </style>
 
