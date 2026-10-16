@@ -340,7 +340,7 @@ class PbpdController extends Controller
 
     public function uploadHasilTransaksi(Request $request, PelangganPbpd $pelanggan): \Illuminate\Http\RedirectResponse
     {
-        abort_unless($this->currentUser()->role?->role_code === '5180TEL', 403);
+        abort_unless($this->currentUser()->role?->role_code === '5180TE', 403);
         $request->validate([
             'berkas_hasil_transaksi.*' => ['required', 'file', 'mimes:pdf,doc,docx,xls,xlsx,jpg,jpeg,png', 'max:10240'],
         ]);
@@ -367,7 +367,7 @@ class PbpdController extends Controller
 
     public function hapusHasilTransaksi(PelangganPbpd $pelanggan, int $index): \Illuminate\Http\RedirectResponse
     {
-        abort_unless($this->currentUser()->role?->role_code === '5180TEL', 403);
+        abort_unless($this->currentUser()->role?->role_code === '5180TE', 403);
 
         $paths = is_array($pelanggan->hasil_transaksi_paths) ? $pelanggan->hasil_transaksi_paths : [];
         $path = $paths[$index] ?? null;

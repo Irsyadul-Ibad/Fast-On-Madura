@@ -4,14 +4,20 @@ namespace App\Http\Controllers;
 
 use App\Exports\LaporanExport;
 use App\Models\PelangganPbpd;
+use App\Models\Ulp;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 
 class LaporanController extends Controller
 {
+    /** Jenis transaksi yang ditampilkan pada menu Laporan. */
+    private const JENIS_TRANSAKSI_LAPORAN = ['PASANG BARU', 'PERUBAHAN DAYA'];
+
     public function index(Request $request)
     {
+        $role = $this->currentUser()->role;
+        $isUp3 = $role?->type === 'UP3';
         $base = $this->laporanQuery($request);
 
         $data = (clone $base)->with(['ulp', 'permintaan', 'pengirimanVendor', 'pengirimanKonstruksi', 'laporanVendor'])
@@ -30,7 +36,9 @@ class LaporanController extends Controller
                 'JARINGAN' => 'JARINGAN',
             ]),
             'jenisPilihan' => (clone $base)->whereNotNull('jenis_transaksi')->distinct()->orderBy('jenis_transaksi')->pluck('jenis_transaksi'),
-            'statusPilihan' => collect(['CETAK PK', 'BAYAR', 'PENGESAHAN PDL', 'PDL AWAL']),
+            'statusPilihan' => collect(['CETAK PK', 'BAYAR', 'PENGESAHAN PDL', 'PDL AWAL', 'PEREMAJAAN']),
+            'showUlpFilter' => $isUp3,
+            'ulps' => $isUp3 ? Ulp::orderBy('nama')->get(['id', 'nama']) : collect(),
         ]);
     }
 
@@ -43,16 +51,28 @@ class LaporanController extends Controller
 
     private function laporanQuery(Request $request)
     {
-        $ulpId = $this->currentUser()->ulpId();
+        $role = $this->currentUser()->role;
+        $ulpId = $role?->type === 'UP3'
+            ? $request->input('ulp')
+            : $this->currentUser()->ulpId();
         $tahap = $request->input('tahap');
 
         return PelangganPbpd::query()
-            ->statusTampil()
-            ->when($ulpId, fn ($q) => $q->where('ulp_id', $ulpId))
-            ->whereNotNull('tujuan_perluasan')
-            ->whereRaw("TRIM(tujuan_perluasan) <> ''")
-            ->whereNotNull('tahap')
-            ->where('tahap', '!=', 'ULP')
+            ->whereIn('jenis_transaksi', self::JENIS_TRANSAKSI_LAPORAN)
+            ->where(function ($query) {
+                $query->whereIn('status', PelangganPbpd::STATUS_TAMPIL)
+                    ->orWhereRaw("UPPER(TRIM(status)) = 'PEREMAJAAN'");
+            })
+            ->when(filled($ulpId), fn ($q) => $q->where('ulp_id', $ulpId))
+            ->where(function ($query) {
+                $query->whereRaw("UPPER(TRIM(status)) = 'PEREMAJAAN'")
+                    ->orWhere(function ($regular) {
+                        $regular->whereNotNull('tujuan_perluasan')
+                            ->whereRaw("TRIM(tujuan_perluasan) <> ''")
+                            ->whereNotNull('tahap')
+                            ->where('tahap', '!=', 'ULP');
+                    });
+            })
             ->when($tahap === 'ULP', fn ($q) => $q->where(function ($query) {
                 $query->where('tahap', '!=', 'ULP')
                     ->orWhere(function ($nested) {

@@ -25,6 +25,6 @@ class AppServiceProvider extends ServiceProvider
             return $user->hasPermission($ability) ? true : null;
         });
 
-        URL::forceScheme('https');
+        //URL::forceScheme('https');
     }
 }

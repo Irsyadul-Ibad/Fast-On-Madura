@@ -52,11 +52,11 @@ class RoleSeeder extends Seeder
             ['role_code' => '5180K2', 'name' => 'PT. KONSTRUKSI JAYA', 'type' => 'VENDOR'],
 
             // UP3
-            ['role_code' => '5180PA',  'name' => 'Pelayanan UP3', 'type' => 'UP3'],
+            ['role_code' => '5180NPS',  'name' => 'NPS UP3', 'type' => 'UP3'],
             ['role_code' => '5180MAN', 'name' => 'Manager UP3',   'type' => 'UP3'],
             ['role_code' => '5180REN', 'name' => 'Perencanaan',   'type' => 'UP3'],
             ['role_code' => '5180KON', 'name' => 'Konstruksi',    'type' => 'UP3'],
-            ['role_code' => '5180TEL', 'name' => 'Transaksi',     'type' => 'UP3'],
+            ['role_code' => '5180TE', 'name' => 'Transaksi',     'type' => 'UP3'],
             ['role_code' => '5180JAR', 'name' => 'Jaringan',      'type' => 'UP3'],
             ['role_code' => '5180',    'name' => 'Administrator', 'type' => 'UP3'],
         ];

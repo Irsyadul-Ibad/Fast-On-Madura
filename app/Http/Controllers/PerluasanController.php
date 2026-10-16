@@ -20,9 +20,9 @@ class PerluasanController extends Controller
         $canEditMaterial = (bool) $role?->ulp_id;
         $canSendVendor = $role?->role_code === '5180REN';
         $canSendKonstruksi = $role?->role_code === '5180KON';
-        $canUploadTransaksi = $role?->role_code === '5180TEL';
+        $canUploadTransaksi = $role?->role_code === '5180TE';
         $canUploadJaringan = $role?->role_code === '5180JAR';
-        $canViewMaterial = $canEditRab || in_array($role?->role_code, ['5180KON', '5180TEL', '5180JAR'], true);
+        $canViewMaterial = $canEditRab || in_array($role?->role_code, ['5180KON', '5180TE', '5180JAR'], true);
         $showBerkasUlp = $role?->type === 'UP3';
         // ULP dan UP3 dapat memfilter seluruh alur proses. Tahap SELESAI
         // merepresentasikan jaringan dan tidak berlaku untuk Tanpa Perluasan.
