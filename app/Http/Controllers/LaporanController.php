@@ -64,15 +64,6 @@ class LaporanController extends Controller
                     ->orWhereRaw("UPPER(TRIM(status)) = 'PEREMAJAAN'");
             })
             ->when(filled($ulpId), fn ($q) => $q->where('ulp_id', $ulpId))
-            ->where(function ($query) {
-                $query->whereRaw("UPPER(TRIM(status)) = 'PEREMAJAAN'")
-                    ->orWhere(function ($regular) {
-                        $regular->whereNotNull('tujuan_perluasan')
-                            ->whereRaw("TRIM(tujuan_perluasan) <> ''")
-                            ->whereNotNull('tahap')
-                            ->where('tahap', '!=', 'ULP');
-                    });
-            })
             ->when($tahap === 'ULP', fn ($q) => $q->where(function ($query) {
                 $query->where('tahap', '!=', 'ULP')
                     ->orWhere(function ($nested) {
