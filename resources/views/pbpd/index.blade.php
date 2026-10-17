@@ -257,7 +257,7 @@
                                 </tr>
                                 <tr>
                                     <th>JUMLAH KONDUKTOR TM</th>
-                                    <td><select name="jenis_konduktor_tm"><option value="">Pilih</option><option>AAAC-S 240</option><option>AAAC-S 150</option><option>AAAC-S 70</option><option>AAAC 40</option><option>AAAC 150</option><option>AAAC 70</option></select></td>
+                                    <td><select name="jenis_konduktor_tm"><option value="">Pilih</option><option>AAAC-S 240</option><option>AAAC-S 150</option><option>AAAC-S 70</option><option>AAAC 240</option><option>AAAC 150</option><option>AAAC 70</option></select></td>
                                     <td><input name="jml_konduktor_tm" type="number" min="0" placeholder="Isi jumlah meter"></td>
                                     <td>METER</td>
                                 </tr>
