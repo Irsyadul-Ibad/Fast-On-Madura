@@ -20,4 +20,9 @@ class PengirimanVendor extends Model
     {
         return $this->belongsTo(Vendor::class);
     }
+
+    public function pelanggan()
+    {
+        return $this->belongsTo(PelangganPbpd::class, 'pelanggan_id');
+    }
 }
