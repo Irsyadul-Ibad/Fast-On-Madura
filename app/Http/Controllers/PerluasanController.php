@@ -22,6 +22,7 @@ class PerluasanController extends Controller
         $canSendKonstruksi = $role?->role_code === '5170KON';
         $canUploadTransaksi = $role?->role_code === '5170TE';
         $canUploadJaringan = $role?->role_code === '5170JAR';
+        $canUploadNps = $role?->role_code === '5170NPS';
         $canViewMaterial = $canEditRab || in_array($role?->role_code, ['5170KON', '5170TE', '5170JAR'], true);
         $showBerkasUlp = $role?->type === 'UP3';
         // ULP dan UP3 dapat memfilter seluruh alur proses. Tahap SELESAI
@@ -123,6 +124,6 @@ class PerluasanController extends Controller
         $vendors = Vendor::with('user')->where('jenis', 'TIANG')->orderBy('nama')->get();
         $vendorsKonstruksi = Vendor::with('user')->where('jenis', 'KONSTRUKSI')->orderBy('nama')->get();
 
-        return view('perluasan.index', compact('data', 'judul', 'tujuan', 'canEditRab', 'canEditMaterial', 'canViewMaterial', 'canSendVendor', 'canSendKonstruksi', 'canUploadTransaksi', 'canUploadJaringan', 'vendors', 'vendorsKonstruksi', 'ulps', 'jenisPilihan', 'statusPilihan', 'tahapPilihan', 'showSummaryCards', 'isUlpSummary', 'summaryTotal', 'summarySentByUlp', 'summaryUlpNames', 'summaryByJenis', 'summaryByStatus', 'showBerkasUlp'));
+        return view('perluasan.index', compact('data', 'judul', 'tujuan', 'canEditRab', 'canEditMaterial', 'canViewMaterial', 'canSendVendor', 'canSendKonstruksi', 'canUploadNps', 'canUploadTransaksi', 'canUploadJaringan', 'vendors', 'vendorsKonstruksi', 'ulps', 'jenisPilihan', 'statusPilihan', 'tahapPilihan', 'showSummaryCards', 'isUlpSummary', 'summaryTotal', 'summarySentByUlp', 'summaryUlpNames', 'summaryByJenis', 'summaryByStatus', 'showBerkasUlp'));
     }
 }

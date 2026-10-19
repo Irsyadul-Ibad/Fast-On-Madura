@@ -83,7 +83,8 @@ class LaporanController extends Controller
             }))
             ->when($tahap === 'PERENCANAAN', fn ($q) => $q->where(function ($query) {
                 $query->whereHas('laporanVendor', fn ($vendor) => $vendor->whereRaw("jsonb_array_length(COALESCE(berkas_hasil_paths::jsonb, '[]'::jsonb)) > 0"))
-                    ->orWhereHas('pengirimanKonstruksi', fn ($konstruksi) => $konstruksi->whereRaw("jsonb_array_length(COALESCE(hasil_paths::jsonb, '[]'::jsonb)) > 0"));
+                    ->orWhereHas('pengirimanKonstruksi', fn ($konstruksi) => $konstruksi->whereRaw("jsonb_array_length(COALESCE(hasil_paths::jsonb, '[]'::jsonb)) > 0"))
+                    ->orWhereRaw("jsonb_array_length(COALESCE(nps_wo_paths::jsonb, '[]'::jsonb)) > 0");
             }))
             ->when($tahap === 'KONSTRUKSI', fn ($q) => $q->where(function ($query) {
                 $query->whereRaw("jsonb_array_length(COALESCE(hasil_konstruksi_paths::jsonb, '[]'::jsonb)) > 0")

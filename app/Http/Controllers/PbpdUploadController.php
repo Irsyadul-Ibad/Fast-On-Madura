@@ -35,6 +35,9 @@ class PbpdUploadController extends Controller
 
         // Gunakan ULP pilihan form sebagai cadangan ketika kolom ULP di Excel kosong.
         $proses = new PelangganPbpdImport($import->id, $request->integer('ulp_id') ?: null);
+        // File gabungan seluruh ULP dapat berisi ribuan baris. Beri waktu
+        // cukup untuk proses import setelah pembacaan sudah dibuat chunked.
+        set_time_limit(900);
         Excel::import($proses, $file);
 
         return redirect()->route('pbpd.upload')->with('hasil', [

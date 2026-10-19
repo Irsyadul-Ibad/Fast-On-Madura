@@ -6,14 +6,23 @@ use App\Models\PelangganPbpd;
 use App\Models\Ulp;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\ToCollection;
+use Maatwebsite\Excel\Concerns\RemembersChunkOffset;
+use Maatwebsite\Excel\Concerns\WithChunkReading;
 use PhpOffice\PhpSpreadsheet\Shared\Date as ExcelDate;
 
-class PelangganPbpdImport implements ToCollection
+class PelangganPbpdImport implements ToCollection, WithChunkReading
 {
+    use RemembersChunkOffset;
+
     public int $baru = 0;
     public int $diperbarui = 0;
     public array $gagal = [];
+
+    private ?array $kolom = null;
+    private int $headerRows = 1;
+    private ?Collection $ulps = null;
 
     public function __construct(private int $importId, private ?int $ulpDefault = null) {}
 
@@ -21,49 +30,58 @@ class PelangganPbpdImport implements ToCollection
     {
         $rows = $rows->map(fn($r) => $r->toArray())->values()->all();
 
-        // 1. Cari baris header: baris pertama yang punya sel berisi "agenda"
-        $h = null;
-        foreach (array_slice($rows, 0, 20, true) as $i => $r) {
-            foreach ($r as $c) {
-                if (str_contains($this->k($c), 'agenda')) {
-                    $h = $i;
-                    break 2;
+        $chunkOffset = $this->getChunkOffset() ?? 0;
+
+        // Header hanya dicari pada chunk pertama. Chunk berikutnya langsung
+        // memakai susunan kolom yang sama.
+        if ($this->kolom === null) {
+            $h = null;
+            foreach (array_slice($rows, 0, 20, true) as $i => $r) {
+                foreach ($r as $c) {
+                    if (str_contains($this->k($c), 'agenda')) {
+                        $h = $i;
+                        break 2;
+                    }
                 }
             }
-        }
-        if ($h === null) {
-            $this->gagal[] = 'Header "NO AGENDA" tidak ditemukan di 20 baris pertama file';
-            return;
-        }
-
-        // 2. Susun nama kolom (mendukung header 2 baris: LAMA/BARU + TARIF/DAYA)
-        $head = $rows[$h];
-        $sub  = $rows[$h + 1] ?? [];
-        $dua  = in_array('tarif', array_map(fn($c) => $this->k($c), $sub), true);
-
-        $kolom = [];
-        $grup  = '';
-        foreach ($head as $c => $nama) {
-            $n = $this->k($nama);
-            if ($n !== '') {
-                $grup = in_array($n, ['lama', 'baru'], true) ? $n : '';
+            if ($h === null) {
+                $this->gagal[] = 'Header "NO AGENDA" tidak ditemukan di 20 baris pertama file';
+                return;
             }
-            $s = $this->k($sub[$c] ?? '');
-            $kolom[$c] = ($dua && $grup && $s) ? $grup . $s : $n;
+
+            // Susun nama kolom (mendukung header 2 baris: LAMA/BARU + TARIF/DAYA).
+            $head = $rows[$h];
+            $sub  = $rows[$h + 1] ?? [];
+            $dua  = in_array('tarif', array_map(fn($c) => $this->k($c), $sub), true);
+
+            $this->kolom = [];
+            $grup = '';
+            foreach ($head as $c => $nama) {
+                $n = $this->k($nama);
+                if ($n !== '') {
+                    $grup = in_array($n, ['lama', 'baru'], true) ? $n : '';
+                }
+                $s = $this->k($sub[$c] ?? '');
+                $this->kolom[$c] = ($dua && $grup && $s) ? $grup . $s : $n;
+            }
+            $this->headerRows = $h + ($dua ? 2 : 1);
         }
-        $mulai = $h + ($dua ? 2 : 1);
 
-        $ulps = Ulp::all();
+        if ($this->ulps === null) {
+            $this->ulps = Ulp::all();
+        }
 
-        // 3. Baca data
+        $mulai = $chunkOffset === 0 ? $this->headerRows : 0;
+        $records = [];
+
         foreach (array_slice($rows, $mulai, null, true) as $i => $r) {
             $d = [];
-            foreach ($kolom as $c => $key) {
+            foreach ($this->kolom as $c => $key) {
                 if ($key !== '') $d[$key] = $r[$c] ?? null;
             }
             if (! array_filter($d, fn($v) => $v !== null && $v !== '')) continue; // baris kosong
 
-            $baris = $i + 1; // nomor baris di Excel
+            $baris = $chunkOffset + $i + 1; // nomor baris di Excel
 
             $noAgenda = $this->angka($this->ambil($d, ['noagenda', 'agenda', 'nomoragenda']));
             if (! $noAgenda) {
@@ -83,7 +101,7 @@ class PelangganPbpdImport implements ToCollection
                 if ($teksCalon === '') continue;
                 $kodeCalon = preg_replace('/\.0$/', '', $teksCalon);
                 $namaCalon = $this->normalUlp($teksCalon);
-                $ulp = $ulps->first(function ($u) use ($kodeCalon, $namaCalon) {
+                $ulp = $this->ulps->first(function ($u) use ($kodeCalon, $namaCalon) {
                     $namaUlp = $this->normalUlp($u->nama);
                     return $u->kode === $kodeCalon || $namaUlp === $namaCalon;
                 });
@@ -140,27 +158,157 @@ class PelangganPbpdImport implements ToCollection
                 'keterangan'      => $this->ambil($d, ['durasiharikerja', 'keterangan', 'ket']),
             ];
 
-            // Nomor agenda dapat sama pada ULP berbeda. Kunci update harus memakai
-            // kombinasi nomor agenda dan ULP agar data antar-ULP tidak tertimpa.
-            // Nomor agenda dari beberapa file Excel tersimpan sebagai angka
-            // ilmiah dan dapat sama untuk beberapa pelanggan berbeda. IDPEL
-            // menjadi bagian kunci agar baris pelanggan tidak saling timpa.
-            $idPelanggan = $data['id_pelanggan'];
-            $ada = PelangganPbpd::where('no_agenda', $noAgenda)
-                ->where('ulp_id', $ulpId)
-                ->when($idPelanggan, fn ($q) => $q->where('id_pelanggan', $idPelanggan), function ($q) use ($data) {
-                    $q->where('nama_pelanggan', $data['nama_pelanggan'])
-                        ->where('alamat', $data['alamat']);
-                })
-                ->first();
-            if ($ada) {
-                $ada->update($data); // tahap tidak diubah
-                $this->diperbarui++;
-            } else {
-                PelangganPbpd::create($data + ['no_agenda' => $noAgenda, 'tahap' => 'ULP']);
-                $this->baru++;
-            }
+            $records[] = [
+                'no_agenda' => $noAgenda,
+                'data' => $data,
+            ];
         }
+
+        $this->simpanChunk($records);
+    }
+
+    public function chunkSize(): int
+    {
+        return 500;
+    }
+
+    private function simpanChunk(array $records): void
+    {
+        if ($records === []) return;
+
+        $agenda = array_values(array_unique(array_column($records, 'no_agenda')));
+        $ulpIds = array_values(array_unique(array_map(
+            fn ($record) => $record['data']['ulp_id'],
+            $records
+        )));
+
+        // Satu query untuk mencari data lama dalam satu chunk, bukan satu
+        // query pencarian untuk setiap baris Excel.
+        $existing = PelangganPbpd::query()
+            ->whereIn('no_agenda', $agenda)
+            ->whereIn('ulp_id', $ulpIds)
+            ->get();
+
+        $existingByKey = [];
+        foreach ($existing as $row) {
+            $existingByKey[$this->kunciData($row->no_agenda, $row->ulp_id, $row->id_pelanggan, $row->nama_pelanggan, $row->alamat)] ??= $row;
+        }
+
+        $insertRows = [];
+        $updateRows = [];
+        $pendingInsertByKey = [];
+        $createdAt = now()->toDateTimeString();
+        foreach ($records as $record) {
+            $data = $record['data'];
+            $key = $this->kunciData(
+                $record['no_agenda'],
+                $data['ulp_id'],
+                $data['id_pelanggan'],
+                $data['nama_pelanggan'],
+                $data['alamat']
+            );
+            $ada = $existingByKey[$key] ?? null;
+
+            if ($ada) {
+                $updateRows[] = $data + ['id' => (int) $ada->id];
+                $this->diperbarui++;
+                continue;
+            }
+
+            // Jika kunci yang sama muncul dua kali dalam chunk ini, perlakukan
+            // baris kedua sebagai pembaruan seperti perilaku import sebelumnya.
+            if (array_key_exists($key, $pendingInsertByKey)) {
+                $insertRows[$pendingInsertByKey[$key]] = array_merge($insertRows[$pendingInsertByKey[$key]], $data);
+                $this->diperbarui++;
+                continue;
+            }
+
+            $pendingInsertByKey[$key] = count($insertRows);
+            $insertRows[] = $data + [
+                'no_agenda' => $record['no_agenda'],
+                'tahap' => 'ULP',
+                'created_at' => $createdAt,
+            ];
+            $this->baru++;
+        }
+
+        $this->updateExistingChunk($updateRows);
+
+        if ($insertRows !== []) {
+            DB::table('pelanggan_pbpd')->insert($insertRows);
+        }
+    }
+
+    private function updateExistingChunk(array $rows): void
+    {
+        if ($rows === []) return;
+
+        // PostgreSQL dapat memperbarui seluruh baris dalam satu chunk melalui
+        // jsonb_to_recordset. Ini menghindari satu query UPDATE untuk setiap
+        // baris lama.
+        if (DB::getDriverName() !== 'pgsql') {
+            foreach ($rows as $row) {
+                $id = $row['id'];
+                unset($row['id']);
+                DB::table('pelanggan_pbpd')->where('id', $id)->update($row);
+            }
+            return;
+        }
+
+        $json = json_encode($rows, JSON_THROW_ON_ERROR);
+        DB::statement(
+            <<<'SQL'
+UPDATE pelanggan_pbpd AS p
+SET import_id = v.import_id,
+    ulp_id = v.ulp_id,
+    id_pelanggan = v.id_pelanggan,
+    bp = v.bp,
+    total_biaya = v.total_biaya,
+    tgl_mohon = v.tgl_mohon,
+    tgl_bayar = v.tgl_bayar,
+    asal_ulp = v.asal_ulp,
+    jenis_transaksi = v.jenis_transaksi,
+    status = v.status,
+    nama_pelanggan = v.nama_pelanggan,
+    alamat = v.alamat,
+    tarif_lama = v.tarif_lama,
+    daya_lama = v.daya_lama,
+    tarif_baru = v.tarif_baru,
+    daya_baru = v.daya_baru,
+    keterangan = v.keterangan
+FROM jsonb_to_recordset(CAST(? AS jsonb)) AS v(
+    id bigint,
+    import_id bigint,
+    ulp_id bigint,
+    id_pelanggan numeric,
+    bp numeric,
+    total_biaya numeric,
+    tgl_mohon date,
+    tgl_bayar date,
+    asal_ulp text,
+    jenis_transaksi text,
+    status text,
+    nama_pelanggan text,
+    alamat text,
+    tarif_lama text,
+    daya_lama text,
+    tarif_baru text,
+    daya_baru text,
+    keterangan text
+)
+WHERE p.id = v.id
+SQL,
+            [$json]
+        );
+    }
+
+    private function kunciData($noAgenda, $ulpId, $idPelanggan, $nama, $alamat): string
+    {
+        $identitas = $idPelanggan !== null && $idPelanggan !== ''
+            ? 'id:' . (string) $idPelanggan
+            : 'nama:' . (string) $nama . '|alamat:' . (string) $alamat;
+
+        return (string) $noAgenda . '|ulp:' . (string) $ulpId . '|' . $identitas;
     }
 
     /** "No. Agenda" -> "noagenda" */

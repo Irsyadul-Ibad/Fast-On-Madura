@@ -12,13 +12,16 @@
         @php($processMap = $data->getCollection()->mapWithKeys(function ($row) {
             $material = $row->permintaan;
             $konstruksi = $row->pengirimanKonstruksi;
-            $planningDone = count($row->laporanVendor?->berkas_hasil_paths ?? []) > 0 || count($konstruksi?->hasil_paths ?? []) > 0;
+            $npsWoDone = count($row->nps_wo_paths ?? []) > 0 || filled($row->nps_wo_at);
+            $planningDone = count($row->laporanVendor?->berkas_hasil_paths ?? []) > 0 || count($konstruksi?->hasil_paths ?? []) > 0 || $npsWoDone;
             $constructionDone = count($row->hasil_konstruksi_paths ?? []) > 0 || count($konstruksi?->hasil_konstruksi_paths ?? []) > 0;
             return [$row->no_agenda => [
                 'ulp' => $row->tahap !== 'ULP' || $row->tujuan_perluasan,
                 'ulpDate' => $material?->dikirim_at?->format('Y-m-d H:i:s') ?? $row->created_at,
                 'planning' => $planningDone,
-                'planningDate' => $row->laporanVendor?->berkas_hasil_at?->format('Y-m-d H:i:s') ?? $konstruksi?->hasil_perencanaan_at?->format('Y-m-d H:i:s'),
+                'planningDate' => $row->laporanVendor?->berkas_hasil_at?->format('Y-m-d H:i:s') ?? $konstruksi?->hasil_perencanaan_at?->format('Y-m-d H:i:s') ?? $row->nps_wo_at?->format('Y-m-d H:i:s'),
+                'npsWo' => $npsWoDone,
+                'npsWoDate' => $row->nps_wo_at?->format('Y-m-d H:i:s'),
                 'construction' => $constructionDone,
                 'constructionDate' => $row->hasil_konstruksi_at?->format('Y-m-d H:i:s') ?? $konstruksi?->hasil_konstruksi_at?->format('Y-m-d H:i:s'),
                 'transaction' => count($row->hasil_transaksi_paths ?? []) > 0,
@@ -55,6 +58,7 @@
             const processMarkup = (item) => `<div class="proses-box laporan-proses-box"><h4>Proses</h4><table class="proses-tabel"><thead><tr><th>Proses</th><th>Status</th><th>Tanggal</th></tr></thead><tbody>
                 <tr><td>Pengiriman ULP</td><td>${statusCell(item.ulp, 'Sudah dikirim ULP')}</td><td>${formatDate(item.ulpDate)}</td></tr>
                 <tr><td>Berkas WO</td><td>${statusCell(item.planning, 'Sudah lengkap')}</td><td>${formatDate(item.planningDate)}</td></tr>
+                <tr><td>Berkas WO NPS</td><td>${statusCell(item.npsWo, 'Sudah lengkap')}</td><td>${formatDate(item.npsWoDate)}</td></tr>
                 <tr><td>Berkas BA Checklist</td><td>${statusCell(item.construction, 'Sudah lengkap')}</td><td>${formatDate(item.constructionDate)}</td></tr>
                 <tr><td>Foto Cek KWH Meter</td><td>${statusCell(item.transaction, 'Sudah lengkap')}</td><td>${formatDate(item.transactionDate)}</td></tr>
                 <tr><td>Berkas BA Operasi</td><td>${statusCell(item.network, 'Sudah lengkap')}</td><td>${formatDate(item.networkDate)}</td></tr>

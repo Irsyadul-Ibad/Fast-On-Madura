@@ -23,11 +23,13 @@ class PelangganPbpd extends Model
             'tgl_mohon' => 'date',
             'tgl_bayar' => 'date',
             'hasil_konstruksi_paths' => 'array',
+            'nps_wo_paths' => 'array',
             'hasil_transaksi_paths' => 'array',
             'hasil_jaringan_paths' => 'array',
             'berkas_pendukung_paths' => 'array',
             'berkas_ijin_paths' => 'array',
             'hasil_konstruksi_at' => 'datetime',
+            'nps_wo_at' => 'datetime',
             'hasil_transaksi_at' => 'datetime',
             'hasil_jaringan_at' => 'datetime',
         ];
@@ -65,7 +67,9 @@ class PelangganPbpd extends Model
         $this->loadMissing(['pengirimanKonstruksi', 'laporanVendor']);
 
         $planningDone = count($this->laporanVendor?->berkas_hasil_paths ?? []) > 0
-            || count($this->pengirimanKonstruksi?->hasil_paths ?? []) > 0;
+            || count($this->pengirimanKonstruksi?->hasil_paths ?? []) > 0
+            || count($this->nps_wo_paths ?? []) > 0
+            || filled($this->nps_wo_at);
         $constructionDone = count($this->hasil_konstruksi_paths ?? []) > 0
             || count($this->pengirimanKonstruksi?->hasil_konstruksi_paths ?? []) > 0;
         $transactionDone = count($this->hasil_transaksi_paths ?? []) > 0;

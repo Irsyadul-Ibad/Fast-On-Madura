@@ -338,6 +338,60 @@ class PbpdController extends Controller
         return back()->with('success', 'Data berhasil dikirim ke vendor konstruksi.');
     }
 
+    public function uploadNpsWo(Request $request, PelangganPbpd $pelanggan): \Illuminate\Http\RedirectResponse
+    {
+        $this->authorizeNpsUpload($pelanggan);
+
+        $request->validate([
+            'berkas_nps_wo' => ['required', 'array', 'min:1'],
+            'berkas_nps_wo.*' => ['required', 'file', 'mimes:pdf,doc,docx,xls,xlsx,jpg,jpeg,png', 'max:10240'],
+        ]);
+
+        $paths = is_array($pelanggan->nps_wo_paths) ? $pelanggan->nps_wo_paths : [];
+        foreach ($request->file('berkas_nps_wo', []) as $file) {
+            $paths[] = $file->store('nps/wo', 'public');
+        }
+
+        $pelanggan->update(['nps_wo_paths' => $paths, 'nps_wo_at' => now()]);
+        NotifikasiService::untukData($pelanggan, 'Berkas WO NPS diupload', 'Berkas WO NPS untuk ' . $pelanggan->no_agenda . ' telah diupload.', route('laporan'));
+
+        return back()->with('success', 'Berkas WO NPS berhasil disimpan.');
+    }
+
+    public function npsWoFile(PelangganPbpd $pelanggan, int $index)
+    {
+        $this->authorizeNpsFileView();
+        $path = (is_array($pelanggan->nps_wo_paths) ? $pelanggan->nps_wo_paths : [])[$index] ?? null;
+        abort_unless($path && Storage::disk('public')->exists($path), 404);
+
+        return $this->publicFileResponse($path);
+    }
+
+    public function hapusNpsWo(PelangganPbpd $pelanggan, int $index): \Illuminate\Http\RedirectResponse
+    {
+        $this->authorizeNpsUpload($pelanggan);
+        $paths = is_array($pelanggan->nps_wo_paths) ? $pelanggan->nps_wo_paths : [];
+        $path = $paths[$index] ?? null;
+        abort_unless($path, 404);
+
+        Storage::disk('public')->delete($path);
+        array_splice($paths, $index, 1);
+        $pelanggan->update(['nps_wo_paths' => $paths ?: null, 'nps_wo_at' => $paths ? $pelanggan->nps_wo_at : null]);
+
+        return back()->with('success', 'Berkas WO NPS berhasil dihapus.');
+    }
+
+    private function authorizeNpsUpload(PelangganPbpd $pelanggan): void
+    {
+        abort_unless($this->currentUser()->role?->role_code === '5170NPS', 403);
+        abort_unless($pelanggan->tahap === 'PERENCANAAN', 422, 'Berkas NPS hanya dapat diunggah pada tahap perencanaan.');
+    }
+
+    private function authorizeNpsFileView(): void
+    {
+        abort_unless($this->currentUser()->role?->type === 'UP3', 403);
+    }
+
     public function uploadHasilTransaksi(Request $request, PelangganPbpd $pelanggan): \Illuminate\Http\RedirectResponse
     {
         abort_unless($this->currentUser()->role?->role_code === '5170TE', 403);

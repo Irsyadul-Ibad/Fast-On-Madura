@@ -111,7 +111,8 @@
                         @php
                             $m = $row->permintaan; $pv = $row->pengirimanVendor; $pk = $row->pengirimanKonstruksi;
                             $ulpSent = $row->tahap !== 'ULP' || $row->tujuan_perluasan;
-                            $planningDone = count($row->laporanVendor?->berkas_hasil_paths ?? []) > 0 || count($pk?->hasil_paths ?? []) > 0;
+                            $npsWoDone = count($row->nps_wo_paths ?? []) > 0 || filled($row->nps_wo_at);
+                            $planningDone = count($row->laporanVendor?->berkas_hasil_paths ?? []) > 0 || count($pk?->hasil_paths ?? []) > 0 || $npsWoDone;
                             $constructionDone = count($row->hasil_konstruksi_paths ?? []) > 0 || count($pk?->hasil_konstruksi_paths ?? []) > 0;
                             $transactionDone = count($row->hasil_transaksi_paths ?? []) > 0;
                             $networkDone = count($row->hasil_jaringan_paths ?? []) > 0;
@@ -171,6 +172,8 @@
                                     data-konstruksi-laporan-file-url="{{ route('vendor.konstruksi.report.file', ['pelanggan' => $row->id, 'index' => 0]) }}"
                                     data-konstruksi-hasil-file-url="{{ route('vendor.konstruksi.result.file', ['pelanggan' => $row->id, 'index' => 0]) }}"
                                     data-konstruksi-hasil-konstruksi-files="{{ base64_encode(json_encode($row->hasil_konstruksi_paths ?? [])) }}"
+                                    data-nps-wo-file-url="{{ route('pbpd.nps-wo.file', ['pelanggan' => $row->id, 'index' => 0]) }}"
+                                    data-nps-wo-files="{{ base64_encode(json_encode($row->nps_wo_paths ?? [])) }}"
                                     data-transaksi-hasil-file-url="{{ route('pbpd.transaksi.result.file', ['pelanggan' => $row->id, 'index' => 0]) }}"
                                     data-transaksi-hasil-files="{{ base64_encode(json_encode($row->hasil_transaksi_paths ?? [])) }}"
                                     data-jaringan-hasil-file-url="{{ route('pbpd.jaringan.result.file', ['pelanggan' => $row->id, 'index' => 0]) }}"
@@ -178,7 +181,9 @@
                                     data-proses-ulp="{{ $ulpSent ? '1' : '0' }}"
                                     data-proses-ulp-date="{{ $m?->dikirim_at?->format('Y-m-d H:i:s') ?? $row->created_at }}"
                                     data-proses-perencanaan="{{ $planningDone ? '1' : '0' }}"
-                                    data-proses-perencanaan-date="{{ $row->laporanVendor?->berkas_hasil_at?->format('Y-m-d H:i:s') ?? $pk?->hasil_perencanaan_at?->format('Y-m-d H:i:s') }}"
+                                    data-proses-perencanaan-date="{{ $row->laporanVendor?->berkas_hasil_at?->format('Y-m-d H:i:s') ?? $pk?->hasil_perencanaan_at?->format('Y-m-d H:i:s') ?? $row->nps_wo_at?->format('Y-m-d H:i:s') }}"
+                                    data-proses-nps-wo="{{ $npsWoDone ? '1' : '0' }}"
+                                    data-proses-nps-wo-date="{{ $row->nps_wo_at?->format('Y-m-d H:i:s') }}"
                                     data-proses-konstruksi="{{ $constructionDone ? '1' : '0' }}"
                                     data-proses-konstruksi-date="{{ $row->hasil_konstruksi_at?->format('Y-m-d H:i:s') ?? $pk?->hasil_konstruksi_at?->format('Y-m-d H:i:s') }}"
                                     data-proses-transaksi="{{ $transactionDone ? '1' : '0' }}"
@@ -276,7 +281,8 @@
                 <h4>Proses</h4>
                 <table class="proses-tabel"><thead><tr><th>Proses</th><th>Status</th><th>Tanggal</th></tr></thead><tbody>
                     <tr><td>Pengiriman ULP</td><td id="prosesUlpStatus"></td><td id="prosesUlpDate">-</td></tr>
-                    <tr><td>Berkas WO</td><td id="prosesPerencanaanStatus"></td><td id="prosesPerencanaanDate">-</td></tr>
+                    <tr><td>Berkas WO dan Kelayakan Tiang</td><td id="prosesPerencanaanStatus"></td><td id="prosesPerencanaanDate">-</td></tr>
+                    <tr><td>Berkas WO NPS</td><td id="prosesNpsWoStatus"></td><td id="prosesNpsWoDate">-</td></tr>
                     <tr><td>Berkas BA Checklist</td><td id="prosesKonstruksiStatus"></td><td id="prosesKonstruksiDate">-</td></tr>
                     <tr><td>Foto Cek KWH Meter</td><td id="prosesTransaksiStatus"></td><td id="prosesTransaksiDate">-</td></tr>
                     <tr><td>Berkas BA Operasi</td><td id="prosesJaringanStatus"></td><td id="prosesJaringanDate">-</td></tr>
@@ -375,7 +381,7 @@
                 </form>
             @endif
             <div class="planning-result-box">
-                <h4>Berkas WO</h4>
+                <h4>Berkas WO dan Kelayakan Tiang</h4>
                 <div id="resultFiles">-</div>
                 @if ($canSendVendor)
                     <div id="resultWaitingMessage" class="result-waiting-message" hidden>Menunggu laporan dari vendor terlebih dahulu.</div>
@@ -384,6 +390,17 @@
                         <input type="hidden" name="pelanggan_id" id="resultPelangganId">
                         <input type="file" name="berkas_hasil[]" multiple required accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png">
                         <button type="submit" class="btn">Upload Berkas Hasil</button>
+                    </form>
+                @endif
+            </div>
+            <div class="planning-result-box nps-result-upload-box">
+                <h4>Berkas WO <small class="upload-owner-label">NPS</small></h4>
+                <div id="npsWoFiles">-</div>
+                @if ($canUploadNps)
+                    <form id="npsWoUploadForm" method="POST" action="#" enctype="multipart/form-data">
+                        @csrf
+                        <input type="file" name="berkas_nps_wo[]" multiple required accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png">
+                        <button type="submit" class="btn">Upload Berkas WO</button>
                     </form>
                 @endif
             </div>
@@ -540,6 +557,7 @@
             const vendorForm = document.getElementById('vendorFormPerluasan');
             const constructionForm = document.getElementById('constructionForm');
             const constructionResultUploadForm = document.getElementById('constructionResultUploadForm');
+            const npsWoUploadForm = document.getElementById('npsWoUploadForm');
             const transaksiResultUploadForm = document.getElementById('transaksiResultUploadForm');
             const jaringanResultUploadForm = document.getElementById('jaringanResultUploadForm');
             const constructionReportBox = document.getElementById('constructionReportBox');
@@ -567,6 +585,7 @@
             const setProcess = (name, done, value) => {
                 const status = document.getElementById(`proses${name}Status`);
                 const tanggal = document.getElementById(`proses${name}Date`);
+                if (!status || !tanggal) return;
                 status.textContent = done === '1' ? '✓ Sudah lengkap' : '✕ Belum diunggah';
                 status.className = done === '1' ? 'proses-selesai' : 'proses-belum';
                 tanggal.textContent = done === '1' ? date(value) : '-';
@@ -587,6 +606,7 @@
                     setText('perluasanRabValue', money(button.dataset.rab));
                     setProcess('Ulp', button.dataset.prosesUlp, button.dataset.prosesUlpDate);
                     setProcess('Perencanaan', button.dataset.prosesPerencanaan, button.dataset.prosesPerencanaanDate);
+                    setProcess('NpsWo', button.dataset.prosesNpsWo, button.dataset.prosesNpsWoDate);
                     setProcess('Konstruksi', button.dataset.prosesKonstruksi, button.dataset.prosesKonstruksiDate);
                     setProcess('Transaksi', button.dataset.prosesTransaksi, button.dataset.prosesTransaksiDate);
                     setProcess('Jaringan', button.dataset.prosesJaringan, button.dataset.prosesJaringanDate);
@@ -633,6 +653,15 @@
                         : '-';
                     if (constructionResultUploadForm) {
                         constructionResultUploadForm.action = `{{ url('/vendor/konstruksi') }}/${button.dataset.id}/hasil-konstruksi`;
+                    }
+                    let npsWoFiles = [];
+                    try { npsWoFiles = JSON.parse(button.dataset.npsWoFiles ? atob(button.dataset.npsWoFiles) : '[]'); } catch (error) { npsWoFiles = []; }
+                    const npsWoFilesBox = document.getElementById('npsWoFiles');
+                    if (npsWoFilesBox) npsWoFilesBox.innerHTML = npsWoFiles.length
+                        ? npsWoFiles.map((path, index) => `<div class="result-file-row"><a href="${button.dataset.npsWoFileUrl.replace(/\/0$/, '/' + index)}" target="_blank" rel="noopener">📄 ${String(path).split('/').pop() || 'Berkas WO NPS ' + (index + 1)}</a>${npsWoUploadForm ? `<form method="POST" action="{{ url('/pbpd') }}/${button.dataset.id}/nps-wo/${index}"><input type="hidden" name="_token" value="{{ csrf_token() }}"><input type="hidden" name="_method" value="DELETE"><button type="submit" class="result-delete" onclick="return confirm('Hapus berkas WO NPS ini?')">Hapus</button></form>` : ''}</div>`).join('')
+                        : '-';
+                    if (npsWoUploadForm) {
+                        npsWoUploadForm.action = `{{ url('/pbpd') }}/${button.dataset.id}/nps-wo`;
                     }
                     let transaksiResultFiles = [];
                     try { transaksiResultFiles = JSON.parse(button.dataset.transaksiHasilFiles ? atob(button.dataset.transaksiHasilFiles) : '[]'); } catch (error) { transaksiResultFiles = []; }
