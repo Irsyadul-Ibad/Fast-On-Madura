@@ -22,7 +22,7 @@ class PbpdUploadController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-    'file'   => ['required', 'file', 'mimes:xlsx,xls,csv', 'max:10240'],
+    'file'   => ['required', 'file', 'mimes:xlsx,xls,csv', 'max:20480'],
     'ulp_id' => ['nullable', 'exists:ulp,id'],
 ]);
 

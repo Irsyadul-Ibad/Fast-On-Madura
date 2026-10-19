@@ -18,7 +18,7 @@ class CheckVendorTiangDeadlines extends Command
     {
         $deadlineSeconds = max(1, (int) config('services.vendor_tiang_deadline_seconds', 259200));
         $cutoff = now()->subSeconds($deadlineSeconds);
-        $planningRoleCodes = ['5180REN'];
+        $planningRoleCodes = ['5170REN'];
         $sent = 0;
 
         PengirimanVendor::query()

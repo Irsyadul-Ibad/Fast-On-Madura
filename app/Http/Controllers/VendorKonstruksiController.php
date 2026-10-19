@@ -12,7 +12,7 @@ class VendorKonstruksiController extends Controller
 {
     private function authorizeVendor(): void
     {
-        abort_unless(in_array($this->currentUser()->role?->role_code, ['VENDOR_KONSTRUKSI', 'VENDOR_KONSTRUKSI2', '5180K1', '5180K2'], true), 403);
+        abort_unless(in_array($this->currentUser()->role?->role_code, ['VENDOR_KONSTRUKSI', 'VENDOR_KONSTRUKSI2', '5170K1', '5170K2', '5170K3', '5170K4', '5170K5', '5170K6', '5170K7'], true), 403);
     }
 
     public function index()
@@ -23,7 +23,7 @@ class VendorKonstruksiController extends Controller
             ->where('tahap', 'VENDOR_KONSTRUKSI')
             ->whereHas('pengirimanKonstruksi', fn ($q) => $q
                 ->whereHas('vendor', fn ($v) => $v->where('jenis', 'KONSTRUKSI')->where('user_id', Auth::id()))
-                ->whereHas('dikirimOleh.role', fn ($r) => $r->where('role_code', '5180KON'))
+                ->whereHas('dikirimOleh.role', fn ($r) => $r->where('role_code', '5170KON'))
             )
             ->orderByDesc('id')->get();
 
@@ -37,7 +37,7 @@ class VendorKonstruksiController extends Controller
             ->statusTampil()
             ->whereHas('pengirimanKonstruksi', fn ($q) => $q
                 ->whereHas('vendor', fn ($v) => $v->where('jenis', 'KONSTRUKSI')->where('user_id', Auth::id()))
-                ->whereHas('dikirimOleh.role', fn ($r) => $r->where('role_code', '5180KON'))
+                ->whereHas('dikirimOleh.role', fn ($r) => $r->where('role_code', '5170KON'))
                 ->whereNotNull('laporan_at')
             )
             ->whereIn('tahap', ['VENDOR_KONSTRUKSI', 'PERENCANAAN', 'KONSTRUKSI'])
@@ -107,7 +107,7 @@ class VendorKonstruksiController extends Controller
 
     public function uploadHasil(Request $request, PelangganPbpd $pelanggan)
     {
-        abort_unless($this->currentUser()->role?->role_code === '5180REN', 403);
+        abort_unless($this->currentUser()->role?->role_code === '5170REN', 403);
         $request->validate([
             'berkas_hasil.*' => ['required', 'file', 'mimes:pdf,doc,docx,xls,xlsx,jpg,jpeg,png', 'max:10240'],
         ]);
@@ -127,9 +127,9 @@ class VendorKonstruksiController extends Controller
     public function laporanFile(PelangganPbpd $pelanggan, int $index)
     {
         $roleCode = $this->currentUser()->role?->role_code;
-        $isPlanning = $roleCode === '5180REN';
-        $isConstructionUp3 = $roleCode === '5180KON';
-        $isVendor = in_array($roleCode, ['VENDOR_KONSTRUKSI', 'VENDOR_KONSTRUKSI2', '5180K1', '5180K2'], true);
+        $isPlanning = $roleCode === '5170REN';
+        $isConstructionUp3 = $roleCode === '5170KON';
+        $isVendor = in_array($roleCode, ['VENDOR_KONSTRUKSI', 'VENDOR_KONSTRUKSI2', '5170K1', '5170K2', '5170K3', '5170K4', '5170K5', '5170K6', '5170K7'], true);
         abort_unless($isPlanning || $isConstructionUp3 || $isVendor, 403);
 
         $pengiriman = $pelanggan->pengirimanKonstruksi()->with('vendor')->firstOrFail();
@@ -159,7 +159,7 @@ class VendorKonstruksiController extends Controller
 
     public function uploadHasilKonstruksi(Request $request, PelangganPbpd $pelanggan)
     {
-        abort_unless($this->currentUser()->role?->role_code === '5180KON', 403);
+        abort_unless($this->currentUser()->role?->role_code === '5170KON', 403);
         $request->validate([
             'berkas_hasil_konstruksi.*' => ['required', 'file', 'mimes:pdf,doc,docx,xls,xlsx,jpg,jpeg,png', 'max:10240'],
         ]);
@@ -186,7 +186,7 @@ class VendorKonstruksiController extends Controller
 
     public function hapusHasilKonstruksi(PelangganPbpd $pelanggan, int $index)
     {
-        abort_unless($this->currentUser()->role?->role_code === '5180KON', 403);
+        abort_unless($this->currentUser()->role?->role_code === '5170KON', 403);
 
         $paths = is_array($pelanggan->hasil_konstruksi_paths) ? $pelanggan->hasil_konstruksi_paths : [];
         $path = $paths[$index] ?? null;

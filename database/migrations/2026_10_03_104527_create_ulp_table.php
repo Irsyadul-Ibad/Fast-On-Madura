@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('ulp', function (Blueprint $table) {
             $table->id();
-            $table->string('kode', 10)->unique(); // 51801 dst
+            $table->string('kode', 10)->unique(); // 51700 dst
             $table->string('nama', 50);
         });
 

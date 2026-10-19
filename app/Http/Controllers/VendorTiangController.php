@@ -13,7 +13,7 @@ class VendorTiangController extends Controller
 {
     private function authorizeVendor(): void
     {
-        abort_unless(in_array($this->currentUser()->role?->role_code, ['VENDOR_TIANG', 'VENDOR_TIANG2', '5180T1', '5180T2', '5180T3', '5180T4', '5180T5', '5180T6', '5180T7', '5180T8', '5180T9'], true), 403);
+        abort_unless(in_array($this->currentUser()->role?->role_code, ['VENDOR_TIANG', 'VENDOR_TIANG2', '5170T1', '5170T2', '5170T3', '5170T4', '5170T5', '5170T6', '5170T7', '5170T8', '5170T9'], true), 403);
     }
 
     public function index()
@@ -105,8 +105,8 @@ class VendorTiangController extends Controller
     public function wo(PelangganPbpd $pelanggan)
     {
         $roleCode = $this->currentUser()->role?->role_code;
-        $isPlanning = $roleCode === '5180REN';
-        $isVendor = in_array($roleCode, ['VENDOR_TIANG', 'VENDOR_TIANG2', '5180T1', '5180T2', '5180T3', '5180T4', '5180T5', '5180T6', '5180T7', '5180T8', '5180T9'], true);
+        $isPlanning = $roleCode === '5170REN';
+        $isVendor = in_array($roleCode, ['VENDOR_TIANG', 'VENDOR_TIANG2', '5170T1', '5170T2', '5170T3', '5170T4', '5170T5', '5170T6', '5170T7', '5170T8', '5170T9'], true);
 
         abort_unless($isPlanning || $isVendor, 403);
 
@@ -123,9 +123,9 @@ class VendorTiangController extends Controller
     public function laporanFile(PelangganPbpd $pelanggan, int $index)
     {
         $roleCode = $this->currentUser()->role?->role_code;
-        $isPlanning = $roleCode === '5180REN';
+        $isPlanning = $roleCode === '5170REN';
         $isUp3 = $this->currentUser()->role?->type === 'UP3';
-        $isVendor = in_array($roleCode, ['VENDOR_TIANG', 'VENDOR_TIANG2', '5180T1', '5180T2', '5180T3', '5180T4', '5180T5', '5180T6', '5180T7', '5180T8', '5180T9'], true);
+        $isVendor = in_array($roleCode, ['VENDOR_TIANG', 'VENDOR_TIANG2', '5170T1', '5170T2', '5170T3', '5170T4', '5170T5', '5170T6', '5170T7', '5170T8', '5170T9'], true);
         abort_unless($isPlanning || $isUp3 || $isVendor, 403);
 
         $pengiriman = $pelanggan->pengirimanVendor()->with('vendor')->firstOrFail();
@@ -142,7 +142,7 @@ class VendorTiangController extends Controller
 
     public function uploadHasil(Request $request, PelangganPbpd $pelanggan)
     {
-        abort_unless($this->currentUser()->role?->role_code === '5180REN', 403);
+        abort_unless($this->currentUser()->role?->role_code === '5170REN', 403);
 
         $data = $request->validate([
             'berkas_hasil.*' => ['required', 'file', 'mimes:pdf,doc,docx,xls,xlsx,jpg,jpeg,png', 'max:10240'],
@@ -173,7 +173,7 @@ class VendorTiangController extends Controller
 
     public function uploadHasilFromExpansion(Request $request)
     {
-        abort_unless($this->currentUser()->role?->role_code === '5180REN', 403);
+        abort_unless($this->currentUser()->role?->role_code === '5170REN', 403);
         $request->validate(['pelanggan_id' => ['required', 'integer', 'exists:pelanggan_pbpd,id']]);
 
         return $this->uploadHasil($request, PelangganPbpd::findOrFail($request->integer('pelanggan_id')));
@@ -182,9 +182,9 @@ class VendorTiangController extends Controller
     public function hasilFile(PelangganPbpd $pelanggan, int $index)
     {
         $roleCode = $this->currentUser()->role?->role_code;
-        $isPlanning = $roleCode === '5180REN';
+        $isPlanning = $roleCode === '5170REN';
         $isUp3 = $this->currentUser()->role?->type === 'UP3';
-        $isVendor = in_array($roleCode, ['VENDOR_TIANG', 'VENDOR_TIANG2', '5180T1', '5180T2', '5180T3', '5180T4', '5180T5', '5180T6', '5180T7', '5180T8', '5180T9'], true);
+        $isVendor = in_array($roleCode, ['VENDOR_TIANG', 'VENDOR_TIANG2', '5170T1', '5170T2', '5170T3', '5170T4', '5170T5', '5170T6', '5170T7', '5170T8', '5170T9'], true);
         abort_unless($isPlanning || $isUp3 || $isVendor, 403);
 
         $pengiriman = $pelanggan->pengirimanVendor()->with('vendor')->firstOrFail();
@@ -201,7 +201,7 @@ class VendorTiangController extends Controller
 
     public function hapusHasil(PelangganPbpd $pelanggan, int $index)
     {
-        abort_unless($this->currentUser()->role?->role_code === '5180REN', 403);
+        abort_unless($this->currentUser()->role?->role_code === '5170REN', 403);
 
         $laporan = $pelanggan->laporanVendor()->firstOrFail();
         $paths = $this->paths($laporan->berkas_hasil_paths);

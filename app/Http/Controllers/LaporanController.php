@@ -29,14 +29,20 @@ class LaporanController extends Controller
             'perTahap' => (clone $base)->selectRaw('tahap, COUNT(*) as jumlah')->groupBy('tahap')->orderBy('tahap')->pluck('jumlah', 'tahap'),
             'perJenis' => (clone $base)->selectRaw('jenis_transaksi, COUNT(*) as jumlah')->groupBy('jenis_transaksi')->orderBy('jenis_transaksi')->pluck('jumlah', 'jenis_transaksi'),
             'tahapPilihan' => collect([
-                'ULP' => 'ULP',
+                'ULP' => 'DIKIRIM ULP',
                 'PERENCANAAN' => 'PERENCANAAN',
                 'KONSTRUKSI' => 'KONSTRUKSI',
                 'TRANSAKSI' => 'TRANSAKSI',
                 'JARINGAN' => 'JARINGAN',
             ]),
             'jenisPilihan' => (clone $base)->whereNotNull('jenis_transaksi')->distinct()->orderBy('jenis_transaksi')->pluck('jenis_transaksi'),
-            'statusPilihan' => collect(['CETAK PK', 'BAYAR', 'PENGESAHAN PDL', 'PDL AWAL', 'PEREMAJAAN']),
+            'statusPilihan' => collect([
+                'CETAK PK',
+                'BAYAR',
+                'PENGESAHAN PDL',
+                'PDL AWAL',
+                'PEREMAJAAN',
+            ]),
             'showUlpFilter' => $isUp3,
             'ulps' => $isUp3 ? Ulp::orderBy('nama')->get(['id', 'nama']) : collect(),
         ]);
@@ -60,8 +66,13 @@ class LaporanController extends Controller
         return PelangganPbpd::query()
             ->whereIn('jenis_transaksi', self::JENIS_TRANSAKSI_LAPORAN)
             ->where(function ($query) {
-                $query->whereIn('status', PelangganPbpd::STATUS_TAMPIL)
-                    ->orWhereRaw("UPPER(TRIM(status)) = 'PEREMAJAAN'");
+                // Data PEREMAJAAN langsung masuk laporan walaupun belum dikirim ULP.
+                $query->whereRaw("UPPER(TRIM(status)) = 'PEREMAJAAN'")
+                    // Data selain PEREMAJAAN masuk setelah dikirim ULP.
+                    ->orWhere(function ($sent) {
+                        $sent->whereNotNull('tahap')
+                            ->whereRaw("UPPER(TRIM(tahap)) <> 'ULP'");
+                    });
             })
             ->when(filled($ulpId), fn ($q) => $q->where('ulp_id', $ulpId))
             ->when($tahap === 'ULP', fn ($q) => $q->where(function ($query) {
@@ -85,6 +96,6 @@ class LaporanController extends Controller
                 $q->whereRaw('CAST(no_agenda AS TEXT) LIKE ?', ['%' . $noAgenda . '%']);
             })
             ->when($request->filled('jenis'), fn ($q) => $q->where('jenis_transaksi', $request->jenis))
-            ->when($request->filled('status'), fn ($q) => $q->where('status', $request->status));
+            ->when($request->filled('status'), fn ($q) => $q->whereRaw('UPPER(TRIM(status)) = ?', [strtoupper(trim((string) $request->status))]));
     }
 }

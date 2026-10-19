@@ -22,13 +22,13 @@ class UserSeeder extends Seeder
                 ]
             );
 
-            if (in_array($role->role_code, ['5180T1', '5180T2', '5180T3', '5180T4', '5180T5', '5180T6', '5180T7', '5180T8', '5180T9'], true)) {
+            if (in_array($role->role_code, ['5170T1', '5170T2', '5170T3', '5170T4', '5170T5', '5170T6', '5170T7', '5170T8', '5170T9'], true)) {
                 Vendor::updateOrCreate(
                     ['user_id' => $user->id],
                     ['nama' => $role->name, 'jenis' => 'TIANG']
                 );
             }
-            if (in_array($role->role_code, ['5180K1', '5180K2'], true)) {
+            if (in_array($role->role_code, ['5170K1', '5170K2', '5170K3', '5170K4', '5170K5', '5170K6', '5170K7'], true)) {
                 Vendor::updateOrCreate(
                     ['user_id' => $user->id],
                     ['nama' => $role->name, 'jenis' => 'KONSTRUKSI']

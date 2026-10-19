@@ -5,7 +5,7 @@
 @php
     $namaScope = auth()->user()->role?->type === 'ULP'
         ? (auth()->user()->role?->name ?? 'ULP')
-        : 'UP3 Bojonegoro';
+        : 'UP3 Madura';
     $tujuanColors = [
         'BELUM DIKIRIM' => '#6fa2d4',
         'JTR' => '#f4c95d',

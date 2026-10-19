@@ -50,25 +50,25 @@ class PermissionSeeder extends Seeder
         $perluasan = ['perluasan.jtm.view', 'perluasan.jtr.view', 'tanpa.perluasan.view'];
 
         $map = [
-            '5180NPS' => array_merge($umum, ['pbpd.view'], $perluasan, ['pbpd.upload','permintaan.create'] ),
-            '5180MAN' => array_merge($umum, ['pbpd.view'], $perluasan, ['pengoperasian.view', 'laporan.view']),
-            '5180REN' => array_merge($umum, $perluasan, ['pbpd.view','perencanaan.process', 'berkas.upload']),
-            '5180KON' => array_merge($umum, $perluasan, ['pbpd.view', 'konstruksi.process', 'berkas.upload']),
-            '5180TE' => array_merge($umum, $perluasan, ['pbpd.view', 'pengoperasian.upload']),
-            '5180JAR' => array_merge($umum, ['perluasan.jtm.view', 'perluasan.jtr.view'], ['pbpd.view', 'jaringan.upload']),
+            '5170NPS' => array_merge($umum, ['pbpd.view'], $perluasan, ['pbpd.upload','permintaan.create'] ),
+            '5170MAN' => array_merge($umum, ['pbpd.view'], $perluasan, ['pengoperasian.view', 'laporan.view']),
+            '5170REN' => array_merge($umum, $perluasan, ['pbpd.view','perencanaan.process', 'berkas.upload']),
+            '5170KON' => array_merge($umum, $perluasan, ['pbpd.view', 'konstruksi.process', 'berkas.upload']),
+            '5170TE' => array_merge($umum, $perluasan, ['pbpd.view', 'pengoperasian.upload']),
+            '5170JAR' => array_merge($umum, ['perluasan.jtm.view', 'perluasan.jtr.view'], ['pbpd.view', 'jaringan.upload']),
         ];
 
-        foreach (Role::whereIn('role_code', ['5180T1', '5180T2', '5180T3', '5180T4', '5180T5', '5180T6', '5180T7', '5180T8', '5180T9'])->get() as $role) {
+        foreach (Role::whereIn('role_code', ['5170T1', '5170T2', '5170T3', '5170T4', '5170T5', '5170T6', '5170T7', '5170T8', '5170T9'])->get() as $role) {
             $role->permissions()->sync(Permission::whereIn('name', ['laporan.view', 'vendor.tiang.view', 'vendor.tiang.process', 'vendor.tiang.history'])->pluck('id'));
         }
-        foreach (Role::whereIn('role_code', ['5180K1', '5180K2'])->get() as $role) {
+        foreach (Role::whereIn('role_code', ['5170K1', '5170K2', '5170K3', '5170K4', '5170K5', '5170K6', '5170K7'])->get() as $role) {
             $role->permissions()->sync(Permission::whereIn('name', ['laporan.view', 'vendor.konstruksi.view', 'vendor.konstruksi.process', 'vendor.konstruksi.history'])->pluck('id'));
         }
 
         $ulp = array_merge($umum, ['pbpd.view'], $perluasan, ['berkas.upload', 'permintaan.create'], ['laporan.view']);
 
         foreach (Role::where('type', 'ULP')
-            ->whereNotIn('role_code', ['5180T1', '5180T2', '5180T3', '5180T4', '5180T5', '5180T6', '5180T7', '5180T8', '5180T9', '5180K1', '5180K2'])
+            ->whereNotIn('role_code', ['5170T1', '5170T2', '5170T3', '5170T4', '5170T5', '5170T6', '5170T7', '5170T8', '5170T9', '5170K1', '5170K2'])
             ->get() as $role) {
             $role->permissions()->sync(Permission::whereIn('name', $ulp)->pluck('id'));
         }
@@ -78,9 +78,9 @@ class PermissionSeeder extends Seeder
                 ?->permissions()->sync(Permission::whereIn('name', $names)->pluck('id'));
         }
 
-        // Role 5180 menggunakan tampilan dan privilege yang sama dengan Manager UP3.
-        $managerUp3Permissions = $map['5180MAN'] ?? [];
-        Role::where('role_code', '5180')->first()
+        // Role 5170 menggunakan tampilan dan privilege yang sama dengan Manager UP3.
+        $managerUp3Permissions = $map['5170MAN'] ?? [];
+        Role::where('role_code', '5170')->first()
             ?->permissions()->sync(Permission::whereIn('name', $managerUp3Permissions)->pluck('id'));
     }
 }

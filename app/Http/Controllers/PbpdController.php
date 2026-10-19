@@ -21,7 +21,7 @@ class PbpdController extends Controller
         $isUlpRole = $role?->type === 'ULP' && (bool) $role?->ulp_id;
         $ulpUser = $isUlpRole ? $this->currentUser()->ulpId() : null;
         $canKirim = $isUlpRole;
-        $canEditRab = $canKirim || $role?->role_code === '5180REN';
+        $canEditRab = $canKirim || $role?->role_code === '5170REN';
 
         $data = PelangganPbpd::with('ulp')
             ->statusTampil()
@@ -117,7 +117,7 @@ class PbpdController extends Controller
     public function updateRab(Request $request, PelangganPbpd $pelanggan): \Illuminate\Http\RedirectResponse
     {
         $role = $this->currentUser()->role;
-        $canEditRab = (bool) $role?->ulp_id || $role?->role_code === '5180REN';
+        $canEditRab = (bool) $role?->ulp_id || $role?->role_code === '5170REN';
         abort_unless($canEditRab, 403);
 
         $ulpUser = $this->currentUser()->ulpId();
@@ -217,7 +217,7 @@ class PbpdController extends Controller
     {
         $role = $this->currentUser()->role;
         $isUlp = (bool) $role?->ulp_id;
-        $isPerencanaan = $role?->role_code === '5180REN';
+        $isPerencanaan = $role?->role_code === '5170REN';
         abort_unless($isUlp || $isPerencanaan, 403);
 
         $ulpUser = $this->currentUser()->ulpId();
@@ -279,7 +279,7 @@ class PbpdController extends Controller
 
     public function kirimVendor(Request $request, PelangganPbpd $pelanggan): \Illuminate\Http\RedirectResponse
     {
-        abort_unless($this->currentUser()->role?->role_code === '5180REN', 403);
+        abort_unless($this->currentUser()->role?->role_code === '5170REN', 403);
 
         $data = $request->validate([
             'vendor_id' => ['required', 'exists:vendors,id'],
@@ -312,7 +312,7 @@ class PbpdController extends Controller
 
     public function kirimKonstruksi(Request $request, PelangganPbpd $pelanggan): \Illuminate\Http\RedirectResponse
     {
-        abort_unless($this->currentUser()->role?->role_code === '5180KON', 403);
+        abort_unless($this->currentUser()->role?->role_code === '5170KON', 403);
 
         $data = $request->validate([
             'vendor_id' => ['required', 'exists:vendors,id'],
@@ -340,7 +340,7 @@ class PbpdController extends Controller
 
     public function uploadHasilTransaksi(Request $request, PelangganPbpd $pelanggan): \Illuminate\Http\RedirectResponse
     {
-        abort_unless($this->currentUser()->role?->role_code === '5180TE', 403);
+        abort_unless($this->currentUser()->role?->role_code === '5170TE', 403);
         $request->validate([
             'berkas_hasil_transaksi.*' => ['required', 'file', 'mimes:pdf,doc,docx,xls,xlsx,jpg,jpeg,png', 'max:10240'],
         ]);
@@ -367,7 +367,7 @@ class PbpdController extends Controller
 
     public function hapusHasilTransaksi(PelangganPbpd $pelanggan, int $index): \Illuminate\Http\RedirectResponse
     {
-        abort_unless($this->currentUser()->role?->role_code === '5180TE', 403);
+        abort_unless($this->currentUser()->role?->role_code === '5170TE', 403);
 
         $paths = is_array($pelanggan->hasil_transaksi_paths) ? $pelanggan->hasil_transaksi_paths : [];
         $path = $paths[$index] ?? null;
@@ -382,7 +382,7 @@ class PbpdController extends Controller
 
     public function uploadHasilJaringan(Request $request, PelangganPbpd $pelanggan): \Illuminate\Http\RedirectResponse
     {
-        abort_unless($this->currentUser()->role?->role_code === '5180JAR', 403);
+        abort_unless($this->currentUser()->role?->role_code === '5170JAR', 403);
         $request->validate([
             'berkas_hasil_jaringan.*' => ['required', 'file', 'mimes:pdf,doc,docx,xls,xlsx,jpg,jpeg,png', 'max:10240'],
         ]);
@@ -409,7 +409,7 @@ class PbpdController extends Controller
 
     public function hapusHasilJaringan(PelangganPbpd $pelanggan, int $index): \Illuminate\Http\RedirectResponse
     {
-        abort_unless($this->currentUser()->role?->role_code === '5180JAR', 403);
+        abort_unless($this->currentUser()->role?->role_code === '5170JAR', 403);
 
         $paths = is_array($pelanggan->hasil_jaringan_paths) ? $pelanggan->hasil_jaringan_paths : [];
         $path = $paths[$index] ?? null;
