@@ -27,6 +27,8 @@ class NotifikasiService
 
     private static function kirim(array $userIds, PelangganPbpd $pelanggan, string $title, string $message, ?string $url): void
     {
+        $url = self::relativeUrl($url);
+
         foreach (array_unique(array_filter(array_map('intval', $userIds))) as $userId) {
             AppNotification::create([
                 'user_id' => $userId,
@@ -36,5 +38,21 @@ class NotifikasiService
                 'url' => $url,
             ]);
         }
+    }
+
+    private static function relativeUrl(?string $url): ?string
+    {
+        if (! $url) {
+            return null;
+        }
+
+        $parts = parse_url($url);
+        $path = is_array($parts) ? ($parts['path'] ?? '/') : '/';
+
+        if (! is_string($path) || ! str_starts_with($path, '/') || str_starts_with($path, '//') || str_contains($path, '\\')) {
+            return '/laporan';
+        }
+
+        return $path . (isset($parts['query']) ? '?' . $parts['query'] : '');
     }
 }

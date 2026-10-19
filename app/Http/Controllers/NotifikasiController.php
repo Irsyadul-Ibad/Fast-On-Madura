@@ -21,7 +21,22 @@ class NotifikasiController extends Controller
         abort_unless((int) $notification->user_id === (int) Auth::id(), 403);
         $notification->update(['read_at' => now()]);
 
-        return $notification->url ? redirect($notification->url) : back();
+        if (! $notification->url) {
+            return back();
+        }
+
+        // Older notifications may contain absolute localhost/tunnel URLs.
+        // Keep only the local path so navigation stays on the current host.
+        $parts = parse_url($notification->url);
+        $path = is_array($parts) ? ($parts['path'] ?? null) : null;
+
+        if (! is_string($path) || ! str_starts_with($path, '/') || str_starts_with($path, '//') || str_contains($path, '\\')) {
+            $path = route('laporan', [], false);
+        }
+
+        $relativeUrl = $path . (isset($parts['query']) ? '?' . $parts['query'] : '');
+
+        return redirect($relativeUrl);
     }
 
     public function readAll()
