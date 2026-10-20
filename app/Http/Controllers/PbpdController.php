@@ -384,7 +384,6 @@ class PbpdController extends Controller
     private function authorizeNpsUpload(PelangganPbpd $pelanggan): void
     {
         abort_unless($this->currentUser()->role?->role_code === '5170NPS', 403);
-        abort_unless($pelanggan->tahap === 'PERENCANAAN', 422, 'Berkas NPS hanya dapat diunggah pada tahap perencanaan.');
     }
 
     private function authorizeNpsFileView(): void
