@@ -9,12 +9,15 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\RemembersChunkOffset;
+use Maatwebsite\Excel\Concerns\WithCustomCsvSettings;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
 use PhpOffice\PhpSpreadsheet\Shared\Date as ExcelDate;
 
-class PelangganPbpdImport implements ToCollection, WithChunkReading
+class PelangganPbpdImport implements ToCollection, WithChunkReading, WithCustomCsvSettings
 {
     use RemembersChunkOffset;
+
+    private const DATABASE_INSERT_BATCH_SIZE = 2000;
 
     public int $baru = 0;
     public int $diperbarui = 0;
@@ -24,7 +27,16 @@ class PelangganPbpdImport implements ToCollection, WithChunkReading
     private int $headerRows = 1;
     private ?Collection $ulps = null;
 
-    public function __construct(private int $importId, private ?int $ulpDefault = null) {}
+    public function __construct(
+        private int $importId,
+        private ?int $ulpDefault = null,
+        private string $csvDelimiter = ',',
+    ) {}
+
+    public function getCsvSettings(): array
+    {
+        return ['delimiter' => $this->csvDelimiter];
+    }
 
     public function collection(Collection $rows): void
     {
@@ -169,7 +181,7 @@ class PelangganPbpdImport implements ToCollection, WithChunkReading
 
     public function chunkSize(): int
     {
-        return 500;
+        return 5000;
     }
 
     private function simpanChunk(array $records): void
@@ -235,7 +247,12 @@ class PelangganPbpdImport implements ToCollection, WithChunkReading
         $this->updateExistingChunk($updateRows);
 
         if ($insertRows !== []) {
-            DB::table('pelanggan_pbpd')->insert($insertRows);
+            // PostgreSQL membatasi jumlah parameter dalam satu query hingga
+            // 65.535. Chunk pembacaan boleh besar, tetapi insert database
+            // harus dipecah agar 5.000 baris tidak melewati batas tersebut.
+            foreach (array_chunk($insertRows, self::DATABASE_INSERT_BATCH_SIZE) as $batch) {
+                DB::table('pelanggan_pbpd')->insert($batch);
+            }
         }
     }
 
