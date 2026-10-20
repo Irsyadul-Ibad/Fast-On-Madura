@@ -111,6 +111,7 @@
                         @php
                             $m = $row->permintaan; $pv = $row->pengirimanVendor; $pk = $row->pengirimanKonstruksi;
                             $ulpSent = $row->tahap !== 'ULP' || $row->tujuan_perluasan;
+                            $vendorReportDone = filled($row->laporanVendor?->vendor_report_at);
                             $npsWoDone = count($row->nps_wo_paths ?? []) > 0 || filled($row->nps_wo_at);
                             $planningDone = count($row->laporanVendor?->berkas_hasil_paths ?? []) > 0 || count($pk?->hasil_paths ?? []) > 0 || $npsWoDone;
                             $constructionDone = count($row->hasil_konstruksi_paths ?? []) > 0 || count($pk?->hasil_konstruksi_paths ?? []) > 0;
@@ -195,7 +196,7 @@
                                     data-laporan-foto="{{ $row->laporanVendor?->foto_terlampir ? 'Ya' : 'Tidak' }}"
                                     data-laporan-siap="{{ $row->laporanVendor?->siap_dilanjutkan ? 'Ya' : 'Tidak' }}"
                                     data-laporan-catatan="{{ $row->laporanVendor?->catatan }}"
-                                    data-laporan-exists="{{ $row->laporanVendor ? '1' : '0' }}"
+                                    data-laporan-exists="{{ $vendorReportDone ? '1' : '0' }}"
                                 ><svg class="icon-inline" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3.5h9l3 3V20.5H6z"/><path d="M15 3.5v4h3M9 12h6M9 16h6"/></svg></button>
                             </td>
                             @if ($showBerkasUlp)
@@ -281,7 +282,7 @@
                 <h4>Proses</h4>
                 <table class="proses-tabel"><thead><tr><th>Proses</th><th>Status</th><th>Tanggal</th></tr></thead><tbody>
                     <tr><td>Pengiriman ULP</td><td id="prosesUlpStatus"></td><td id="prosesUlpDate">-</td></tr>
-                    <tr><td>Berkas WO dan Kelayakan Tiang</td><td id="prosesPerencanaanStatus"></td><td id="prosesPerencanaanDate">-</td></tr>
+                    <tr><td>Berkas Kajian Kelayakan</td><td id="prosesPerencanaanStatus"></td><td id="prosesPerencanaanDate">-</td></tr>
                     <tr><td>Berkas WO NPS</td><td id="prosesNpsWoStatus"></td><td id="prosesNpsWoDate">-</td></tr>
                     <tr><td>Berkas BA Checklist</td><td id="prosesKonstruksiStatus"></td><td id="prosesKonstruksiDate">-</td></tr>
                     <tr><td>Foto Cek KWH Meter</td><td id="prosesTransaksiStatus"></td><td id="prosesTransaksiDate">-</td></tr>
@@ -381,10 +382,11 @@
                 </form>
             @endif
             <div class="planning-result-box">
-                <h4>Berkas WO dan Kelayakan Tiang</h4>
+                <h4>Berkas Kajian Kelayakan</h4>
                 <div id="resultFiles">-</div>
                 @if ($canSendVendor)
-                    <div id="resultWaitingMessage" class="result-waiting-message" hidden>Menunggu laporan dari vendor terlebih dahulu.</div>
+                {{-- untuk bagian pemberitahuan yang dihilangkan --}}
+                    {{-- <div id="resultWaitingMessage" class="result-waiting-message" hidden>Laporan vendor tiang belum masuk. Perencanaan tetap dapat mengupload berkas hasil.</div> --}}
                     <form id="resultUploadForm" method="POST" action="{{ request()->url() }}" enctype="multipart/form-data">
                         @csrf
                         <input type="hidden" name="pelanggan_id" id="resultPelangganId">
@@ -718,7 +720,7 @@
                             : '-';
                     if (resultUploadForm) {
                         const hasVendorReport = button.dataset.laporanExists === '1';
-                        resultUploadForm.hidden = !hasVendorReport;
+                        resultUploadForm.hidden = false;
                         resultUploadForm.action = `{{ url('/vendor/tiang') }}/${button.dataset.id}/hasil`;
                         if (resultWaitingMessage) resultWaitingMessage.hidden = hasVendorReport;
                     }

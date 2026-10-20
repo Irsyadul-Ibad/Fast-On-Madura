@@ -32,7 +32,7 @@ class VendorTiangController extends Controller
 
         $riwayat = PelangganPbpd::with(['ulp', 'pengirimanVendor.vendor', 'laporanVendor'])
             ->statusTampil()
-            ->whereHas('laporanVendor')
+            ->whereHas('laporanVendor', fn ($q) => $q->whereNotNull('vendor_report_at'))
             ->whereHas('pengirimanVendor.vendor', fn ($q) => $q
                 ->where('jenis', 'TIANG')
                 ->where('user_id', Auth::id())
@@ -49,7 +49,7 @@ class VendorTiangController extends Controller
 
         $riwayat = PelangganPbpd::with(['ulp', 'pengirimanVendor.vendor', 'laporanVendor'])
             ->statusTampil()
-            ->whereHas('laporanVendor')
+            ->whereHas('laporanVendor', fn ($q) => $q->whereNotNull('vendor_report_at'))
             ->whereHas('pengirimanVendor.vendor', fn ($q) => $q
                 ->where('jenis', 'TIANG')
                 ->where('user_id', Auth::id())
@@ -92,6 +92,7 @@ class VendorTiangController extends Controller
             'berkas_paths' => $paths,
             'dikirim_oleh' => Auth::id(),
             'dikirim_at' => now(),
+            'vendor_report_at' => now(),
         ])->save();
 
         if ($pelanggan->tahap === 'VENDOR_TIANG') {
@@ -148,13 +149,24 @@ class VendorTiangController extends Controller
             'berkas_hasil.*' => ['required', 'file', 'mimes:pdf,doc,docx,xls,xlsx,jpg,jpeg,png', 'max:10240'],
         ]);
 
-        $laporan = $pelanggan->laporanVendor()->firstOrFail();
+        $pengiriman = $pelanggan->pengirimanVendor()->firstOrFail();
+        $laporan = $pelanggan->laporanVendor()->firstOrNew(['pelanggan_id' => $pelanggan->id]);
         $paths = $this->paths($laporan->berkas_hasil_paths);
         foreach ($request->file('berkas_hasil', []) as $file) {
             $paths[] = $file->store('hasil-perencanaan', 'public');
         }
 
-        $laporan->update(['berkas_hasil_paths' => $paths, 'berkas_hasil_at' => now()]);
+        $laporan->fill([
+            'vendor_id' => $laporan->vendor_id ?? $pengiriman->vendor_id,
+            'berkas_hasil_paths' => $paths,
+            'berkas_hasil_at' => now(),
+        ]);
+        if (! $laporan->exists) {
+            // Simpan hasil Perencanaan lebih dulu; laporan vendor dapat masuk belakangan.
+            $laporan->dikirim_oleh = Auth::id();
+            $laporan->dikirim_at = now();
+        }
+        $laporan->save();
         $pelanggan->tandaiSelesaiJikaLengkap(Auth::id());
         NotifikasiService::untukData($pelanggan, 'Berkas hasil perencanaan diupload', 'Berkas hasil perencanaan untuk ' . $pelanggan->no_agenda . ' telah diupload.', route('laporan'));
 

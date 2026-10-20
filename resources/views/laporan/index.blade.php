@@ -13,6 +13,7 @@
             $material = $row->permintaan;
             $konstruksi = $row->pengirimanKonstruksi;
             $npsWoDone = count($row->nps_wo_paths ?? []) > 0 || filled($row->nps_wo_at);
+            $npsChecklistDone = count($row->nps_checklist_paths ?? []) > 0 || filled($row->nps_checklist_at);
             $planningDone = count($row->laporanVendor?->berkas_hasil_paths ?? []) > 0 || count($konstruksi?->hasil_paths ?? []) > 0 || $npsWoDone;
             $constructionDone = count($row->hasil_konstruksi_paths ?? []) > 0 || count($konstruksi?->hasil_konstruksi_paths ?? []) > 0;
             return [$row->no_agenda => [
@@ -22,6 +23,8 @@
                 'planningDate' => $row->laporanVendor?->berkas_hasil_at?->format('Y-m-d H:i:s') ?? $konstruksi?->hasil_perencanaan_at?->format('Y-m-d H:i:s') ?? $row->nps_wo_at?->format('Y-m-d H:i:s'),
                 'npsWo' => $npsWoDone,
                 'npsWoDate' => $row->nps_wo_at?->format('Y-m-d H:i:s'),
+                'npsChecklist' => $npsChecklistDone,
+                'npsChecklistDate' => $row->nps_checklist_at?->format('Y-m-d H:i:s'),
                 'construction' => $constructionDone,
                 'constructionDate' => $row->hasil_konstruksi_at?->format('Y-m-d H:i:s') ?? $konstruksi?->hasil_konstruksi_at?->format('Y-m-d H:i:s'),
                 'transaction' => count($row->hasil_transaksi_paths ?? []) > 0,
@@ -58,6 +61,7 @@
             const processMarkup = (item) => `<div class="proses-box laporan-proses-box"><h4>Proses</h4><table class="proses-tabel"><thead><tr><th>Proses</th><th>Status</th><th>Tanggal</th></tr></thead><tbody>
                 <tr><td>Pengiriman ULP</td><td>${statusCell(item.ulp, 'Sudah dikirim ULP')}</td><td>${formatDate(item.ulpDate)}</td></tr>
                 <tr><td>Berkas WO</td><td>${statusCell(item.planning, 'Sudah lengkap')}</td><td>${formatDate(item.planningDate)}</td></tr>
+                <tr><td>Checklist NPS</td><td>${statusCell(item.npsChecklist, 'Sudah lengkap')}</td><td>${formatDate(item.npsChecklistDate)}</td></tr>
                 <tr><td>Berkas WO NPS</td><td>${statusCell(item.npsWo, 'Sudah lengkap')}</td><td>${formatDate(item.npsWoDate)}</td></tr>
                 <tr><td>Berkas BA Checklist</td><td>${statusCell(item.construction, 'Sudah lengkap')}</td><td>${formatDate(item.constructionDate)}</td></tr>
                 <tr><td>Foto Cek KWH Meter</td><td>${statusCell(item.transaction, 'Sudah lengkap')}</td><td>${formatDate(item.transactionDate)}</td></tr>
@@ -88,7 +92,7 @@
                 header.textContent = 'PROSES';
                 detailHeader.after(header);
             }
-            const labels = [['ulp', 'ULP'], ['planning', 'PERENCANAAN'], ['construction', 'KONSTRUKSI'], ['transaction', 'TRANSAKSI'], ['network', 'JARINGAN']];
+            const labels = [['ulp', 'ULP'], ['planning', 'PERENCANAAN'], ['npsChecklist', 'NPS'], ['construction', 'KONSTRUKSI'], ['transaction', 'TRANSAKSI'], ['network', 'JARINGAN']];
             const cellMarkup = (item) => `<div class="laporan-process-stack">${labels.map(([key, label]) => `<span class="laporan-process-chip ${item[key] ? 'is-done' : 'is-pending'}" title="${label}">${item[key] ? '✓' : '×'} ${label}</span>`).join('')}</div>`;
             table.tBodies[0]?.querySelectorAll('tr').forEach((row) => {
                 const agendaCell = [...row.cells].find((cell) => processMap[cell.textContent.trim()]);

@@ -18,6 +18,7 @@ class LaporanVendor extends Model
             'berkas_paths' => 'array',
             'berkas_hasil_paths' => 'array',
             'berkas_hasil_at' => 'datetime',
+            'vendor_report_at' => 'datetime',
         ];
     }
 }
