@@ -65,9 +65,9 @@ class RoleSeeder extends Seeder
             ['role_code' => '5170MAN', 'name' => 'Manager UP3',   'type' => 'UP3'],
             ['role_code' => '5170REN', 'name' => 'Perencanaan',   'type' => 'UP3'],
             ['role_code' => '5170KON', 'name' => 'Konstruksi',    'type' => 'UP3'],
-            ['role_code' => '5170TE ', 'name' => 'Transaksi',     'type' => 'UP3'],
+            ['role_code' => '5170TE', 'name' => 'Transaksi',     'type' => 'UP3'],
             ['role_code' => '5170JAR', 'name' => 'Jaringan',      'type' => 'UP3'],
-            ['role_code' => '5170   ',    'name' => 'Administrator', 'type' => 'UP3'],
+            ['role_code' => '5170',    'name' => 'Administrator', 'type' => 'UP3'],
         ];
 
         foreach ($roles as $role) {
