@@ -564,7 +564,7 @@
             const jaringanResultUploadForm = document.getElementById('jaringanResultUploadForm');
             const constructionReportBox = document.getElementById('constructionReportBox');
             const resultUploadForm = document.getElementById('resultUploadForm');
-            const resultWaitingMessage = document.getElementById('resultWaitingMessage');
+            // const resultWaitingMessage = document.getElementById('resultWaitingMessage');
             const setText = (id, value) => { document.getElementById(id).textContent = value || '-'; };
             const money = (value) => value ? Number(value).toLocaleString('id-ID') : '-';
             const formatRupiah = (value) => {
@@ -719,10 +719,10 @@
                             ? resultFiles.map((path, index) => `<div class="result-file-row"><a href="${button.dataset.resultFileUrl.replace(/\/0$/, '/' + index)}" target="_blank">📄 Berkas hasil ${index + 1}</a>${resultUploadForm ? `<form method="POST" action="${button.dataset.resultDeleteUrl.replace(/\/0$/, '/' + index)}"><input type="hidden" name="_token" value="{{ csrf_token() }}"><button type="submit" class="result-delete" onclick="return confirm('Hapus berkas ini?')">Hapus</button></form>` : ''}</div>`).join('')
                             : '-';
                     if (resultUploadForm) {
-                        const hasVendorReport = button.dataset.laporanExists === '1';
+                        // const hasVendorReport = button.dataset.laporanExists === '1';
                         resultUploadForm.hidden = false;
                         resultUploadForm.action = `{{ url('/vendor/tiang') }}/${button.dataset.id}/hasil`;
-                        if (resultWaitingMessage) resultWaitingMessage.hidden = hasVendorReport;
+                        // if (resultWaitingMessage) resultWaitingMessage.hidden = hasVendorReport;
                     }
                 });
             });

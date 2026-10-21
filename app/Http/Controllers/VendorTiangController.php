@@ -149,7 +149,11 @@ class VendorTiangController extends Controller
             'berkas_hasil.*' => ['required', 'file', 'mimes:pdf,doc,docx,xls,xlsx,jpg,jpeg,png', 'max:10240'],
         ]);
 
-        $pengiriman = $pelanggan->pengirimanVendor()->firstOrFail();
+        // Upload hasil Perencanaan tidak perlu menunggu laporan vendor atau
+        // record pengiriman vendor. Jika pengiriman sudah ada, gunakan vendor
+        // tersebut; jika belum ada, laporan tetap boleh disimpan dengan
+        // vendor_id null.
+        $pengiriman = $pelanggan->pengirimanVendor()->first();
         $laporan = $pelanggan->laporanVendor()->firstOrNew(['pelanggan_id' => $pelanggan->id]);
         $paths = $this->paths($laporan->berkas_hasil_paths);
         foreach ($request->file('berkas_hasil', []) as $file) {
@@ -157,7 +161,7 @@ class VendorTiangController extends Controller
         }
 
         $laporan->fill([
-            'vendor_id' => $laporan->vendor_id ?? $pengiriman->vendor_id,
+            'vendor_id' => $laporan->vendor_id ?? $pengiriman?->vendor_id,
             'berkas_hasil_paths' => $paths,
             'berkas_hasil_at' => now(),
         ]);
