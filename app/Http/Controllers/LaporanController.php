@@ -41,7 +41,7 @@ class LaporanController extends Controller
                 'BAYAR',
                 'PENGESAHAN PDL',
                 'PDL AWAL',
-                'PEREMAJAAN',
+                // 'PEREMAJAAN', // Dinonaktifkan sementara dari pilihan filter laporan.
             ]),
             'showUlpFilter' => $isUp3,
             'ulps' => $isUp3 ? Ulp::orderBy('nama')->get(['id', 'nama']) : collect(),
@@ -65,15 +65,19 @@ class LaporanController extends Controller
 
         return PelangganPbpd::query()
             ->whereIn('jenis_transaksi', self::JENIS_TRANSAKSI_LAPORAN)
-            ->where(function ($query) {
-                // Data PEREMAJAAN langsung masuk laporan walaupun belum dikirim ULP.
-                $query->whereRaw("UPPER(TRIM(status)) = 'PEREMAJAAN'")
-                    // Data selain PEREMAJAAN masuk setelah dikirim ULP.
-                    ->orWhere(function ($sent) {
-                        $sent->whereNotNull('tahap')
-                            ->whereRaw("UPPER(TRIM(tahap)) <> 'ULP'");
-                    });
-            })
+            // Logika lama untuk memasukkan PEREMAJAAN langsung ke laporan,
+            // meskipun belum melewati tahap ULP, disimpan sebagai referensi:
+            // ->where(function ($query) {
+            //     $query->whereRaw("UPPER(TRIM(status)) = 'PEREMAJAAN'")
+            //         ->orWhere(function ($sent) {
+            //             $sent->whereNotNull('tahap')
+            //                 ->whereRaw("UPPER(TRIM(tahap)) <> 'ULP'");
+            //         });
+            // })
+            // Hanya data yang sudah diproses/dikirim melewati tahap ULP yang
+            // boleh masuk laporan.
+            ->whereNotNull('tahap')
+            ->whereRaw("UPPER(TRIM(tahap)) <> 'ULP'")
             ->when(filled($ulpId), fn ($q) => $q->where('ulp_id', $ulpId))
             ->when($tahap === 'ULP', fn ($q) => $q->where(function ($query) {
                 $query->where('tahap', '!=', 'ULP')
