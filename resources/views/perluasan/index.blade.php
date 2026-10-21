@@ -445,10 +445,10 @@
                 <div class="detail-grid">
                     <div><small>Vendor</small><b id="constructionReportVendor">-</b></div>
                     <div><small>User Vendor</small><b id="constructionReportUser">-</b></div>
-                    <div><small>Pekerjaan lengkap</small><b id="constructionReportLengkap">-</b></div>
-                    <div><small>Pekerjaan sesuai WO</small><b id="constructionReportSesuai">-</b></div>
-                    <div><small>Foto dokumentasi</small><b id="constructionReportFoto">-</b></div>
-                    <div><small>Siap dilanjutkan</small><b id="constructionReportSiap">-</b></div>
+                    <div><small>Material Lengkap</small><b id="constructionReportLengkap">-</b></div>
+                    <div><small>Pekerjaan Dimulai</small><b id="constructionReportSesuai">-</b></div>
+                    <div><small>Pekerjaan Selesai</small><b id="constructionReportFoto">-</b></div>
+                    <div><small>Pekerjaan Siap Untuk Dioperasikan</small><b id="constructionReportSiap">-</b></div>
                     <div class="detail-full"><small>Catatan</small><b id="constructionReportCatatan">-</b></div>
                     <div class="detail-full"><small>Berkas laporan</small><div id="constructionReportFiles">-</div></div>
                 </div>
