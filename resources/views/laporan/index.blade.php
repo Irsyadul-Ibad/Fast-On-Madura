@@ -60,8 +60,8 @@
             const statusCell = (done, label) => `<span class="${done ? 'proses-selesai' : 'proses-belum'}">${done ? '✓ ' + label : '× Belum diunggah'}</span>`;
             const processMarkup = (item) => `<div class="proses-box laporan-proses-box"><h4>Proses</h4><table class="proses-tabel"><thead><tr><th>Proses</th><th>Status</th><th>Tanggal</th></tr></thead><tbody>
                 <tr><td>Pengiriman ULP</td><td>${statusCell(item.ulp, 'Sudah dikirim ULP')}</td><td>${formatDate(item.ulpDate)}</td></tr>
-                <tr><td>Berkas WO</td><td>${statusCell(item.planning, 'Sudah lengkap')}</td><td>${formatDate(item.planningDate)}</td></tr>
-                <tr><td>Checklist NPS</td><td>${statusCell(item.npsChecklist, 'Sudah lengkap')}</td><td>${formatDate(item.npsChecklistDate)}</td></tr>
+                <tr><td>Berkas Kajian Kelayakan</td><td>${statusCell(item.planning, 'Sudah lengkap')}</td><td>${formatDate(item.planningDate)}</td></tr>
+                <tr><td>Berkas WO NPS</td><td>${statusCell(item.npsChecklist, 'Sudah lengkap')}</td><td>${formatDate(item.npsChecklistDate)}</td></tr>
                 <tr><td>Berkas WO NPS</td><td>${statusCell(item.npsWo, 'Sudah lengkap')}</td><td>${formatDate(item.npsWoDate)}</td></tr>
                 <tr><td>Berkas BA Checklist</td><td>${statusCell(item.construction, 'Sudah lengkap')}</td><td>${formatDate(item.constructionDate)}</td></tr>
                 <tr><td>Foto Cek KWH Meter</td><td>${statusCell(item.transaction, 'Sudah lengkap')}</td><td>${formatDate(item.transactionDate)}</td></tr>
