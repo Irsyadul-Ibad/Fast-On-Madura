@@ -98,10 +98,10 @@
                     <tr class="table-title-row">
                         <th colspan="{{ ($canKirim ? 1 : 0) + 16 + ($showSyarat ? 2 : 0) }}">
                             <div class="table-title-content">
-                                <span>RECORD, JUMLAH TRANSAKSI PB/PD</span>
                                 @if ($canKirim)
                                     <button type="button" class="btn table-send-button" id="openSendModal" disabled>Kirim data terpilih</button>
                                 @endif
+                                <span>RECORD, JUMLAH TRANSAKSI PB/PD</span>
                             </div>
                         </th>
                     </tr>
@@ -522,7 +522,7 @@
         .tabel{border:0!important;border-radius:10px!important;overflow:hidden;font-size:12px!important}
         .tabel thead th{background:#0d1b8c!important;border-color:#263aa8!important;color:#fff!important;font-size:11px!important;letter-spacing:.035em;white-space:nowrap}
         .tabel thead .table-title-row th{height:52px!important;padding:8px 16px!important;text-align:left!important;font-size:12px!important;font-weight:800!important;letter-spacing:.035em!important;background:#0d1b8c!important;border-color:#0d1b8c!important}
-        .table-title-content{display:flex;align-items:center;justify-content:space-between;gap:16px;width:100%}.table-send-button{min-height:32px!important;padding:7px 14px!important;background:#2b73fe!important;color:#fff!important;border:0!important;border-radius:8px!important;font-size:11px!important;font-weight:700!important;letter-spacing:0!important;white-space:nowrap}.table-send-button:hover{background:#1e5ed8!important}.table-send-button:disabled{opacity:.65;cursor:not-allowed}
+        .table-title-content{display:flex;align-items:center;justify-content:flex-start;gap:16px;width:100%}.table-send-button{min-height:32px!important;padding:7px 14px!important;background:#2b73fe!important;color:#fff!important;border:0!important;border-radius:8px!important;font-size:11px!important;font-weight:700!important;letter-spacing:0!important;white-space:nowrap}.table-send-button:hover{background:#1e5ed8!important}.table-send-button:disabled{opacity:.65;cursor:not-allowed}
         .tabel thead th.grup,.tabel thead th.sub{background:#0d1b8c!important}
         .tabel tbody tr{transition:background .16s,box-shadow .16s}.tabel tbody tr:nth-child(even){background:#f8fbff!important}.tabel tbody tr:hover{background:#eef6ff!important;box-shadow:inset 3px 0 #f4c300}
         .tabel tbody td{border-color:#e2e8f0!important;color:#475569!important;vertical-align:middle}.tabel tbody td b{color:#123b5d!important}.tabel tbody td:nth-child(2),.tabel tbody td:nth-child(3){font-weight:650}
@@ -530,6 +530,6 @@
         .tabel .ikon-dtl:hover,.tabel .detail-link:hover{background:#1e6fa8!important;color:#fff!important;transform:translateY(-1px)!important}
         .tabel .ikon-syarat{width:28px;height:28px;border-radius:8px!important;background:#f8fbff!important;color:#1e6fa8!important;border:1px solid #d5e5f5!important}.tabel .ikon-syarat.berkas-lengkap{background:#e8f7ef!important;color:#2e9b68!important;border-color:#b9e4ca!important}.tabel .ikon-syarat.berkas-belum{background:#fff7ed!important;color:#d97706!important;border-color:#f5d7a1!important}
         .tabel .pill{font-size:11px!important;font-weight:700;border-radius:999px!important;padding:5px 9px!important}
-        @media(max-width:760px){.filter{padding:64px 12px 14px!important}.filter>*{flex:1 1 100%}.filter::before{padding-left:12px}.filter::after{left:12px}.kartu-judul{align-items:flex-start;flex-direction:column}.kartu .scroll{margin:0 10px 10px}.table-title-content{align-items:flex-start;flex-direction:column;gap:8px}.table-send-button{align-self:flex-end}}
+        @media(max-width:760px){.filter{padding:64px 12px 14px!important}.filter>*{flex:1 1 100%}.filter::before{padding-left:12px}.filter::after{left:12px}.kartu-judul{align-items:flex-start;flex-direction:column}.kartu .scroll{margin:0 10px 10px}.table-title-content{align-items:flex-start;flex-direction:column;gap:8px}.table-send-button{align-self:flex-start}}
     </style>
 @endsection
