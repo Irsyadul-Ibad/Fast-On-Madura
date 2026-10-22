@@ -62,6 +62,54 @@
             .filter { align-items:stretch; }
             .filter input, .filter select, .filter button, .filter a { width:100%; }
         }
+        /* Keep all sidebar styling in the document head so it is stable on first paint. */
+        #mainSidebar{
+            position:sticky!important;top:0!important;align-self:flex-start;display:flex!important;flex-direction:column!important;
+            flex:0 0 17rem!important;width:17rem!important;height:100vh!important;overflow-y:auto!important;overflow-x:hidden!important;
+            padding:30px 0 18px!important;background:#0D1B8C!important;color:#fff!important;border-right:0!important;
+            border-radius:0 0 16px 0!important;box-shadow:4px 0 15px rgba(0,0,0,.1)!important;scrollbar-width:thin;
+            scrollbar-color:rgba(255,255,255,.3) transparent;transition:none!important;
+        }
+        #mainSidebar h2{display:flex!important;align-items:center!important;justify-content:center!important;gap:6px!important;margin:0 12px 8px!important;color:#fff!important;font-size:24px!important;font-weight:700!important;letter-spacing:0!important;text-align:center!important}
+        #mainSidebar h2 .brand-fast{color:#fff!important}
+        #mainSidebar h2 .brand-accent{color:#facc15!important}
+        #mainSidebar .role{margin:0 18px 24px!important;color:rgba(219,234,254,.75)!important;font-size:10px!important;letter-spacing:.12em!important;text-align:center!important;text-transform:uppercase}
+        #mainSidebar a{
+            position:relative;display:flex!important;align-items:center;gap:0;width:90%;margin:0 auto 8px!important;padding:10px 16px!important;
+            border:1px solid transparent!important;border-radius:14px!important;color:#d1d5db!important;font-size:13.6px!important;
+            font-weight:600!important;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+            animation:none!important;transform:none!important;transition:background-color .2s ease,color .2s ease,border-color .2s ease!important;
+        }
+        #mainSidebar a::before,#mainSidebar a::after{content:none!important;display:none!important}
+        #mainSidebar .sidebar-icon {
+            display:inline-grid!important;place-items:center;flex:0 0 1.2rem!important;width:1.2rem!important;min-width:1.2rem!important;
+            height:1.2rem!important;margin-right:12px!important;line-height:0!important;border:0!important;border-radius:0!important;
+            background:transparent!important;color:inherit!important;pointer-events:none!important;animation:none!important;transform:none!important;transition:none!important;
+        }
+        #mainSidebar .sidebar-icon svg {
+            display:block!important;flex:0 0 1.2rem!important;width:1.2rem!important;min-width:1.2rem!important;max-width:1.2rem!important;
+            height:1.2rem!important;min-height:1.2rem!important;max-height:1.2rem!important;fill:none!important;stroke:currentColor!important;
+            stroke-width:2!important;stroke-linecap:round!important;stroke-linejoin:round!important;shape-rendering:geometricPrecision;
+            pointer-events:none!important;animation:none!important;transform:none!important;transition:none!important;will-change:auto;
+        }
+        #mainSidebar a:hover:not(.active),#mainSidebar a:focus-visible:not(.active){background:#1727a6!important;color:#fff!important;border-color:transparent!important}
+        #mainSidebar a.active{background:#fff!important;color:#0D1B8C!important;border-radius:9999px!important;font-weight:700!important;box-shadow:none!important}
+        #mainSidebar .notif-badge{margin-left:auto!important;background:#facc15!important;color:#172554!important;min-width:18px!important;border-radius:999px!important;font-size:10px!important;font-weight:800!important}
+        #mainSidebar,#mainSidebar *{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+        html{scrollbar-gutter:stable}
+        @media (min-width:651px){
+            .layout{display:block!important}
+            #mainSidebar{position:fixed!important;inset:0 auto 0 0!important;z-index:100!important;height:100vh!important}
+            .content{width:calc(100% - 17rem)!important;margin-left:17rem!important}
+        }
+        @media (max-width:650px){
+            .layout{display:block!important}
+            .content{width:100%!important;margin-left:0!important}
+            #mainSidebar{position:fixed!important;inset:0 auto 0 0!important;z-index:100!important;width:17rem!important;height:100vh!important;
+                border-radius:0!important;padding:30px 0 18px!important;transform:translateX(-102%)!important;transition:transform .3s ease!important}
+            body.menu-open #mainSidebar{transform:translateX(0)!important}
+            body.menu-open::after{content:"";position:fixed;inset:0;z-index:90!important;background:rgba(0,0,0,.58)}
+        }
     </style>
 </head>
 <body>
@@ -453,135 +501,6 @@
     .detail-modal-box a,.laporan-modal-box a{color:#1e6fa8!important}.detail-modal-box .proses-selesai,.laporan-modal-box .proses-selesai{color:#2e9b68!important}.detail-modal-box .proses-belum,.laporan-modal-box .proses-belum{color:#d9534f!important}
     @media(max-width:600px){.detail-modal,.laporan-modal{padding:12px!important}.detail-modal-box,.laporan-modal-box{width:100%!important;max-height:calc(100vh - 24px)!important}.detail-modal-box h3,.laporan-modal-box h3{padding-left:16px!important}}
 
-    /* Sidebar appearance follows the FASTON reference layout. */
-    #mainSidebar{
-        position:sticky!important;
-        top:0!important;
-        align-self:flex-start;
-        display:flex!important;
-        flex-direction:column!important;
-        flex:0 0 17rem!important;
-        width:17rem!important;
-        height:100vh!important;
-        overflow-y:auto!important;
-        overflow-x:hidden!important;
-        padding:30px 0 18px!important;
-        background:#0D1B8C!important;
-        color:#fff!important;
-        border-right:0!important;
-        border-radius:0 0 16px 0!important;
-        box-shadow:4px 0 15px rgba(0,0,0,.1)!important;
-        scrollbar-width:thin;
-        scrollbar-color:rgba(255,255,255,.3) transparent;
-        transition:none!important;
-    }
-    #mainSidebar h2{display:flex!important;align-items:center!important;justify-content:center!important;gap:6px!important;margin:0 12px 8px!important;color:#fff!important;font-size:24px!important;font-weight:700!important;letter-spacing:0!important;text-align:center!important}
-    #mainSidebar h2 .brand-fast{color:#fff!important}
-    #mainSidebar h2 .brand-accent{color:#facc15!important}
-    #mainSidebar .role{margin:0 18px 24px!important;color:rgba(219,234,254,.75)!important;font-size:10px!important;letter-spacing:.12em!important;text-align:center!important;text-transform:uppercase}
-    #mainSidebar a{
-        position:relative;
-        display:flex!important;
-        align-items:center;
-        gap:0;
-        width:90%;
-        margin:0 auto 8px!important;
-        padding:10px 16px!important;
-        border:1px solid transparent!important;
-        border-radius:14px!important;
-        color:#d1d5db!important;
-        font-size:13.6px!important;
-        font-weight:600!important;
-        letter-spacing:.02em;
-        white-space:nowrap;
-        overflow:hidden;
-        text-overflow:ellipsis;
-        animation:none!important;
-        transform:none!important;
-        transition:background-color .2s ease,color .2s ease,border-color .2s ease!important;
-    }
-    #mainSidebar a::before,
-    #mainSidebar a::after{content:none!important;display:none!important}
-    #mainSidebar .sidebar-icon{
-        display:inline-grid!important;
-        place-items:center;
-        flex:0 0 1.2rem!important;
-        width:1.2rem!important;
-        min-width:1.2rem!important;
-        height:1.2rem!important;
-        margin-right:12px!important;
-        line-height:0!important;
-        border:0!important;
-        border-radius:0!important;
-        background:transparent!important;
-        color:inherit!important;
-        pointer-events:none!important;
-        animation:none!important;
-        transform:none!important;
-        transition:none!important;
-    }
-    #mainSidebar .sidebar-icon svg{
-        display:block!important;
-        flex:0 0 1.2rem!important;
-        width:1.2rem!important;
-        height:1.2rem!important;
-        fill:none!important;
-        stroke:currentColor!important;
-        stroke-width:2!important;
-        stroke-linecap:round!important;
-        stroke-linejoin:round!important;
-        shape-rendering:geometricPrecision;
-        pointer-events:none!important;
-        animation:none!important;
-        transform:none!important;
-        transition:none!important;
-        will-change:auto;
-    }
-    #mainSidebar a:hover:not(.active),
-    #mainSidebar a:focus-visible:not(.active){background:#1727a6!important;color:#fff!important;border-color:transparent!important}
-    #mainSidebar a.active{background:#fff!important;color:#0D1B8C!important;border-radius:9999px!important;font-weight:700!important;box-shadow:none!important}
-    #mainSidebar .notif-badge{margin-left:auto!important;background:#facc15!important;color:#172554!important;min-width:18px!important;border-radius:999px!important;font-size:10px!important;font-weight:800!important}
-    #mainSidebar,
-    #mainSidebar *{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
-    html{scrollbar-gutter:stable;}
-    @media (min-width:651px){
-        .layout{display:block!important;}
-        #mainSidebar{
-            position:fixed!important;
-            inset:0 auto 0 0!important;
-            z-index:100!important;
-            height:100vh!important;
-        }
-        .content{
-            width:calc(100% - 17rem)!important;
-            margin-left:17rem!important;
-        }
-    }
-    @media (max-width:650px){
-        .layout{display:block!important;}
-        .content{width:100%!important;margin-left:0!important;}
-        #mainSidebar{
-            position:fixed!important;
-            inset:0 auto 0 0!important;
-            z-index:100!important;
-            width:17rem!important;
-            height:100vh!important;
-            border-radius:0!important;
-            padding:30px 0 18px!important;
-            transform:translateX(-102%)!important;
-            transition:transform .3s ease!important;
-        }
-        body.menu-open #mainSidebar{
-            transform:translateX(0)!important;
-        }
-        body.menu-open::after{
-            content:"";
-            position:fixed;
-            inset:0;
-            z-index:90!important;
-            background:rgba(0,0,0,.58);
-        }
-    }
     /* Summary cards shared by PB/PD and expansion pages. */
     .summary-cards{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;margin:0 0 16px}
     .summary-card{min-height:92px;padding:15px 16px;border:1px solid #d9e2ec;border-top:3px solid #1e6fa8;border-radius:12px;background:#fff;box-shadow:0 2px 8px rgba(18,59,93,.08);display:flex;flex-direction:column;justify-content:space-between;gap:8px}
