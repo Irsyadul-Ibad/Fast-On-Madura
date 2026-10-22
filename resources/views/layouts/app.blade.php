@@ -215,7 +215,7 @@
     body{background:var(--ref-page);color:var(--ref-text);font-family:Inter,Arial,sans-serif}
     .content,main,body:has(.modern-dashboard) main{background:var(--ref-page)}
     header{background:#fff;border-bottom-color:var(--ref-line);box-shadow:0 1px 5px rgba(15,23,42,.05)}header strong{color:#091267}header form button{background:#f1f5f9;color:#091267;border-color:var(--ref-line)}header form button:hover{background:#e2e8f0;color:#091267}
-    .box,.card,.modern-panel,.metric-card,.vendor-card{background:#fff;border-color:var(--ref-line);border-radius:12px;color:var(--ref-text);box-shadow:0 2px 8px rgba(15,23,42,.08)}.box:hover,.card:hover,.modern-panel:hover{border-color:#cbd5e1;box-shadow:0 4px 12px rgba(15,23,42,.1)}
+    .box,.card,.modern-panel,.metric-card{background:#fff;border-color:var(--ref-line);border-radius:12px;color:var(--ref-text);box-shadow:0 2px 8px rgba(15,23,42,.08)}.box:hover,.card:hover,.modern-panel:hover{border-color:#cbd5e1;box-shadow:0 4px 12px rgba(15,23,42,.1)}
     .kartu-judul,.section-head,.panel-heading h2{color:#1e293b}.pill{background:#eff6ff;color:#1d4ed8;border:0}.scroll{background:#fff;border-color:var(--ref-line)}.tabel{background:#fff;color:var(--ref-text);border-radius:8px}.tabel th,.tabel td{border-color:var(--ref-line)}.tabel thead th{background:var(--ref-navy);color:#fff}.tabel thead th.grup{background:#183bb8;color:#fff}.tabel thead th.sub{background:#2452cf;color:#fff}.tabel tbody tr:nth-child(even){background:#f8fafc}.tabel tbody tr:hover{background:#eff6ff}.tabel td b{color:#1e3a5f}
     .tabel .ikon-dtl,.tabel .detail-link,.laporan-detail{background:var(--ref-blue)!important;border-color:var(--ref-blue)!important;color:#fff!important;box-shadow:0 2px 8px rgba(43,115,254,.2)}.tabel .ikon-dtl:hover,.tabel .detail-link:hover,.laporan-detail:hover{background:#1d4ed8!important;border-color:#1d4ed8!important;color:#fff!important;transform:none}.tabel .ikon-syarat{background:#eff6ff;color:#2563eb;border-color:#bfdbfe}
     input,select,textarea{background:#fff;color:var(--ref-text);border-color:#cbd5e1;font-family:Inter,Arial,sans-serif}input::placeholder,textarea::placeholder{color:#94a3b8}input:focus,select:focus,textarea:focus{outline:3px solid rgba(43,115,254,.14);border-color:var(--ref-blue)!important;box-shadow:0 0 0 1px var(--ref-blue)}button,.btn{background:var(--ref-blue);color:#fff;border-radius:8px;box-shadow:0 2px 8px rgba(15,23,42,.08)}button:hover,.btn:hover{background:#1d4ed8;color:#fff}a{color:#1e6fa8}
@@ -314,7 +314,6 @@
     .kebutuhan-tabel select,.kebutuhan-tabel input{background:#0f1c30!important;color:#dbe7f6;border-color:#385170}
     .kebutuhan-tabel select:focus,.kebutuhan-tabel input:focus{border-color:#20b8cf;box-shadow:0 0 0 3px rgba(32,184,207,.12)}
     #tujuanKirim{background:#111d32!important;color:#e6f1fc;border-color:#20b8cf!important}
-    .vendor-card{background:linear-gradient(145deg,#172742,#131f35);border-color:#2b4161}
     .vendor-card-head{border-bottom-color:#2b3d5b}
     .vendor-card-head strong,.history-item strong{color:#eef5ff}
     .vendor-card-head span,.history-item div span{color:#91a2bd}
@@ -338,7 +337,7 @@
     header strong{font-weight:750;letter-spacing:.015em}
     header{background:rgba(13,21,38,.94);border-bottom-color:#22324d}
     main{background:radial-gradient(circle at 84% 0%,#182747 0,#0e172a 37%,var(--ui-bg) 78%)}
-    .box,.card,.modern-panel,.metric-card,.vendor-card{border-radius:12px;border-color:var(--ui-border);box-shadow:0 8px 24px rgba(0,0,0,.16)}
+    .box,.card,.modern-panel,.metric-card{border-radius:12px;border-color:var(--ui-border);box-shadow:0 8px 24px rgba(0,0,0,.16)}
     .box:hover,.card:hover,.modern-panel:hover{border-color:#385276;box-shadow:0 10px 28px rgba(0,0,0,.2)}
     button,.btn{border-radius:7px;font-weight:650}
     input,select,textarea{border-radius:7px}
@@ -361,7 +360,7 @@
     header strong{color:var(--navy);font-family:Inter,Arial,sans-serif;font-size:16px;font-weight:700}
     header form button{background:var(--white);color:var(--navy);border-color:var(--border)}header form button:hover{background:#edf4f8;color:var(--navy)}
     main,body:has(.modern-dashboard) main{background:var(--page)}
-    .box,.card,.modern-panel,.metric-card,.vendor-card{background:var(--white);border:1px solid var(--border);border-radius:8px;color:var(--text);box-shadow:0 2px 8px rgba(18,59,93,.08)}
+    .box,.card,.modern-panel,.metric-card{background:var(--white);border:1px solid var(--border);border-radius:8px;color:var(--text);box-shadow:0 2px 8px rgba(18,59,93,.08)}
     .box:hover,.card:hover,.modern-panel:hover{border-color:#c5d5e3;box-shadow:0 3px 10px rgba(18,59,93,.1)}
     .kartu-judul,.section-head,.panel-heading h2{color:var(--text)}.pill{background:#eaf3f8;color:var(--blue);border-radius:8px}
     .scroll{background:var(--white);border-color:var(--border);border-radius:8px}.tabel{background:var(--white);color:var(--text);border-radius:8px}
@@ -388,7 +387,7 @@
     body{background:linear-gradient(135deg,var(--login-deep) 0%,var(--login-blue) 55%,var(--login-mid) 100%);color:#eaf5ff;font-family:Inter,Arial,sans-serif}
     .content{background:transparent}
     header{background:rgba(5,14,84,.42);border-bottom-color:rgba(255,255,255,.14);box-shadow:0 1px 16px rgba(0,0,0,.18);backdrop-filter:blur(14px)}header strong{color:#fff}header form button{background:rgba(255,255,255,.1);color:#fff;border-color:rgba(255,255,255,.22)}header form button:hover{background:rgba(255,255,255,.18);color:#fff}
-    main,body:has(.modern-dashboard) main{background:transparent}.box,.card,.modern-panel,.metric-card,.vendor-card{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.2);color:#eaf5ff;box-shadow:0 12px 30px rgba(0,0,0,.16),inset 0 1px rgba(255,255,255,.06);backdrop-filter:blur(12px)}.box:hover,.card:hover,.modern-panel:hover{border-color:rgba(39,169,214,.5);box-shadow:0 15px 34px rgba(0,0,0,.22)}
+    main,body:has(.modern-dashboard) main{background:transparent}.box,.card,.modern-panel,.metric-card{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.2);color:#eaf5ff;box-shadow:0 12px 30px rgba(0,0,0,.16),inset 0 1px rgba(255,255,255,.06);backdrop-filter:blur(12px)}.box:hover,.card:hover,.modern-panel:hover{border-color:rgba(39,169,214,.5);box-shadow:0 15px 34px rgba(0,0,0,.22)}
     .kartu-judul,.section-head,.panel-heading h2{color:#fff}.pill{background:rgba(39,169,214,.18);color:#9be7fa;border:1px solid rgba(39,169,214,.25)}.scroll{border-color:rgba(255,255,255,.2);background:rgba(255,255,255,.06)}.tabel{background:rgba(8,22,95,.62);color:#eaf5ff;border-radius:8px}.tabel th,.tabel td{border-color:rgba(255,255,255,.14)}.tabel thead th{background:rgba(7,27,111,.82);color:#dff6ff}.tabel thead th.grup{background:rgba(30,111,168,.6);color:#fff}.tabel thead th.sub{background:rgba(39,169,214,.28);color:#e8fbff}.tabel tbody tr:nth-child(even){background:rgba(255,255,255,.035)}.tabel tbody tr:hover{background:rgba(39,169,214,.12)}.tabel td b{color:#fff}
     .tabel .ikon-dtl,.tabel .detail-link,.laporan-detail{background:linear-gradient(135deg,var(--login-blue),#0093e9)!important;border-color:rgba(255,255,255,.22)!important;color:#fff!important;box-shadow:0 5px 14px rgba(0,115,204,.25)}.tabel .ikon-dtl:hover,.tabel .detail-link:hover,.laporan-detail:hover{background:linear-gradient(135deg,#091267,#27a9d6)!important;color:#fff!important;transform:translateY(-1px)}.tabel .ikon-syarat{background:rgba(255,255,255,.1);color:#b8effb;border-color:rgba(255,255,255,.2)}
     input,select,textarea{background:rgba(255,255,255,.1);color:#fff;border-color:rgba(255,255,255,.24);font-family:Inter,Arial,sans-serif}input::placeholder,textarea::placeholder{color:rgba(255,255,255,.55)}input:focus,select:focus,textarea:focus{outline:3px solid rgba(39,169,214,.22);border-color:var(--login-cyan)!important;box-shadow:0 0 0 1px var(--login-cyan)}button,.btn{background:linear-gradient(135deg,var(--login-blue),#0093e9);color:#fff;border-radius:8px;box-shadow:0 4px 14px rgba(0,115,204,.2)}button:hover,.btn:hover{background:linear-gradient(135deg,var(--login-deep),#0073cc);color:#fff}
@@ -402,7 +401,7 @@
     :root{color-scheme:light;--ref-navy:#0D1B8C;--ref-blue:#2B73FE;--ref-cyan:#27A9D6;--ref-page:#F8FAFC;--ref-line:#E2E8F0;--ref-text:#334155;--ref-muted:#64748B}
     body{background:var(--ref-page);color:var(--ref-text);font-family:Inter,Arial,sans-serif}.content,main,body:has(.modern-dashboard) main{background:var(--ref-page)}
     header{background:#fff;border-bottom-color:var(--ref-line);box-shadow:0 1px 5px rgba(15,23,42,.05)}header strong{color:#091267}header form button{background:#f1f5f9;color:#091267;border-color:var(--ref-line)}header form button:hover{background:#e2e8f0;color:#091267}
-    .box,.card,.modern-panel,.metric-card,.vendor-card{background:#fff;border-color:var(--ref-line);border-radius:12px;color:var(--ref-text);box-shadow:0 2px 8px rgba(15,23,42,.08)}.box:hover,.card:hover,.modern-panel:hover{border-color:#cbd5e1;box-shadow:0 4px 12px rgba(15,23,42,.1)}.kartu-judul,.section-head,.panel-heading h2{color:#1e293b}.pill{background:#eff6ff;color:#1d4ed8;border:0}
+    .box,.card,.modern-panel,.metric-card{background:#fff;border-color:var(--ref-line);border-radius:12px;color:var(--ref-text);box-shadow:0 2px 8px rgba(15,23,42,.08)}.box:hover,.card:hover,.modern-panel:hover{border-color:#cbd5e1;box-shadow:0 4px 12px rgba(15,23,42,.1)}.kartu-judul,.section-head,.panel-heading h2{color:#1e293b}.pill{background:#eff6ff;color:#1d4ed8;border:0}
     .scroll,.tabel{background:#fff;border-color:var(--ref-line)}.tabel{color:var(--ref-text);border-radius:8px}.tabel th,.tabel td{border-color:var(--ref-line)}.tabel thead th{background:var(--ref-navy);color:#fff}.tabel thead th.grup{background:#183bb8}.tabel thead th.sub{background:#2452cf}.tabel tbody tr:nth-child(even){background:#f8fafc}.tabel tbody tr:hover{background:#eff6ff}.tabel td b{color:#1e3a5f}.tabel .ikon-dtl,.tabel .detail-link,.laporan-detail{background:var(--ref-blue)!important;border-color:var(--ref-blue)!important;color:#fff!important}.tabel .ikon-dtl:hover,.tabel .detail-link:hover,.laporan-detail:hover{background:#1d4ed8!important;border-color:#1d4ed8!important;transform:none}.tabel .ikon-syarat{background:#eff6ff;color:#2563eb;border-color:#bfdbfe}
     input,select,textarea{background:#fff;color:var(--ref-text);border-color:#cbd5e1;font-family:Inter,Arial,sans-serif}input::placeholder,textarea::placeholder{color:#94a3b8}input:focus,select:focus,textarea:focus{outline:3px solid rgba(43,115,254,.14);border-color:var(--ref-blue)!important;box-shadow:0 0 0 1px var(--ref-blue)}button,.btn{background:var(--ref-blue);color:#fff;border-radius:8px}button:hover,.btn:hover{background:#1d4ed8;color:#fff}a{color:#1e6fa8}a.btn,a.btn-excel{background:var(--ref-blue);border-color:var(--ref-blue);color:#fff!important}a.btn:hover,a.btn-excel:hover{background:#1d4ed8;border-color:#1d4ed8;transform:none}a.btn.btn-abu{background:#f1f5f9!important;border-color:#cbd5e1!important;color:#334155!important}
     .stat-card,.notif-item,.vendor-berkas,.vendor-report,.vendor-report-form,.history-edit-form{background:#fff;border-color:var(--ref-line);color:var(--ref-text)}.stat-card small,.kartu-kaki,.halaman,.vendor-berkas span,.vendor-card-head span,.history-item div span{color:var(--ref-muted)}.stat-card strong,.notif-item strong{color:var(--ref-navy)}.notif-item.unread{background:#eff6ff;border-left-color:var(--ref-blue)}.ringkasan span{background:#eff6ff;color:#334155}
@@ -417,9 +416,9 @@
     /* Shared modern dashboard language across every role and page. */
     .content{background:#f5f8fc!important}
     .content>h1,.content>h2,.content>h3{color:#123b5d!important;font-weight:750;letter-spacing:-.025em}
-    .box,.card,.kartu,.vendor-card,.notif-box,.upload-card,.history-card{border:1px solid #dbe5f0!important;border-radius:16px!important;background:#fff!important;box-shadow:0 8px 24px rgba(13,27,140,.06)!important}
-    .box:not(.filter),.card,.vendor-card,.notif-box{padding:18px!important}
-    .box:hover,.card:hover,.vendor-card:hover,.notif-box:hover{border-color:#c7d8ec!important;box-shadow:0 11px 28px rgba(13,27,140,.09)!important}
+    .box,.card,.kartu,.notif-box,.upload-card,.history-card{border:1px solid #dbe5f0!important;border-radius:16px!important;background:#fff!important;box-shadow:0 8px 24px rgba(13,27,140,.06)!important}
+    .box:not(.filter),.card,.notif-box{padding:18px!important}
+    .box:hover,.card:hover,.notif-box:hover{border-color:#c7d8ec!important;box-shadow:0 11px 28px rgba(13,27,140,.09)!important}
     .section-head,.kartu-judul,.card-header,.vendor-card-head,.notif-head{border-radius:12px!important;color:#fff!important;background:#0d1b8c!important}
     .section-head h2,.section-head h3,.card-header h2,.card-header h3,.vendor-card-head h3,.notif-head h2{color:#fff!important}
     .scroll{border:1px solid #dbe5f0!important;border-radius:11px!important;background:#fff!important}
@@ -439,7 +438,7 @@
     .proses-tabel,.kebutuhan-tabel{border-radius:10px!important;overflow:hidden}.proses-tabel th,.kebutuhan-tabel th{background:#edf4ff!important;color:#123b5d!important}
     .vendor-form,.planning-result-box,.construction-report-box,.proses-box{border-radius:12px!important;border-color:#dbe5f0!important;box-shadow:0 3px 12px rgba(13,27,140,.05)}
     .notif-item{border-radius:11px!important}.notif-item.unread{border-left:4px solid #f4c300!important;background:#fffaf0!important}
-    @media(max-width:700px){.box:not(.filter),.card,.vendor-card,.notif-box{padding:14px!important}.content>h1,.content>h2,.content>h3{font-size:20px!important}.tabel{font-size:11px!important}}
+    @media(max-width:700px){.box:not(.filter),.card,.notif-box{padding:14px!important}.content>h1,.content>h2,.content>h3{font-size:20px!important}.tabel{font-size:11px!important}}
 </style>
 <style>
     /* PB/PD table shell: keep the record bar, action area and table as one visual panel. */
