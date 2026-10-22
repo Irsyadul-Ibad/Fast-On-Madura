@@ -250,9 +250,15 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <th>JUMLAH TIANG</th>
-                                    <td><select name="jenis_tiang"><option value="">Pilih</option><option>9</option><option>11</option><option>13</option></select></td>
-                                    <td><input name="jml_tiang" type="number" min="0" placeholder="Isi jumlah sendiri"></td>
+                                    <th>JUMLAH TIANG TM</th>
+                                    <td><select name="jenis_tiang_tm"><option value="">Pilih</option><option>11</option><option>13</option></select></td>
+                                    <td><input name="jml_tiang_tm" type="number" min="0" placeholder="Isi jumlah sendiri"></td>
+                                    <td>BUAH</td>
+                                </tr>
+                                <tr>
+                                    <th>JUMLAH TIANG TR</th>
+                                    <td><select name="jenis_tiang_tr"><option value="">Pilih</option><option>9</option></select></td>
+                                    <td><input name="jml_tiang_tr" type="number" min="0" placeholder="Isi jumlah sendiri"></td>
                                     <td>BUAH</td>
                                 </tr>
                                 <tr>

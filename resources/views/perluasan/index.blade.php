@@ -150,6 +150,10 @@
                                     data-detail-url="{{ route('pbpd.detail.update', $row->id) }}"
                                     data-jenis-tiang="{{ $m?->jenis_tiang }}"
                                     data-jml-tiang="{{ $m?->jml_tiang }}"
+                                    data-jenis-tiang-tm="{{ $m?->jenis_tiang_tm ?? $m?->jenis_tiang }}"
+                                    data-jml-tiang-tm="{{ $m?->jml_tiang_tm ?? $m?->jml_tiang }}"
+                                    data-jenis-tiang-tr="{{ $m?->jenis_tiang_tr }}"
+                                    data-jml-tiang-tr="{{ $m?->jml_tiang_tr }}"
                                     data-jenis-konduktor-tm="{{ $m?->jenis_konduktor_tm }}"
                                     data-jml-konduktor-tm="{{ $m?->jml_konduktor_tm }}"
                                     data-jenis-konduktor-tr="{{ $m?->jenis_konduktor_tr }}"
@@ -295,8 +299,10 @@
                     @csrf
                     <div class="detail-edit-table">
                         <label>RAB <input id="rabInputPerluasan" name="rab_display" type="text" inputmode="numeric" autocomplete="off" placeholder="Masukkan RAB" @disabled(!$canEditRab)><input id="rabValuePerluasan" name="rab" type="hidden"></label>
-                        <label>Jenis Tiang <select id="jenisTiangPerluasan" name="jenis_tiang" @disabled(!$canEditMaterial)><option value="">Pilih</option><option>9</option><option>11</option><option>13</option></select></label>
-                        <label>Jumlah Tiang <input id="jmlTiangPerluasan" name="jml_tiang" type="number" min="0" @disabled(!$canEditMaterial)></label>
+                        <label>Jenis Tiang TM<select id="jenisTiangTmPerluasan" name="jenis_tiang_tm" @disabled(!$canEditMaterial)><option value="">Pilih</option><option>11</option><option>13</option></select></label>
+                        <label>Jumlah Tiang TM <input id="jmlTiangTmPerluasan" name="jml_tiang_tm" type="number" min="0" @disabled(!$canEditMaterial)></label>
+                        <label>Jenis Tiang TR<select id="jenisTiangTrPerluasan" name="jenis_tiang_tr" @disabled(!$canEditMaterial)><option value="">Pilih</option><option>9</option></select></label>
+                        <label>Jumlah Tiang TR<input id="jmlTiangTrPerluasan" name="jml_tiang_tr" type="number" min="0" @disabled(!$canEditMaterial)></label>
                         <label>Jenis Konduktor TM<select id="jenisKonduktorTmPerluasan" name="jenis_konduktor_tm" @disabled(!$canEditMaterial)><option value="">Pilih</option><option>AAAC-S 240</option><option>AAAC-S 150</option><option>AAAC-S 70</option><option>AAAC 240</option><option>AAAC 150</option><option>AAAC 70</option></select></label>
                         <label>Jumlah Konduktor TM<input id="jmlKonduktorTmPerluasan" name="jml_konduktor_tm" type="number" min="0" @disabled(!$canEditMaterial)></label>
                         <label>Jenis Konduktor TR<select id="jenisKonduktorTrPerluasan" name="jenis_konduktor_tr" @disabled(!$canEditMaterial)><option value="">Pilih</option><option>LVTC 3x70+1x70</option><option>LVTC 3x70+1x50</option></select></label>
@@ -618,8 +624,10 @@
                         rabInputPerluasan.value = formatRupiah(button.dataset.rab || '');
                         rabValuePerluasan.value = button.dataset.rab || '';
                         form.action = button.dataset.detailUrl;
-                        document.getElementById('jenisTiangPerluasan').value = button.dataset.jenisTiang || '';
-                        document.getElementById('jmlTiangPerluasan').value = button.dataset.jmlTiang || '';
+                        document.getElementById('jenisTiangTmPerluasan').value = button.dataset.jenisTiangTm || button.dataset.jenisTiang || '';
+                        document.getElementById('jmlTiangTmPerluasan').value = button.dataset.jmlTiangTm || button.dataset.jmlTiang || '';
+                        document.getElementById('jenisTiangTrPerluasan').value = button.dataset.jenisTiangTr || '';
+                        document.getElementById('jmlTiangTrPerluasan').value = button.dataset.jmlTiangTr || '';
                         document.getElementById('jenisKonduktorTmPerluasan').value = button.dataset.jenisKonduktorTm || '';
                         document.getElementById('jmlKonduktorTmPerluasan').value = button.dataset.jmlKonduktorTm || '';
                         document.getElementById('jenisKonduktorTrPerluasan').value = button.dataset.jenisKonduktorTr || '';
