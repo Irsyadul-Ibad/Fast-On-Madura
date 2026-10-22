@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Imports\PelangganPbpdImport;
+use App\Jobs\ProcessPbpdImport;
 use App\Models\ImportExcel;
 use App\Models\Ulp;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Storage;
+use Throwable;
 
 class PbpdUploadController extends Controller
 {
@@ -42,29 +43,37 @@ class PbpdUploadController extends Controller
             ? $this->detectCsvDelimiter($file->getRealPath())
             : ',';
 
+        $path = $file->store('pbpd-imports', 'local');
+
+        if (! $path) {
+            return back()->withErrors(['file' => 'File gagal disimpan. Silakan coba lagi.']);
+        }
+
         $import = ImportExcel::create([
             'file_name'   => $file->getClientOriginalName(),
             'uploaded_by' => Auth::id(),
+            'status'      => 'queued',
+            'file_path'   => $path,
         ]);
 
-        // Gunakan ULP pilihan form sebagai cadangan ketika kolom ULP di Excel kosong.
-        $proses = new PelangganPbpdImport(
-            $import->id,
-            $request->integer('ulp_id') ?: null,
-            $csvDelimiter,
-        );
-        // File gabungan seluruh ULP dapat berisi ribuan baris. Beri waktu
-        // cukup untuk proses import setelah pembacaan sudah dibuat chunked.
-        set_time_limit(900);
-        Excel::import($proses, $file);
+        try {
+            ProcessPbpdImport::dispatch(
+                $import->id,
+                $request->integer('ulp_id') ?: null,
+                $csvDelimiter,
+            );
+        } catch (Throwable $exception) {
+            $import->update([
+                'status' => 'failed',
+                'error_message' => mb_substr($exception->getMessage(), 0, 2000),
+            ]);
+            Storage::disk('local')->delete($path);
 
-        return redirect()->route('pbpd.upload')->with('hasil', [
-            'import_id'  => $import->id,
-            'baru'       => $proses->baru,
-            'diperbarui' => $proses->diperbarui,
-            'gagal'      => array_slice($proses->gagal, 0, 20),
-            'jml_gagal'  => count($proses->gagal),
-        ]);
+            return back()->withErrors(['file' => 'File tersimpan, tetapi gagal masuk antrean. Silakan coba lagi.']);
+        }
+
+        return redirect()->route('pbpd.upload')
+            ->with('queued', 'File berhasil diunggah dan sedang menunggu diproses. Anda tidak perlu menunggu di halaman ini.');
     }
 
     private function detectCsvDelimiter(?string $path): string

@@ -4,20 +4,8 @@
 @section('judul', 'Upload Data PB/PD')
 
 @section('isi')
-    @if (session('hasil'))
-        @php $h = session('hasil'); @endphp
-        <div class="box">
-            <b>Upload selesai:</b>
-            {{ $h['baru'] }} data baru, {{ $h['diperbarui'] }} diperbarui, {{ $h['jml_gagal'] }} dilewati.
-            <a class="btn" href="{{ route('pbpd.index', ['import' => $h['import_id']]) }}">
-                Lihat &amp; filter data ini
-            </a>
-            @if ($h['jml_gagal'])
-                <ul style="margin-top:10px;color:#a61b1b">
-                    @foreach ($h['gagal'] as $g) <li>{{ $g }}</li> @endforeach
-                </ul>
-            @endif
-        </div>
+    @if (session('queued'))
+        <div class="box" role="status">{{ session('queued') }}</div>
     @endif
 
     <form class="box filter" method="POST" action="{{ route('pbpd.upload') }}" enctype="multipart/form-data">
@@ -42,7 +30,7 @@
                         <th style="background:#0b3d6b">Waktu</th>
                         <th style="background:#0b3d6b">File</th>
                         <th style="background:#0b3d6b">Oleh (user id)</th>
-                        <th style="background:#0b3d6b"></th>
+                        <th style="background:#0b3d6b">Status / hasil</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -51,7 +39,32 @@
                         <td>{{ $r->created_at->format('d/m/Y H:i') }}</td>
                         <td>{{ $r->file_name }}</td>
                         <td>{{ $r->uploaded_by }}</td>
-                        <td><a href="{{ route('pbpd.index', ['import' => $r->id]) }}">Lihat data</a></td>
+                        <td>
+                            @if ($r->status === 'queued')
+                                <span>Dalam antrean</span>
+                            @elseif ($r->status === 'processing')
+                                <span>Sedang diproses…</span>
+                            @elseif ($r->status === 'completed')
+                                <span>Selesai: {{ $r->baru }} baru, {{ $r->diperbarui }} diperbarui, {{ $r->jml_gagal }} dilewati.</span>
+                                <a href="{{ route('pbpd.index', ['import' => $r->id]) }}">Lihat data</a>
+                                @if ($r->jml_gagal && $r->failed_rows)
+                                    <details>
+                                        <summary>Detail baris yang dilewati</summary>
+                                        <ul style="margin-top:8px;color:#a61b1b">
+                                            @foreach ($r->failed_rows as $rowError) <li>{{ $rowError }}</li> @endforeach
+                                            @if ($r->jml_gagal > count($r->failed_rows))
+                                                <li>Menampilkan 100 dari {{ $r->jml_gagal }} baris.</li>
+                                            @endif
+                                        </ul>
+                                    </details>
+                                @endif
+                            @else
+                                <span>Gagal</span>
+                                @if ($r->error_message)
+                                    <details><summary>Lihat penyebab</summary><div>{{ $r->error_message }}</div></details>
+                                @endif
+                            @endif
+                        </td>
                     </tr>
                 @empty
                     <tr><td colspan="4" style="text-align:center">Belum ada upload.</td></tr>
@@ -60,4 +73,9 @@
             </table>
         </div>
     </div>
+    @if ($riwayat->contains(fn ($r) => in_array($r->status, ['queued', 'processing'], true)))
+        <script>
+            window.setTimeout(() => window.location.reload(), 5000);
+        </script>
+    @endif
 @endsection
