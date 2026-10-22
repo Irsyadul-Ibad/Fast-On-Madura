@@ -84,6 +84,7 @@
         @endforelse
     </div>
 
+    @push('page-styles')
     <style>
         .vendor-card { margin-top:16px; padding:18px; border:1px solid #ccd8e5; border-radius:10px; background:#f8fbfe; }
         .vendor-card-head { display:flex; justify-content:space-between; gap:16px; padding-bottom:14px; border-bottom:1px solid #dce5ee; }
@@ -152,6 +153,7 @@
         .history-edit-form textarea::placeholder{color:#94a3b8}
         @media (max-width:600px) { .history-button { float:none; margin:12px 0 0; } .history-item { align-items:flex-start; flex-direction:column; } }
     </style>
+    @endpush
     <script>
         (() => {
             const panel = document.getElementById('historyPanel');

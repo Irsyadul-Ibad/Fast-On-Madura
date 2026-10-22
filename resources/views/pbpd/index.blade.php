@@ -349,6 +349,7 @@
         </div>
     </div>
 
+    @push('page-styles')
     <style>
         .detail-modal { position:fixed; inset:0; z-index:20; display:grid; place-items:center; padding:20px; background:rgba(0,0,0,.45); }
         .detail-modal[hidden] { display:none; }
@@ -404,6 +405,7 @@
         .syarat-upload-form input[type=file] { flex:1; min-width:220px; padding:8px; border:1px solid #b9c7d5; border-radius:6px; }
         @media (max-width:600px) { .tujuan-cards{grid-template-columns:1fr}.tujuan-card{min-height:72px!important}.detail-grid { grid-template-columns:1fr; } .detail-full { grid-column:auto; } .detail-rab-form { align-items:stretch; flex-direction:column; } }
     </style>
+    @endpush
 
     <script>
         (() => {
@@ -507,6 +509,7 @@
             }
         })();
     </script>
+    @push('page-styles')
     <style>
         /* Modern dashboard treatment for the existing PB/PD screen. */
         .filter{position:relative;display:flex;align-items:center;column-gap:10px!important;row-gap:12px!important;flex-wrap:wrap;padding:70px 18px 20px!important;background:#fff!important;border:1px solid #dbe5f0!important;border-radius:16px!important;box-shadow:0 8px 24px rgba(13,27,140,.07)!important}
@@ -538,4 +541,5 @@
         .tabel .pill{font-size:11px!important;font-weight:700;border-radius:999px!important;padding:5px 9px!important}
         @media(max-width:760px){.filter{padding:64px 12px 14px!important}.filter>*{flex:1 1 100%}.filter::before{padding-left:12px}.filter::after{left:12px}.kartu-judul{align-items:flex-start;flex-direction:column}.kartu .scroll{margin:0 10px 10px}.table-title-content{align-items:flex-start;flex-direction:column;gap:8px}.table-send-button{align-self:flex-start}}
     </style>
+    @endpush
 @endsection

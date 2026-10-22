@@ -45,9 +45,12 @@
         </aside>
     </div>
 </div>
+@push('page-styles')
 <style>
     .modern-dashboard{color:#263746}.dashboard-topline{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;margin:4px 0 24px}.eyebrow{color:#0072ce;font-size:11px;font-weight:800;letter-spacing:.12em}.dashboard-topline h1{margin:7px 0 5px;color:#173b5c;font-size:26px;letter-spacing:-.03em}.dashboard-topline h1 span{color:#ffc900}.dashboard-topline p,.panel-heading p{margin:0;color:#8294a3;font-size:13px}.dashboard-primary{padding:11px 16px;border-radius:9px;background:#075ca8;color:#fff;text-decoration:none;font-size:13px;font-weight:700;box-shadow:0 8px 18px rgba(0,91,170,.18);transition:transform .2s,box-shadow .2s}.dashboard-primary:hover{color:#fff;transform:translateY(-1px);box-shadow:0 10px 22px rgba(0,91,170,.24)}.dashboard-primary span{margin-left:8px;font-size:16px}.metric-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:16px}.metric-card{position:relative;overflow:hidden;padding:18px 18px 16px;border:1px solid #e3e9f1;border-radius:14px;background:#fff;box-shadow:0 6px 18px rgba(38,60,85,.045);transition:transform .2s,box-shadow .2s}.metric-card:hover{transform:translateY(-2px);box-shadow:0 12px 24px rgba(38,60,85,.09)}.metric-card::after{content:"";position:absolute;right:-28px;bottom:-35px;width:105px;height:105px;border-radius:50%;background:var(--metric-color);opacity:.075}.metric-blue{--metric-color:#0072ce}.metric-yellow{--metric-color:#e1a900}.metric-cyan{--metric-color:#0099c8}.metric-green{--metric-color:#159447}.metric-label{display:flex;align-items:center;gap:8px;color:#718696;font-size:12px}.metric-icon{display:grid;place-items:center;width:29px;height:29px;border-radius:9px;background:color-mix(in srgb,var(--metric-color) 12%,white);color:var(--metric-color);font-weight:800}.metric-card strong{display:block;margin:15px 0 2px;color:#173b5c;font-size:29px;letter-spacing:-.045em}.metric-card small{color:#92a2af;font-size:11px}.metric-line{height:5px;margin-top:15px;border-radius:5px;background:#edf2f6;overflow:hidden}.metric-line i{display:block;height:100%;border-radius:5px;background:var(--metric-color)}.dashboard-layout{display:grid;grid-template-columns:minmax(0,1.8fr) minmax(280px,.9fr);gap:16px}.dashboard-main-column,.dashboard-side-column{display:grid;align-content:start;gap:16px}.modern-panel{min-width:0;padding:19px;border:1px solid #e3e9f1;border-radius:14px;background:#fff;box-shadow:0 6px 18px rgba(38,60,85,.04)}.compact-panel{padding:18px}.panel-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:15px}.panel-heading h2{margin:0 0 4px;color:#173b5c;font-size:15px}.panel-heading a{color:#0072ce;font-size:12px;font-weight:700;text-decoration:none}.modern-table-wrap{overflow-x:auto}.modern-table{width:100%;border-collapse:collapse;font-size:12px}.modern-table th{padding:9px 8px;border-bottom:1px solid #e6edf2;color:#8a9aa7;font-size:10px;text-align:left;letter-spacing:.05em}.modern-table td{padding:11px 8px;border-bottom:1px solid #eef2f5;color:#536b7b;white-space:nowrap}.modern-table tr:last-child td{border-bottom:0}.modern-table tbody tr{transition:background .15s}.modern-table tbody tr:hover{background:#f6fbfe}.modern-table td b,.modern-table td small{display:block}.modern-table td b{color:#294a63;font-weight:650}.modern-table td small{margin-top:3px;color:#96a6b2;font-size:10px}.modern-table .agenda{color:#0072ce;font-size:11px}.status-tag{display:inline-block;padding:4px 7px;border-radius:6px;font-size:10px;font-weight:700}.status-tag.stage{background:#edf6fc;color:#0064a9}.status-dot{display:inline-block;width:6px;height:6px;margin-right:6px;border-radius:50%;background:#17a15c}.stage-chart{display:grid;gap:12px}.stage-row{display:grid;grid-template-columns:125px minmax(60px,1fr) 25px;align-items:center;gap:10px;color:#627989;font-size:12px}.stage-row>b{text-align:right;color:#173b5c}.stage-track{height:7px;border-radius:8px;background:#edf2f6;overflow:hidden}.stage-track i{display:block;height:100%;border-radius:8px;background:linear-gradient(90deg,#0072ce,#53b3e6)}.donut-wrap{display:flex;align-items:center;gap:18px}.donut{display:grid;place-items:center;width:116px;height:116px;border-radius:50%;background:conic-gradient(#0072ce 0 42%,#ffc900 42% 70%,#66bddc 70% 100%)}.donut>div{display:grid;place-items:center;width:76px;height:76px;border-radius:50%;background:#fff}.donut b{color:#173b5c;font-size:21px}.donut small{color:#8a9aa7;font-size:10px}.legend,.transaction-list{display:grid;flex:1;gap:10px}.legend>div,.transaction-list>div{display:flex;align-items:center;gap:7px;color:#627989;font-size:11px}.legend b,.transaction-list b{margin-left:auto;color:#173b5c}.legend-dot{width:8px;height:8px;border-radius:50%;background:#0072ce}.dot-1{background:#ffc900}.dot-2{background:#66bddc}.empty{color:#91a1ad;font-size:12px}@media(max-width:1000px){.metric-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.dashboard-layout{grid-template-columns:1fr}.dashboard-side-column{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:650px){.dashboard-topline{align-items:flex-start;flex-direction:column}.dashboard-topline h1{font-size:22px}.dashboard-primary{width:100%;text-align:center}.metric-grid,.dashboard-side-column{grid-template-columns:1fr}.stage-row{grid-template-columns:105px minmax(40px,1fr) 22px}.modern-panel{padding:14px}}
 </style>
+@endpush
+@push('page-styles')
 <style>
     /* Visual layer only: dashboard remains backed by the existing queries and routes. */
     .modern-dashboard{max-width:1440px;margin:0 auto;padding:4px 2px 18px;color:#27313d}
@@ -79,6 +82,8 @@
     .dashboard-side-column .modern-panel{background:rgba(255,255,255,.94)}
     @media(max-width:650px){.modern-dashboard{padding:0}.dashboard-topline{padding-top:2px}}
 </style>
+@endpush
+@push('page-styles')
 <style>
     /* Dark visual theme only. No data, route, permission, or interaction logic is changed. */
     body:has(.modern-dashboard){background:#0a1020;color:#d8e2f0}
@@ -147,6 +152,8 @@
     @media(max-width:1000px){body:has(.modern-dashboard) .dashboard-layout{grid-template-columns:1fr}}
     @media(max-width:650px){body:has(.modern-dashboard) main{padding-left:14px;padding-right:14px}}
 </style>
+@endpush
+@push('page-styles')
 <style>
     /* Final dashboard alignment with the modern PB/PD pages. */
     body:has(.modern-dashboard){background:#f5f8fc!important;color:#334155!important}
@@ -164,4 +171,5 @@
     body:has(.modern-dashboard) .legend-dot{background:#6fa2d4}
     @media(max-width:650px){body:has(.modern-dashboard) main{padding-left:14px;padding-right:14px}body:has(.modern-dashboard) .dashboard-topline{align-items:flex-start}body:has(.modern-dashboard) .dashboard-topline h1{font-size:22px}}
 </style>
+@endpush
 @endsection

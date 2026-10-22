@@ -11,6 +11,7 @@
     @empty <p>Belum ada notifikasi.</p> @endforelse
     <div class="halaman">{{ $notifications->links() }}</div>
 </div>
+@push('page-styles')
 <style>
     .notif-box{padding:18px!important;background:#f8fbff!important}
     .notif-head{display:flex;justify-content:space-between;align-items:center;gap:14px;margin:-18px -18px 16px;padding:14px 16px;background:#111c91!important;border-radius:14px 14px 0 0!important}
@@ -28,4 +29,5 @@
     .halaman{margin-top:16px}
     @media(max-width:600px){.notif-head{align-items:flex-start;flex-direction:column}.notif-head button{width:100%}.notif-item{padding:12px}}
 </style>
+@endpush
 @endsection

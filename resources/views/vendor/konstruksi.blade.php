@@ -66,6 +66,7 @@
             <div class="empty">Belum ada riwayat pengiriman.</div>
         @endforelse
     </div>
+    @push('page-styles')
     <style>
         .kartu{overflow:hidden;padding:0!important;border:1px solid #d8e3ef!important;border-radius:14px!important;background:#fff!important;box-shadow:0 6px 18px rgba(13,27,140,.07)!important}
         .kartu-judul{display:flex;align-items:center;justify-content:space-between;min-height:48px;margin:0!important;padding:12px 18px!important;background:#0d1b8c!important;color:#fff!important;border-radius:13px 13px 0 0!important;font-size:14px;font-weight:800;letter-spacing:.03em}
@@ -77,4 +78,5 @@
         .vendor-report-form .btn,.history-edit-form .btn{min-height:38px;border:0;border-radius:8px;background:#2563eb!important;color:#fff!important;font-weight:700;box-shadow:0 4px 10px rgba(37,99,235,.2)}.vendor-report-form .btn:hover,.history-edit-form .btn:hover{background:#1d4ed8!important}
         .history-item{display:flex;justify-content:space-between;gap:16px;margin:16px;padding:16px;border:1px solid #d8e3ef;border-radius:12px;background:#fff}.history-item b,.history-item strong,.history-item div span{display:block}.history-item strong{margin:5px 0;color:#123b5d}.history-item div span{color:#64748b;font-size:13px}.history-item .pill{align-self:flex-start;background:#dcfce7;color:#15803d;border:0}.btn-hapus{margin-top:8px;background:#dc2626!important}.btn-hapus:hover{background:#b91c1c!important}
     </style>
+    @endpush
 @endsection

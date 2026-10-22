@@ -463,6 +463,7 @@
         </div>
     </div>
 
+    @push('page-styles')
     <style>
         .perluasan-filter{position:relative;display:flex;align-items:center;column-gap:9px!important;row-gap:10px!important;flex-wrap:wrap;padding:70px 16px 16px!important;margin-bottom:16px!important;background:#fff!important;border:1px solid #dbe5f0!important;border-radius:14px!important;box-shadow:0 6px 18px rgba(13,27,140,.06)!important}
         .perluasan-filter::before{content:'DAFTAR TRANSAKSI';position:absolute;inset:0 0 auto;height:50px;display:flex;align-items:flex-start;padding:9px 16px 0;border-radius:14px 14px 0 0;background:#0d1b8c;color:#fff;font-size:15px;font-weight:800;letter-spacing:.035em;line-height:1.1}
@@ -556,6 +557,7 @@
         #detailModalPerluasan .detail-rab-form .btn:hover{background:#1f5ed8!important}
         @media (max-width:600px) { .perluasan-filter{padding:64px 12px 14px!important}.perluasan-filter::before{padding-left:12px}.perluasan-filter::after{left:12px}.perluasan-filter>*{flex:1 1 100%}.detail-grid { grid-template-columns:1fr; } .detail-full { grid-column:auto; } .detail-rab-form { align-items:stretch; flex-direction:column; } }
     </style>
+    @endpush
 
     <script>
         (() => {

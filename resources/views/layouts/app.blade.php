@@ -111,85 +111,8 @@
             body.menu-open::after{content:"";position:fixed;inset:0;z-index:90!important;background:rgba(0,0,0,.58)}
         }
     </style>
-</head>
-<body>
-<div class="layout">
-    <aside id="mainSidebar">
-        <h2><span class="brand-fast">FAST</span> <span class="brand-accent">ON 360</span></h2>
-        <div class="role">{{ auth()->user()->role?->name ?? auth()->user()->user_id }}</div>
+    @stack('page-styles')
 
-        @php
-            $sidebarRoleCode = (string) auth()->user()->role?->role_code;
-            $isVendorRole = auth()->user()->role?->type === 'VENDOR' || str_starts_with($sidebarRoleCode, 'VENDOR');
-        @endphp
-        @foreach (config('menu') as $m)
-            @if (!($isVendorRole && $m['route'] === 'laporan'))
-                @can($m['permission'])
-                    <a href="{{ route($m['route']) }}"
-                       class="{{ request()->routeIs($m['route']) ? 'active' : '' }}">
-                        <span class="sidebar-icon" aria-hidden="true">
-                            @switch($m['route'])
-                                @case('dashboard')
-                                    <svg class="sidebar-modern-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m3 10 9-7 9 7"/><path d="M5 9.5V21h14V9.5"/><path d="M9 21v-6h6v6"/></svg>
-                                    @break
-                                @case('pbpd.index')
-                                    <svg class="sidebar-modern-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/></svg>
-                                    @break
-                                @case('laporan')
-                                    <svg class="sidebar-modern-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h6"/></svg>
-                                    @break
-                                @case('perluasan.jtm')
-                                @case('perluasan.jtr')
-                                    <svg class="sidebar-modern-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 19 10 13l4 4 6-7"/><path d="M15 10h5v5"/></svg>
-                                    @break
-                                @case('tanpa.perluasan')
-                                    <svg class="sidebar-modern-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8"/><path d="m7 7 10 10"/></svg>
-                                    @break
-                                @case('pbpd.upload')
-                                    <svg class="sidebar-modern-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 16V4"/><path d="m7 9 5-5 5 5"/><path d="M5 14v6h14v-6"/></svg>
-                                    @break
-                                @case('vendor.tiang')
-                                @case('vendor.tiang.history')
-                                @case('vendor.konstruksi')
-                                @case('vendor.konstruksi.history')
-                                    <svg class="sidebar-modern-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 21h18M5 21V9l7-5 7 5v12"/><path d="M9 21v-5h6v5M8 10h.01M12 10h.01M16 10h.01"/></svg>
-                                    @break
-                                @case('pengoperasian')
-                                    <svg class="sidebar-modern-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="m8 12 2.5 2.5L16.5 9"/></svg>
-                                    @break
-                                @case('pencarian')
-                                    <svg class="sidebar-modern-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="10.8" cy="10.8" r="6.3"/><path d="m16 16 4.5 4.5"/></svg>
-                                    @break
-                                @case('notifikasi')
-                                    <svg class="sidebar-modern-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg>
-                                    @break
-                                @default
-                                    <svg class="sidebar-modern-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8"/></svg>
-                            @endswitch
-                        </span>
-                        {{ $m['label'] }}@if ($m['route'] === 'notifikasi' && auth()->check()) <span class="notif-badge">{{ \App\Models\AppNotification::where('user_id', auth()->id())->whereNull('read_at')->count() }}</span>@endif
-                    </a>
-                @endcan
-            @endif
-        @endforeach
-    </aside>
-
-    <div class="content">
-        <header>
-            <div class="header-title"><button type="button" class="menu-toggle" id="menuToggle" aria-label="Buka menu" aria-controls="mainSidebar" aria-expanded="false">☰</button><strong>@yield('judul', 'FAST ON')</strong></div>
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <button type="submit">Keluar</button>
-            </form>
-        </header>
-        <main>
-            @if (session('error'))
-                <div class="global-flash-error" role="alert">{{ session('error') }}</div>
-            @endif
-            @yield('isi')
-        </main>
-    </div>
-</div>
 <style>.notif-badge{display:inline-block;min-width:18px;margin-left:6px;padding:2px 5px;border-radius:10px;background:#c0392b;color:#fff;font-size:11px;text-align:center}.global-flash-error{margin:14px 20px;padding:11px 14px;border:1px solid #f1c1bd;border-left:4px solid #d9534f;border-radius:9px;background:#fff5f4;color:#a33b36;font-size:13px;font-weight:600}</style>
 <style>
     :root { --pln-navy:#003b70; --pln-blue:#0072ce; --pln-light:#eef7fd; --pln-yellow:#ffc900; --ink:#183247; }
@@ -523,6 +446,91 @@
     @media(max-width:1100px){.summary-cards{grid-template-columns:repeat(3,minmax(0,1fr))}}
     @media(max-width:650px){.summary-cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.summary-card{min-height:82px;padding:12px}.summary-card strong{font-size:22px}}
 </style>
+</head>
+<body>
+<div class="layout">
+    <aside id="mainSidebar">
+        <h2><span class="brand-fast">FAST</span> <span class="brand-accent">ON 360</span></h2>
+        <div class="role">{{ auth()->user()->role?->name ?? auth()->user()->user_id }}</div>
+
+        @php
+            $sidebarRoleCode = (string) auth()->user()->role?->role_code;
+            $isVendorRole = auth()->user()->role?->type === 'VENDOR' || str_starts_with($sidebarRoleCode, 'VENDOR');
+        @endphp
+        @foreach (config('menu') as $m)
+            @if (!($isVendorRole && $m['route'] === 'laporan'))
+                @can($m['permission'])
+                    <a href="{{ route($m['route']) }}"
+                       class="{{ request()->routeIs($m['route']) ? 'active' : '' }}">
+                        <span class="sidebar-icon" aria-hidden="true">
+                            @switch($m['route'])
+                                @case('dashboard')
+                                    <svg class="sidebar-modern-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m3 10 9-7 9 7"/><path d="M5 9.5V21h14V9.5"/><path d="M9 21v-6h6v6"/></svg>
+                                    @break
+                                @case('pbpd.index')
+                                    <svg class="sidebar-modern-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/></svg>
+                                    @break
+                                @case('laporan')
+                                    <svg class="sidebar-modern-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h6"/></svg>
+                                    @break
+                                @case('perluasan.jtm')
+                                @case('perluasan.jtr')
+                                    <svg class="sidebar-modern-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 19 10 13l4 4 6-7"/><path d="M15 10h5v5"/></svg>
+                                    @break
+                                @case('tanpa.perluasan')
+                                    <svg class="sidebar-modern-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8"/><path d="m7 7 10 10"/></svg>
+                                    @break
+                                @case('pbpd.upload')
+                                    <svg class="sidebar-modern-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 16V4"/><path d="m7 9 5-5 5 5"/><path d="M5 14v6h14v-6"/></svg>
+                                    @break
+                                @case('vendor.tiang')
+                                @case('vendor.tiang.history')
+                                @case('vendor.konstruksi')
+                                @case('vendor.konstruksi.history')
+                                    <svg class="sidebar-modern-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 21h18M5 21V9l7-5 7 5v12"/><path d="M9 21v-5h6v5M8 10h.01M12 10h.01M16 10h.01"/></svg>
+                                    @break
+                                @case('pengoperasian')
+                                    <svg class="sidebar-modern-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="m8 12 2.5 2.5L16.5 9"/></svg>
+                                    @break
+                                @case('pencarian')
+                                    <svg class="sidebar-modern-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="10.8" cy="10.8" r="6.3"/><path d="m16 16 4.5 4.5"/></svg>
+                                    @break
+                                @case('notifikasi')
+                                    <svg class="sidebar-modern-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></svg>
+                                    @break
+                                @default
+                                    <svg class="sidebar-modern-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8"/></svg>
+                            @endswitch
+                        </span>
+                        {{ $m['label'] }}@if ($m['route'] === 'notifikasi' && auth()->check()) <span class="notif-badge">{{ \App\Models\AppNotification::where('user_id', auth()->id())->whereNull('read_at')->count() }}</span>@endif
+                    </a>
+                @endcan
+            @endif
+        @endforeach
+    </aside>
+
+    <div class="content">
+        <header>
+            <div class="header-title"><button type="button" class="menu-toggle" id="menuToggle" aria-label="Buka menu" aria-controls="mainSidebar" aria-expanded="false">☰</button><strong>@yield('judul', 'FAST ON')</strong></div>
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit">Keluar</button>
+            </form>
+        </header>
+        <main>
+            @if (session('error'))
+                <div class="global-flash-error" role="alert">{{ session('error') }}</div>
+            @endif
+            @yield('isi')
+        </main>
+    </div>
+</div>
+
+
+
+
+
+
 <script>
     const menuToggle = document.getElementById('menuToggle');
     const mainSidebar = document.getElementById('mainSidebar');
