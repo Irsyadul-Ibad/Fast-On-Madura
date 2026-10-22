@@ -125,16 +125,18 @@
             const materialStart = 4 + (showSyarat ? 2 : 0);
             const processIndex = 3;
             const columns = [
-                [0, 'NO.'], [2, 'DETAIL'], [materialStart + 16, 'NO AGENDA'], [materialStart + 18, 'IDPEL'],
-                [materialStart + 17, 'NAMA PELANGGAN'], [materialStart + 13, 'JENIS PERLUASAN'], [materialStart + 14, 'TRANSAKSI'],
-                [materialStart + 15, 'STATUS'], [materialStart + 22, 'TARIF LAMA'], [materialStart + 23, 'DAYA LAMA'],
-                [materialStart + 24, 'TARIF BARU'], [materialStart + 25, 'DAYA BARU'],
-                [materialStart + 0, 'RAB'], [materialStart + 1, 'JENIS TIANG'], [materialStart + 2, 'JUMLAH TIANG'],
-                [materialStart + 3, 'JENIS KONDUKTOR TM'], [materialStart + 4, 'JUMLAH KONDUKTOR TM'], [materialStart + 5, 'JENIS KONDUKTOR TR'],
-                [materialStart + 6, 'JUMLAH KONDUKTOR TR'], [materialStart + 7, 'JENIS TRAFO'], [materialStart + 8, 'JUMLAH TRAFO'],
-                [materialStart + 9, 'JENIS KWH METER'], [materialStart + 10, 'JUMLAH KWH METER'], [materialStart + 11, 'JENIS PANEL'], [materialStart + 12, 'JUMLAH PANEL'],
-                [materialStart + 20, 'TANGGAL MOHON'], [materialStart + 21, 'TANGGAL BAYAR'], [materialStart + 19, 'TOTAL BIAYA'],
-                [materialStart + 26, 'DURASI HARI KERJA'], [1, 'ASAL ULP'], [processIndex, 'PROSES'],
+                [0, 'NO.'], [2, 'DETAIL'], [materialStart + 18, 'NO AGENDA'], [materialStart + 20, 'IDPEL'],
+                [materialStart + 19, 'NAMA PELANGGAN'], [materialStart + 15, 'JENIS PERLUASAN'], [materialStart + 16, 'TRANSAKSI'],
+                [materialStart + 17, 'STATUS'], [materialStart + 24, 'TARIF LAMA'], [materialStart + 25, 'DAYA LAMA'],
+                [materialStart + 26, 'TARIF BARU'], [materialStart + 27, 'DAYA BARU'],
+                [materialStart + 0, 'RAB'], [materialStart + 1, 'JENIS TIANG TM'], [materialStart + 2, 'JUMLAH TIANG TM'],
+                [materialStart + 3, 'JENIS TIANG TR'], [materialStart + 4, 'JUMLAH TIANG TR'], [materialStart + 5, 'JENIS KONDUKTOR TM'],
+                [materialStart + 6, 'JUMLAH KONDUKTOR TM'], [materialStart + 7, 'JENIS KONDUKTOR TR'], [materialStart + 8, 'JUMLAH KONDUKTOR TR'],
+                [materialStart + 9, 'JENIS TRAFO'], [materialStart + 10, 'JUMLAH TRAFO'],
+                [materialStart + 11, 'JENIS KWH METER'], [materialStart + 12, 'JUMLAH KWH METER'],
+                [materialStart + 13, 'JENIS PANEL'], [materialStart + 14, 'JUMLAH PANEL'],
+                [materialStart + 22, 'TANGGAL MOHON'], [materialStart + 23, 'TANGGAL BAYAR'], [materialStart + 21, 'TOTAL BIAYA'],
+                [materialStart + 28, 'DURASI HARI KERJA'], [1, 'ASAL ULP'], [processIndex, 'PROSES'],
             ];
             if (showSyarat) columns.push([4, 'BERKAS PENDUKUNG'], [5, 'BERKAS IJIN']);
             const header = table.tHead?.rows?.[0];
