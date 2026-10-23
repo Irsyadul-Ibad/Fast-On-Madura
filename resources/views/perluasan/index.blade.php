@@ -169,6 +169,8 @@
                                     data-vendor-id="{{ $pv?->vendor_id }}"
                                     data-kelayakan="{{ $pv?->status_kelayakan }}"
                                     data-konstruksi-vendor="{{ $pk?->vendor?->nama }}"
+                                    data-konstruksi-vendor-id="{{ count($pk?->berkas_paths ?? []) > 0 ? $pk?->vendor_id : '' }}"
+                                    data-konstruksi-has-delivery="{{ count($pk?->berkas_paths ?? []) > 0 ? '1' : '0' }}"
                                     data-konstruksi-user="{{ $pk?->vendor?->user?->user_id }}"
                                     data-konstruksi-lengkap="{{ $pk?->pekerjaan_lengkap ? 'Ya' : 'Tidak' }}"
                                     data-konstruksi-sesuai="{{ $pk?->pekerjaan_sesuai_wo ? 'Ya' : 'Tidak' }}"
@@ -344,7 +346,13 @@
                     <label>Upload berkas WO tiang
                         <input type="file" name="wo_tiang" accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png">
                     </label>
-                    <button type="submit" class="btn">Kirim ke Vendor</button>
+                    <div id="vendorLockedNotice" class="vendor-locked-notice" hidden>Laporan vendor sudah diterima. Pengiriman ini terkunci dan tidak dapat diedit atau dihapus.</div>
+                    <button type="submit" class="btn" id="vendorSubmitButton">Kirim ke Vendor</button>
+                </form>
+                <form id="vendorDeleteForm" method="POST" action="#" class="vendor-delete-form" hidden onsubmit="return confirm('Hapus pengiriman ke vendor tiang? Berkas laporan vendor terkait juga akan dihapus.')">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn">Hapus Pengiriman Vendor Tiang</button>
                 </form>
             @endif
 
@@ -361,9 +369,15 @@
                         </select>
                     </label>
                     <label>Upload berkas pengiriman
-                        <input type="file" name="berkas[]" multiple required accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png">
+                        <input type="file" name="berkas[]" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png">
                     </label>
-                    <button type="submit" class="btn">Kirim ke Vendor Konstruksi</button>
+                    <div id="constructionLockedNotice" class="vendor-locked-notice" hidden>Laporan vendor konstruksi sudah diterima. Pengiriman ini terkunci dan tidak dapat diedit atau dihapus.</div>
+                    <button type="submit" class="btn" id="constructionSubmitButton">Kirim ke Vendor Konstruksi</button>
+                </form>
+                <form id="constructionDeleteForm" method="POST" action="#" class="vendor-delete-form" hidden onsubmit="return confirm('Hapus pengiriman ke vendor konstruksi? Berkas laporan vendor terkait juga akan dihapus.')">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn">Hapus Pengiriman Vendor Konstruksi</button>
                 </form>
             @endif
 
@@ -507,6 +521,11 @@
         .vendor-form select, .vendor-form input[type=file] { width:100%; padding:8px; border:1px solid #b9c7d5; border-radius:5px; background:#fff; }
         .vendor-kelayakan { display:flex; gap:12px; align-items:center; flex-wrap:wrap; color:#536477; }
         .vendor-kelayakan label { display:inline-flex; align-items:center; gap:4px; }
+        .vendor-delete-form{margin-top:8px}
+        .vendor-delete-form[hidden]{display:none!important}
+        .vendor-delete-form button{width:100%;background:#c23f3a!important;color:#fff!important}
+        .vendor-delete-form button:hover{background:#a9322e!important}
+        .vendor-locked-notice{padding:10px 12px;border:1px solid #f1d28a;border-radius:8px;background:#fffaf0;color:#8a6417;font-size:12px;line-height:1.45}
         .vendor-report-result { display:grid; gap:8px; margin-top:16px; padding:14px; border:1px solid #c8d6e5; border-radius:8px; background:#eef7ff; }
         .vendor-report-result h4 { margin:0 0 4px; color:#0b3d6b; }
         .vendor-report-result div { display:flex; justify-content:space-between; gap:12px; color:#536477; }
@@ -578,7 +597,9 @@
             const form = document.getElementById('detailFormPerluasan');
             const tanpaRabForm = document.getElementById('tanpaRabForm');
             const vendorForm = document.getElementById('vendorFormPerluasan');
+            const vendorDeleteForm = document.getElementById('vendorDeleteForm');
             const constructionForm = document.getElementById('constructionForm');
+            const constructionDeleteForm = document.getElementById('constructionDeleteForm');
             const constructionResultUploadForm = document.getElementById('constructionResultUploadForm');
             const npsWoUploadForm = document.getElementById('npsWoUploadForm');
             const transaksiResultUploadForm = document.getElementById('transaksiResultUploadForm');
@@ -667,15 +688,38 @@
                         tanpaRabForm.action = button.dataset.rabUrl;
                     }
                     if (vendorForm) {
-                        vendorForm.hidden = button.dataset.tahap !== 'PERENCANAAN';
+                        const stageAllowsTiang = ['PERENCANAAN', 'VENDOR_TIANG'].includes(button.dataset.tahap);
+                        const hasVendorDelivery = Boolean(button.dataset.vendorId);
+                        const vendorReportReceived = hasVendorDelivery && Boolean(button.dataset.laporanDate);
+                        vendorForm.hidden = !stageAllowsTiang;
                         vendorForm.action = button.dataset.vendorUrl;
                         document.getElementById('vendorIdPerluasan').value = button.dataset.vendorId || '';
+                        document.getElementById('vendorSubmitButton').textContent = vendorReportReceived ? 'Laporan sudah diterima' : (hasVendorDelivery ? 'Simpan Perubahan Pengiriman' : 'Kirim ke Vendor');
+                        document.getElementById('vendorLockedNotice').hidden = !vendorReportReceived;
+                        vendorForm.querySelectorAll('select,input:not([type="hidden"]),button[type="submit"]').forEach((control) => { control.disabled = vendorReportReceived; });
                         vendorForm.querySelectorAll('input[name="status_kelayakan"]').forEach((radio) => {
                             radio.checked = radio.value === button.dataset.kelayakan;
                         });
+                        if (vendorDeleteForm) {
+                            vendorDeleteForm.hidden = !hasVendorDelivery || vendorReportReceived;
+                            vendorDeleteForm.action = `{{ url('/pbpd') }}/${button.dataset.id}/kirim-vendor`;
+                        }
                     }
                     if (constructionForm) {
+                        const stageAllowsConstruction = ['PERENCANAAN', 'VENDOR_KONSTRUKSI'].includes(button.dataset.tahap);
+                        const hasConstructionDelivery = button.dataset.konstruksiHasDelivery === '1';
+                        const constructionReportReceived = Boolean(button.dataset.konstruksiLaporanDate);
+                        constructionForm.hidden = !stageAllowsConstruction;
                         constructionForm.action = `{{ url('/pbpd') }}/${button.dataset.id}/kirim-konstruksi`;
+                        document.getElementById('constructionVendorId').value = button.dataset.konstruksiVendorId || '';
+                        document.getElementById('constructionForm').querySelector('input[name="berkas[]"]').required = !hasConstructionDelivery;
+                        document.getElementById('constructionSubmitButton').textContent = constructionReportReceived ? 'Laporan sudah diterima' : (hasConstructionDelivery ? 'Simpan Perubahan Pengiriman' : 'Kirim ke Vendor Konstruksi');
+                        document.getElementById('constructionLockedNotice').hidden = !constructionReportReceived;
+                        constructionForm.querySelectorAll('select,input:not([type="hidden"]),button[type="submit"]').forEach((control) => { control.disabled = constructionReportReceived; });
+                        if (constructionDeleteForm) {
+                            constructionDeleteForm.hidden = !hasConstructionDelivery || constructionReportReceived;
+                            constructionDeleteForm.action = `{{ url('/pbpd') }}/${button.dataset.id}/kirim-konstruksi`;
+                        }
                     }
                     let constructionResultFiles = [];
                     try { constructionResultFiles = JSON.parse(button.dataset.konstruksiHasilKonstruksiFiles ? atob(button.dataset.konstruksiHasilKonstruksiFiles) : '[]'); } catch (error) { constructionResultFiles = []; }

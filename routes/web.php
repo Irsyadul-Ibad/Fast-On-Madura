@@ -63,9 +63,15 @@ Route::middleware('auth')->group(function () {
     Route::post('/pbpd/{pelanggan}/kirim-vendor', [PbpdController::class, 'kirimVendor'])
         ->middleware('permission:perencanaan.process')
         ->name('pbpd.vendor.send');
+    Route::delete('/pbpd/{pelanggan}/kirim-vendor', [PbpdController::class, 'hapusKirimVendor'])
+        ->middleware('permission:perencanaan.process')
+        ->name('pbpd.vendor.delete');
     Route::post('/pbpd/{pelanggan}/kirim-konstruksi', [PbpdController::class, 'kirimKonstruksi'])
         ->middleware('permission:konstruksi.process')
         ->name('pbpd.konstruksi.send');
+    Route::delete('/pbpd/{pelanggan}/kirim-konstruksi', [PbpdController::class, 'hapusKirimKonstruksi'])
+        ->middleware('permission:konstruksi.process')
+        ->name('pbpd.konstruksi.delete');
     Route::post('/pbpd/{pelanggan}/nps-wo', [PbpdController::class, 'uploadNpsWo'])
         ->middleware('permission:berkas.upload')
         ->name('pbpd.nps-wo.upload');

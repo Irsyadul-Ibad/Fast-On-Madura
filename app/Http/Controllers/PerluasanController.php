@@ -34,9 +34,13 @@ class PerluasanController extends Controller
             'PENGOPERASIAN' => 'TRANSAKSI',
             'SELESAI' => 'JARINGAN',
         ];
-        $visibleTahaps = in_array($role?->type, ['UP3', 'ULP'], true)
-            ? array_keys($tahapLabels)
-            : ['PERENCANAAN'];
+        $visibleTahaps = match ($role?->role_code) {
+            '5170REN' => ['PERENCANAAN', 'VENDOR_TIANG'],
+            '5170KON' => ['PERENCANAAN', 'VENDOR_KONSTRUKSI'],
+            default => in_array($role?->type, ['UP3', 'ULP'], true)
+                ? array_keys($tahapLabels)
+                : ['PERENCANAAN'],
+        };
         if ($tujuan === 'TANPA_PERLUASAN') {
             unset($tahapLabels['SELESAI']);
             $visibleTahaps = array_values(array_diff($visibleTahaps, ['SELESAI']));

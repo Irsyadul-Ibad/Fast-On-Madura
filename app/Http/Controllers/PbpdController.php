@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
 
 class PbpdController extends Controller
 {
@@ -307,6 +308,16 @@ class PbpdController extends Controller
 
         $vendor = Vendor::whereKey($data['vendor_id'])->where('jenis', 'TIANG')->firstOrFail();
         $pengiriman = PengirimanVendor::firstOrNew(['pelanggan_id' => $pelanggan->id]);
+        $laporanSaatIni = $pelanggan->laporanVendor()->first();
+        if ($pengiriman->exists && filled($laporanSaatIni?->vendor_report_at)) {
+            return back()->with('error', 'Pengiriman terkunci karena vendor tiang sudah mengirim laporan.');
+        }
+
+        $vendorBerubah = $pengiriman->exists && (int) $pengiriman->vendor_id !== (int) $vendor->id;
+
+        if ($vendorBerubah) {
+            $this->clearLaporanVendorTiang($pelanggan);
+        }
 
         if ($request->hasFile('wo_tiang')) {
             if ($pengiriman->wo_tiang_path) {
@@ -324,10 +335,62 @@ class PbpdController extends Controller
             'dikirim_at' => now(),
         ])->save();
 
+        $laporan = $pelanggan->laporanVendor()->first();
+        if ($laporan && (int) $laporan->vendor_id !== (int) $vendor->id) {
+            $laporan->update(['vendor_id' => $vendor->id]);
+        }
+
         $pelanggan->update(['tahap' => 'VENDOR_TIANG']);
         NotifikasiService::untukData($pelanggan, 'Data dikirim ke vendor tiang', 'Data '.$pelanggan->no_agenda.' dikirim ke vendor tiang.', route('laporan'), [$vendor->user_id]);
 
         return back()->with('success', 'Data berhasil dikirim ke vendor tiang.');
+    }
+
+    public function hapusKirimVendor(PelangganPbpd $pelanggan): RedirectResponse
+    {
+        abort_unless($this->currentUser()->role?->role_code === '5170REN', 403);
+
+        $pengiriman = $pelanggan->pengirimanVendor()->firstOrFail();
+        if (filled($pelanggan->laporanVendor()->value('vendor_report_at'))) {
+            return back()->with('error', 'Pengiriman tidak dapat dihapus karena vendor tiang sudah mengirim laporan.');
+        }
+
+        if ($pengiriman->wo_tiang_path) {
+            Storage::disk('public')->delete($pengiriman->wo_tiang_path);
+        }
+
+        $this->clearLaporanVendorTiang($pelanggan);
+        $pengiriman->delete();
+
+        if ($pelanggan->tahap === 'VENDOR_TIANG') {
+            $pelanggan->update(['tahap' => 'PERENCANAAN']);
+        }
+
+        return back()->with('success', 'Pengiriman ke vendor tiang berhasil dihapus.');
+    }
+
+    private function clearLaporanVendorTiang(PelangganPbpd $pelanggan): void
+    {
+        $laporan = $pelanggan->laporanVendor()->first();
+        if (! $laporan) {
+            return;
+        }
+
+        foreach ($this->storedPaths($laporan->berkas_paths) as $path) {
+            Storage::disk('public')->delete($path);
+        }
+
+        $laporan->update([
+            'vendor_id' => null,
+            'pekerjaan_lengkap' => false,
+            'pekerjaan_sesuai_wo' => false,
+            'foto_terlampir' => false,
+            'siap_dilanjutkan' => false,
+            'catatan' => null,
+            'berkas_paths' => null,
+            'berkas_names' => null,
+            'vendor_report_at' => null,
+        ]);
     }
 
     public function kirimKonstruksi(Request $request, PelangganPbpd $pelanggan): RedirectResponse
@@ -341,8 +404,21 @@ class PbpdController extends Controller
 
         $vendor = Vendor::whereKey($data['vendor_id'])->where('jenis', 'KONSTRUKSI')->firstOrFail();
         $pengiriman = PengirimanKonstruksi::firstOrNew(['pelanggan_id' => $pelanggan->id]);
+        if ($pengiriman->exists && filled($pengiriman->laporan_at)) {
+            return back()->with('error', 'Pengiriman terkunci karena vendor konstruksi sudah mengirim laporan.');
+        }
+
+        $vendorBerubah = $pengiriman->exists && (int) $pengiriman->vendor_id !== (int) $vendor->id;
+        if ($vendorBerubah) {
+            $this->clearLaporanVendorKonstruksi($pengiriman);
+        }
         $uploadedFiles = $request->file('berkas', []);
         $existingPaths = $this->arrayPaths($pengiriman->berkas_paths);
+        if ($existingPaths === [] && $uploadedFiles === []) {
+            throw ValidationException::withMessages([
+                'berkas' => 'Unggah minimal satu berkas untuk mengirim data ke vendor konstruksi.',
+            ]);
+        }
         $paths = $this->appendUploadedFiles(
             $existingPaths,
             $uploadedFiles,
@@ -368,6 +444,52 @@ class PbpdController extends Controller
         NotifikasiService::untukData($pelanggan, 'Data dikirim ke vendor konstruksi', 'Data '.$pelanggan->no_agenda.' dikirim ke vendor konstruksi.', route('laporan'), [$vendor->user_id]);
 
         return back()->with('success', 'Data berhasil dikirim ke vendor konstruksi.');
+    }
+
+    public function hapusKirimKonstruksi(PelangganPbpd $pelanggan): RedirectResponse
+    {
+        abort_unless($this->currentUser()->role?->role_code === '5170KON', 403);
+
+        $pengiriman = $pelanggan->pengirimanKonstruksi()->firstOrFail();
+        if (filled($pengiriman->laporan_at)) {
+            return back()->with('error', 'Pengiriman tidak dapat dihapus karena vendor konstruksi sudah mengirim laporan.');
+        }
+
+        foreach ([...$this->arrayPaths($pengiriman->berkas_paths), ...$this->arrayPaths($pengiriman->laporan_paths)] as $path) {
+            Storage::disk('public')->delete($path);
+        }
+
+        $this->clearLaporanVendorKonstruksi($pengiriman, false);
+        $pengiriman->update([
+            'berkas_paths' => null,
+            'berkas_names' => null,
+        ]);
+
+        if ($pelanggan->tahap === 'VENDOR_KONSTRUKSI') {
+            $pelanggan->update(['tahap' => 'PERENCANAAN']);
+        }
+
+        return back()->with('success', 'Pengiriman ke vendor konstruksi berhasil dihapus.');
+    }
+
+    private function clearLaporanVendorKonstruksi(PengirimanKonstruksi $pengiriman, bool $deleteFiles = true): void
+    {
+        if ($deleteFiles) {
+            foreach ($this->arrayPaths($pengiriman->laporan_paths) as $path) {
+                Storage::disk('public')->delete($path);
+            }
+        }
+
+        $pengiriman->update([
+            'pekerjaan_lengkap' => null,
+            'pekerjaan_sesuai_wo' => null,
+            'foto_terlampir' => null,
+            'siap_dilanjutkan' => null,
+            'catatan' => null,
+            'laporan_paths' => null,
+            'laporan_names' => null,
+            'laporan_at' => null,
+        ]);
     }
 
     public function uploadNpsWo(Request $request, PelangganPbpd $pelanggan): RedirectResponse
