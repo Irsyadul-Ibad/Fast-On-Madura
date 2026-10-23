@@ -132,6 +132,35 @@ class VendorTiangController extends Controller
         return back()->with('success', 'Laporan berhasil dikirim ke Perencanaan.');
     }
 
+    public function hapusLaporan(PelangganPbpd $pelanggan)
+    {
+        $this->authorizeVendor();
+        $pengiriman = $pelanggan->pengirimanVendor()->with('vendor')->firstOrFail();
+        abort_unless($pengiriman->vendor?->jenis === 'TIANG', 403);
+        abort_unless($pengiriman->vendor?->user_id === Auth::id(), 403);
+
+        $laporan = $pelanggan->laporanVendor()->firstOrFail();
+        abort_unless(filled($laporan->vendor_report_at), 404);
+
+        foreach ($this->storedPaths($laporan->berkas_paths) as $path) {
+            Storage::disk('public')->delete($path);
+        }
+
+        $laporan->update([
+            'pekerjaan_lengkap' => false,
+            'pekerjaan_sesuai_wo' => false,
+            'foto_terlampir' => false,
+            'siap_dilanjutkan' => false,
+            'catatan' => null,
+            'berkas_paths' => null,
+            'berkas_names' => null,
+            'vendor_report_at' => null,
+        ]);
+        $pelanggan->update(['tahap' => 'VENDOR_TIANG']);
+
+        return back()->with('success', 'Laporan vendor tiang berhasil dihapus.');
+    }
+
     public function wo(PelangganPbpd $pelanggan)
     {
         $roleCode = $this->currentUser()->role?->role_code;

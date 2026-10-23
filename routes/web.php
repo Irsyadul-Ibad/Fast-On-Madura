@@ -107,6 +107,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/vendor/tiang/{pelanggan}/laporan', [VendorTiangController::class, 'kirimLaporan'])
         ->middleware('permission:vendor.tiang.process')
         ->name('vendor.tiang.report');
+    Route::delete('/vendor/tiang/{pelanggan}/laporan', [VendorTiangController::class, 'hapusLaporan'])
+        ->middleware('permission:vendor.tiang.process')
+        ->name('vendor.tiang.report.delete');
     Route::get('/vendor/tiang/{pelanggan}/wo', [VendorTiangController::class, 'wo'])
         ->name('vendor.tiang.wo');
     Route::get('/vendor/tiang/{pelanggan}/laporan/{index}', [VendorTiangController::class, 'laporanFile'])

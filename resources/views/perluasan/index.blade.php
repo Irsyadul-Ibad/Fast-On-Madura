@@ -349,11 +349,15 @@
                     <div id="vendorLockedNotice" class="vendor-locked-notice" hidden>Laporan vendor sudah diterima. Pengiriman ini terkunci dan tidak dapat diedit atau dihapus.</div>
                     <button type="submit" class="btn" id="vendorSubmitButton">Kirim ke Vendor</button>
                 </form>
-                <form id="vendorDeleteForm" method="POST" action="#" class="vendor-delete-form" hidden onsubmit="return confirm('Hapus pengiriman ke vendor tiang? Berkas laporan vendor terkait juga akan dihapus.')">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="btn">Hapus Pengiriman Vendor Tiang</button>
-                </form>
+                <div id="vendorDeleteCard" class="vendor-delete-card" hidden>
+                    <h4>Pengiriman Vendor Tiang</h4>
+                    <p>Hapus pengiriman ini jika ingin mengganti atau membatalkan vendor.</p>
+                    <form id="vendorDeleteForm" method="POST" action="#" class="vendor-delete-form" onsubmit="return confirm('Hapus pengiriman ke vendor tiang? Berkas laporan vendor terkait juga akan dihapus.')">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn">Hapus Pengiriman Vendor Tiang</button>
+                    </form>
+                </div>
             @endif
 
             @if ($canSendKonstruksi)
@@ -374,11 +378,15 @@
                     <div id="constructionLockedNotice" class="vendor-locked-notice" hidden>Laporan vendor konstruksi sudah diterima. Pengiriman ini terkunci dan tidak dapat diedit atau dihapus.</div>
                     <button type="submit" class="btn" id="constructionSubmitButton">Kirim ke Vendor Konstruksi</button>
                 </form>
-                <form id="constructionDeleteForm" method="POST" action="#" class="vendor-delete-form" hidden onsubmit="return confirm('Hapus pengiriman ke vendor konstruksi? Berkas laporan vendor terkait juga akan dihapus.')">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="btn">Hapus Pengiriman Vendor Konstruksi</button>
-                </form>
+                <div id="constructionDeleteCard" class="vendor-delete-card" hidden>
+                    <h4>Pengiriman Vendor Konstruksi (KHS)</h4>
+                    <p>Hapus pengiriman ini jika ingin mengganti atau membatalkan vendor.</p>
+                    <form id="constructionDeleteForm" method="POST" action="#" class="vendor-delete-form" onsubmit="return confirm('Hapus pengiriman ke vendor konstruksi? Berkas laporan vendor terkait juga akan dihapus.')">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn">Hapus Pengiriman Vendor Konstruksi</button>
+                    </form>
+                </div>
             @endif
 
             @if ($canSendVendor)
@@ -521,8 +529,11 @@
         .vendor-form select, .vendor-form input[type=file] { width:100%; padding:8px; border:1px solid #b9c7d5; border-radius:5px; background:#fff; }
         .vendor-kelayakan { display:flex; gap:12px; align-items:center; flex-wrap:wrap; color:#536477; }
         .vendor-kelayakan label { display:inline-flex; align-items:center; gap:4px; }
-        .vendor-delete-form{margin-top:8px}
-        .vendor-delete-form[hidden]{display:none!important}
+        .vendor-delete-card{margin-top:12px;padding:14px;border:1px solid #e2caca;border-radius:9px;background:#fff8f7}
+        .vendor-delete-card[hidden]{display:none!important}
+        .vendor-delete-card h4{margin:0 0 5px;color:#8d3030}
+        .vendor-delete-card p{margin:0;color:#6b5353;font-size:12px;line-height:1.45}
+        .vendor-delete-form{margin-top:10px}
         .vendor-delete-form button{width:100%;background:#c23f3a!important;color:#fff!important}
         .vendor-delete-form button:hover{background:#a9322e!important}
         .vendor-locked-notice{padding:10px 12px;border:1px solid #f1d28a;border-radius:8px;background:#fffaf0;color:#8a6417;font-size:12px;line-height:1.45}
@@ -701,7 +712,7 @@
                             radio.checked = radio.value === button.dataset.kelayakan;
                         });
                         if (vendorDeleteForm) {
-                            vendorDeleteForm.hidden = !hasVendorDelivery || vendorReportReceived;
+                            document.getElementById('vendorDeleteCard').hidden = !hasVendorDelivery || vendorReportReceived;
                             vendorDeleteForm.action = `{{ url('/pbpd') }}/${button.dataset.id}/kirim-vendor`;
                         }
                     }
@@ -717,7 +728,7 @@
                         document.getElementById('constructionLockedNotice').hidden = !constructionReportReceived;
                         constructionForm.querySelectorAll('select,input:not([type="hidden"]),button[type="submit"]').forEach((control) => { control.disabled = constructionReportReceived; });
                         if (constructionDeleteForm) {
-                            constructionDeleteForm.hidden = !hasConstructionDelivery || constructionReportReceived;
+                            document.getElementById('constructionDeleteCard').hidden = !hasConstructionDelivery || constructionReportReceived;
                             constructionDeleteForm.action = `{{ url('/pbpd') }}/${button.dataset.id}/kirim-konstruksi`;
                         }
                     }

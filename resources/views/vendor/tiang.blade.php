@@ -82,7 +82,7 @@
                     @endif
                 </div>
             </div>
-            <form method="POST" action="{{ route('vendor.tiang.report', $row->id) }}" enctype="multipart/form-data" class="history-edit-form">
+            <form id="edit-laporan-tiang-{{ $row->id }}" method="POST" action="{{ route('vendor.tiang.report', $row->id) }}" enctype="multipart/form-data" class="history-edit-form">
                 @csrf
                 <b>Edit Laporan</b>
                 <label><input type="checkbox" name="pekerjaan_lengkap" value="1" @checked($laporan?->pekerjaan_lengkap)> Dokumen pekerjaan lengkap</label>
@@ -91,8 +91,15 @@
                 <label><input type="checkbox" name="siap_dilanjutkan" value="1" @checked($laporan?->siap_dilanjutkan)> Siap ditindaklanjuti Perencanaan</label>
                 <textarea name="catatan" placeholder="Catatan (opsional)">{{ $laporan?->catatan }}</textarea>
                 <input type="file" name="berkas[]" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png">
-                <button type="submit" class="btn">Simpan Perubahan</button>
             </form>
+            <div class="history-actions-card">
+                <button type="submit" form="edit-laporan-tiang-{{ $row->id }}" class="btn">Simpan Perubahan</button>
+                <form method="POST" action="{{ route('vendor.tiang.report.delete', $row->id) }}" class="history-delete-form" onsubmit="return confirm('Hapus laporan Vendor Tiang ini? Data hasil Perencanaan tidak ikut dihapus.')">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-hapus">Hapus Laporan</button>
+                </form>
+            </div>
         @empty
             <div style="text-align:center;padding:24px">Belum ada riwayat pengiriman.</div>
         @endforelse
@@ -131,6 +138,7 @@
         .vendor-card-head>.pill,.vendor-card-badges>.pill-ungu{display:inline-flex!important;align-items:center;justify-content:center;min-width:118px;min-height:34px;padding:7px 12px!important;border:1px solid rgba(255,255,255,.35)!important;border-radius:999px!important;background:#eaf3ff!important;color:#0d1b8c!important;font-size:11px!important;font-weight:800;white-space:nowrap}
         .vendor-card-badges,.history-badges{display:flex;align-items:flex-end;flex-direction:column;gap:8px}
         .vendor-card-badges .pill,.history-badges .pill{display:inline-flex;align-items:center;justify-content:center;min-height:30px;padding:6px 11px;border-radius:999px;font-size:10px;font-weight:800;white-space:nowrap}
+        .history-badges .pill{box-sizing:border-box;width:156px}
         .vendor-card-badges .vendor-eligibility,.history-badges .vendor-eligibility{border:1px solid transparent}
         .vendor-eligibility.is-eligible{background:#e8f7ef!important;color:#237a53!important;border-color:#b9e4ca!important}
         .vendor-eligibility.is-not-eligible{background:#fff0ef!important;color:#c23f3a!important;border-color:#f1c1bd!important}
@@ -162,9 +170,17 @@
         .history-edit-form>b{color:#123b5d;font-size:13px}
         .history-edit-form label{display:flex;align-items:center;gap:8px;color:#334155!important;font-size:12px}
         .history-edit-form label input[type=checkbox]{width:15px;height:15px;accent-color:#0d1b8c}
-        .history-edit-form textarea,.history-edit-form input[type=file]{background:#fff!important;color:#334155!important;border:1px solid #b8c9da!important;border-radius:8px}
+        .history-panel,.history-panel *{box-sizing:border-box}
+        .history-panel{width:100%;max-width:100%;min-width:0}
+        .history-item,.history-edit-form,.history-actions-card{min-width:0;max-width:100%}
+        .history-edit-form textarea,.history-edit-form input[type=file]{display:block;width:100%;min-width:0;max-width:100%;background:#fff!important;color:#334155!important;border:1px solid #b8c9da!important;border-radius:8px}
         .history-edit-form textarea::placeholder{color:#94a3b8}
-        @media (max-width:600px) { .history-item { align-items:flex-start; flex-direction:column; } }
+        .history-actions-card{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:0 16px 16px;padding:12px;border:1px solid #d6e2ee;border-radius:10px;background:#f8fbff}
+        .history-actions-card>.btn,.history-delete-form .btn-hapus{box-sizing:border-box;width:100%;min-height:38px;margin:0;border:0;border-radius:8px;font-weight:700}
+        .history-actions-card>.btn{background:#0d1b8c!important;color:#fff!important}.history-actions-card>.btn:hover{background:#091267!important}
+        .history-delete-form{min-width:0;margin:0}.history-delete-form .btn-hapus{background:#c23f3a!important;color:#fff!important}.history-delete-form .btn-hapus:hover{background:#a9322e!important}
+        @media(max-width:600px){.history-item{gap:10px;padding:12px}.history-actions-card{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:0 12px 12px;padding:10px}.history-actions-card>.btn,.history-delete-form .btn-hapus{min-width:0;padding:8px 5px;font-size:11px;line-height:1.25;white-space:normal}}
+        @media (max-width:600px) { .history-item { align-items:flex-start; flex-direction:column; }.history-badges{align-items:flex-start;width:100%}.history-badges .pill{max-width:100%} }
     </style>
     @endpush
 @endsection
