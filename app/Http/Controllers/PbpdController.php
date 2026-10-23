@@ -312,7 +312,9 @@ class PbpdController extends Controller
             if ($pengiriman->wo_tiang_path) {
                 Storage::disk('public')->delete($pengiriman->wo_tiang_path);
             }
-            $pengiriman->wo_tiang_path = $request->file('wo_tiang')->store('wo-tiang', 'public');
+            $woFile = $request->file('wo_tiang');
+            $pengiriman->wo_tiang_path = $woFile->store('wo-tiang', 'public');
+            $pengiriman->wo_tiang_name = $woFile->getClientOriginalName();
         }
 
         $pengiriman->fill([

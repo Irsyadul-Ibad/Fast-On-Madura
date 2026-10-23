@@ -77,11 +77,21 @@ class VendorTiangController extends Controller
         ]);
 
         $laporan = LaporanVendor::firstOrNew(['pelanggan_id' => $pelanggan->id]);
+        $existingPaths = $this->storedPaths($laporan->berkas_paths);
+        $uploadedFiles = $request->file('berkas', []);
         $paths = $this->appendUploadedFiles(
-            $this->storedPaths($laporan->berkas_paths),
-            $request->file('berkas', []),
+            $existingPaths,
+            $uploadedFiles,
             'laporan-vendor',
         );
+        $names = array_slice(
+            array_pad($this->storedPaths($laporan->berkas_names), count($existingPaths), null),
+            0,
+            count($existingPaths),
+        );
+        foreach ($uploadedFiles as $file) {
+            $names[] = $file->getClientOriginalName();
+        }
 
         $laporan->fill([
             'vendor_id' => $pelanggan->pengirimanVendor?->vendor_id,
@@ -91,6 +101,7 @@ class VendorTiangController extends Controller
             'siap_dilanjutkan' => $request->boolean('siap_dilanjutkan'),
             'catatan' => $data['catatan'] ?? null,
             'berkas_paths' => $paths,
+            'berkas_names' => $names,
             'dikirim_oleh' => Auth::id(),
             'dikirim_at' => now(),
             'vendor_report_at' => now(),

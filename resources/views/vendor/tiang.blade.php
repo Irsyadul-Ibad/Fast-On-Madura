@@ -37,7 +37,7 @@
                 <div class="vendor-berkas">
                     <b>Berkas Pekerjaan</b>
                     @if ($kirim?->wo_tiang_path)
-                        <a href="{{ route('vendor.tiang.wo', $row->id) }}" target="_blank">📄 WO Tiang</a>
+                        <a href="{{ route('vendor.tiang.wo', $row->id) }}" target="_blank">📄 {{ $kirim->wo_tiang_name ?: basename($kirim->wo_tiang_path) }}</a>
                     @else
                         <span>Belum ada berkas WO tiang.</span>
                     @endif

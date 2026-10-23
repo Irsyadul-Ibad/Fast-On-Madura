@@ -132,6 +132,7 @@
                                     data-vendor-url="{{ route('pbpd.vendor.send', $row->id) }}"
                                     data-report-file-url="{{ route('vendor.tiang.report.file', ['pelanggan' => $row->id, 'index' => 0]) }}"
                                     data-laporan-files="{{ base64_encode(json_encode($row->laporanVendor?->berkas_paths ?? [])) }}"
+                                    data-laporan-names="{{ base64_encode(json_encode($row->laporanVendor?->berkas_names ?? [])) }}"
                                     data-result-file-url="{{ route('vendor.tiang.result.file', ['pelanggan' => $row->id, 'index' => 0]) }}"
                                     data-result-delete-url="{{ route('vendor.tiang.result.delete', ['pelanggan' => $row->id, 'index' => 0]) }}"
                                     data-result-files="{{ base64_encode(json_encode($row->laporanVendor?->berkas_hasil_paths ?? [])) }}"
@@ -736,9 +737,11 @@
                     }
                     let vendorReportFiles = [];
                     try { vendorReportFiles = JSON.parse(button.dataset.laporanFiles ? atob(button.dataset.laporanFiles) : '[]'); } catch (error) { vendorReportFiles = []; }
+                    let vendorReportNames = [];
+                    try { vendorReportNames = JSON.parse(button.dataset.laporanNames ? atob(button.dataset.laporanNames) : '[]'); } catch (error) { vendorReportNames = []; }
                     const vendorReportFilesBox = document.getElementById('vendorReportFiles');
                     if (vendorReportFilesBox) vendorReportFilesBox.innerHTML = vendorReportFiles.length
-                        ? vendorReportFiles.map((path, index) => fileRow(button.dataset.reportFileUrl.replace(/\/0$/, '/' + index), String(path).split('/').pop() || `Berkas laporan vendor ${index + 1}`, button.dataset.laporanDate)).join('')
+                        ? vendorReportFiles.map((path, index) => fileRow(button.dataset.reportFileUrl.replace(/\/0$/, '/' + index), vendorReportNames[index] || String(path).split('/').pop() || `Berkas laporan vendor ${index + 1}`, button.dataset.laporanDate)).join('')
                         : '-';
                     const resultFilesBox = document.getElementById('resultFiles');
                     let resultFiles = [];

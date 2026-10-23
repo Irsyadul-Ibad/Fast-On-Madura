@@ -16,6 +16,7 @@ class LaporanVendor extends Model
         return [
             'dikirim_at' => 'datetime',
             'berkas_paths' => 'array',
+            'berkas_names' => 'array',
             'berkas_hasil_paths' => 'array',
             'berkas_hasil_names' => 'array',
             'berkas_hasil_at' => 'datetime',
