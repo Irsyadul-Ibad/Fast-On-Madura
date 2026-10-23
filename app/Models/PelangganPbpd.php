@@ -65,7 +65,7 @@ class PelangganPbpd extends Model
         $this->update(['tahap' => $ke]);
     }
 
-    /** Menandai selesai setelah seluruh lima proses memiliki berkas lengkap. */
+    /** Menandai selesai setelah seluruh proses wajib memiliki berkas/laporan. */
     public function tandaiSelesaiJikaLengkap(?int $userId = null): bool
     {
         $this->loadMissing(['pengirimanKonstruksi', 'laporanVendor']);
@@ -74,11 +74,17 @@ class PelangganPbpd extends Model
             || count($this->pengirimanKonstruksi?->hasil_paths ?? []) > 0;
         $constructionDone = count($this->hasil_konstruksi_paths ?? []) > 0
             || count($this->pengirimanKonstruksi?->hasil_konstruksi_paths ?? []) > 0;
+        $npsDone = count($this->nps_wo_paths ?? []) > 0;
         $transactionDone = count($this->hasil_transaksi_paths ?? []) > 0;
-        $networkDone = count($this->hasil_jaringan_paths ?? []) > 0;
-        $ulpDone = $this->tahap !== 'ULP' || (bool) $this->tujuan_perluasan;
+        $vendorTiangDone = filled($this->laporanVendor?->vendor_report_at);
+        $vendorKhsDone = filled($this->pengirimanKonstruksi?->laporan_at);
+        $tujuan = strtoupper(str_replace('_', ' ', trim((string) $this->tujuan_perluasan)));
+        $networkRequired = in_array($tujuan, ['JTM', 'JTR'], true);
+        $networkDone = ! $networkRequired || count($this->hasil_jaringan_paths ?? []) > 0;
+        $tujuanValid = in_array($tujuan, ['JTM', 'JTR', 'TANPA PERLUASAN'], true);
 
-        if (! $ulpDone || ! $planningDone || ! $constructionDone || ! $transactionDone || ! $networkDone) {
+        if (! $tujuanValid || ! $planningDone || ! $constructionDone || ! $npsDone
+            || ! $transactionDone || ! $vendorTiangDone || ! $vendorKhsDone || ! $networkDone) {
             return false;
         }
 

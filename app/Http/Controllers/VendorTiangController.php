@@ -126,6 +126,7 @@ class VendorTiangController extends Controller
         if ($pelanggan->tahap === 'VENDOR_TIANG') {
             $pelanggan->update(['tahap' => 'PERENCANAAN']);
         }
+        $pelanggan->tandaiSelesaiJikaLengkap(Auth::id());
         NotifikasiService::untukData($pelanggan, 'Laporan vendor tiang masuk', 'Vendor tiang telah mengirim laporan untuk '.$pelanggan->no_agenda.'.', route('laporan'));
 
         return back()->with('success', 'Laporan berhasil dikirim ke Perencanaan.');

@@ -508,6 +508,7 @@ class PbpdController extends Controller
         );
 
         $pelanggan->update(['nps_wo_paths' => $paths, 'nps_wo_at' => now()]);
+        $pelanggan->tandaiSelesaiJikaLengkap(Auth::id());
         NotifikasiService::untukData($pelanggan, 'Berkas WO NPS diupload', 'Berkas WO NPS untuk '.$pelanggan->no_agenda.' telah diupload.', route('laporan'));
 
         return back()->with('success', 'Berkas WO NPS berhasil disimpan.');

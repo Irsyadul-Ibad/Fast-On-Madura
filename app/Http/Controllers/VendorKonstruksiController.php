@@ -98,6 +98,7 @@ class VendorKonstruksiController extends Controller
         ]);
 
         $pelanggan->update(['tahap' => 'PERENCANAAN']);
+        $pelanggan->tandaiSelesaiJikaLengkap(Auth::id());
         NotifikasiService::untukData($pelanggan, 'Laporan vendor konstruksi masuk', 'Vendor konstruksi telah mengirim laporan untuk '.$pelanggan->no_agenda.'.', route('laporan'));
 
         return back()->with('success', 'Laporan vendor konstruksi berhasil dikirim.');
