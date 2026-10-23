@@ -556,6 +556,6 @@ class PbpdController extends Controller
 
         $name = $this->arrayPaths($pelanggan->{$namesColumn})[$index] ?? basename($path);
 
-        return Storage::disk('public')->response($path, basename($name));
+        return $this->publicFileResponse($path, basename($name));
     }
 }

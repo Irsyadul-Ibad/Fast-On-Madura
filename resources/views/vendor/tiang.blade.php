@@ -136,7 +136,7 @@
         .vendor-eligibility.is-not-eligible{background:#fff0ef!important;color:#c23f3a!important;border-color:#f1c1bd!important}
         .vendor-berkas,.vendor-report{margin:14px 16px;padding:15px;border:1px solid #d6e2ee;border-radius:10px;background:#f8fbff;box-shadow:none}
         .vendor-berkas b,.vendor-report>b{color:#123b5d;font-size:13px}
-        .vendor-berkas a{display:flex;align-items:center;gap:7px;padding:10px 12px;border:1px solid #c8def5;border-radius:8px;background:#eaf3ff;color:#1e6fa8;font-size:12px;font-weight:700;text-decoration:none}
+        .vendor-berkas a{display:flex;align-items:center;gap:7px;width:100%;min-width:0;box-sizing:border-box;padding:10px 12px;border:1px solid #c8def5;border-radius:8px;background:#eaf3ff;color:#1e6fa8;font-size:12px;font-weight:700;line-height:1.45;text-decoration:none;white-space:normal;overflow-wrap:anywhere;word-break:break-word}
         .vendor-berkas a:hover{background:#1e6fa8;color:#fff}
         .vendor-berkas span{color:#64748b;font-size:12px}
         .vendor-report label{display:flex;align-items:center;gap:8px;color:#334155;font-size:12px;line-height:1.4}

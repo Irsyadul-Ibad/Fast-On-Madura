@@ -244,7 +244,7 @@ class VendorTiangController extends Controller
 
         $name = $this->storedPaths($laporan->berkas_hasil_names)[$index] ?? basename($path);
 
-        return Storage::disk('public')->response($path, basename($name));
+        return $this->publicFileResponse($path, basename($name));
     }
 
     public function hapusHasil(PelangganPbpd $pelanggan, int $index)

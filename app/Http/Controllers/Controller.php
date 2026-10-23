@@ -29,12 +29,12 @@ abstract class Controller
         return $user;
     }
 
-    protected function publicFileResponse(string $path): StreamedResponse
+    protected function publicFileResponse(string $path, ?string $name = null): StreamedResponse
     {
         /** @var FilesystemAdapter $disk */
         $disk = Storage::disk('public');
 
-        return $disk->response($path);
+        return $disk->response($path, $name);
     }
 
     protected function arrayPaths(mixed $value): array

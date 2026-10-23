@@ -445,6 +445,11 @@
     .content>header form[action$="/logout"] button:hover{background:#0d166f!important;color:#fff!important;border-color:#0d166f!important}
     @media(max-width:1100px){.summary-cards{grid-template-columns:repeat(3,minmax(0,1fr))}}
     @media(max-width:650px){.summary-cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.summary-card{min-height:82px;padding:12px}.summary-card strong{font-size:22px}}
+    .menu-toggle{width:38px;height:38px;align-items:center;justify-content:center;padding:0!important;border:1px solid #0d1b8c!important;border-radius:10px!important;background:#0d1b8c!important;color:#fff!important;box-shadow:0 3px 8px rgba(13,27,140,.18)!important;line-height:1}
+    .menu-toggle svg{display:block;width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    .menu-toggle:hover{background:#091267!important;border-color:#091267!important;color:#fff!important;box-shadow:0 4px 10px rgba(13,27,140,.24)!important;transform:none!important}
+    .menu-toggle:focus-visible{outline:3px solid rgba(43,115,254,.28);outline-offset:2px}
+    @media(max-width:650px){.menu-toggle{display:inline-flex!important;flex:0 0 38px}}
 </style>
 </head>
 <body>
@@ -517,7 +522,7 @@
     <div class="content">
         <header>
             <div class="header-title">
-                <button type="button" class="menu-toggle" id="menuToggle" aria-label="Buka menu" aria-controls="mainSidebar" aria-expanded="false">☰</button>
+                <button type="button" class="menu-toggle" id="menuToggle" aria-label="Buka menu" aria-controls="mainSidebar" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
                 <strong>@yield('judul', 'FAST ON')</strong>
             </div>
             <form method="POST" action="{{ route('logout') }}">
