@@ -24,7 +24,14 @@
                         <strong>{{ $row->nama_pelanggan }}</strong>
                         <span>ULP: {{ $row->ulp?->nama }} - {{ $row->jenis_transaksi }}</span>
                     </div>
-                    <span class="pill pill-ungu">{{ $row->jenis_transaksi }}</span>
+                    <div class="vendor-card-badges">
+                        <span class="pill pill-ungu">{{ $row->jenis_transaksi }}</span>
+                        @if (filled($kirim?->status_kelayakan))
+                            <span class="pill vendor-eligibility {{ $kirim->status_kelayakan === 'LAYAK' ? 'is-eligible' : 'is-not-eligible' }}">
+                                {{ $kirim->status_kelayakan }}
+                            </span>
+                        @endif
+                    </div>
                 </div>
 
                 <div class="vendor-berkas">
@@ -66,7 +73,14 @@
                     <strong>{{ $row->nama_pelanggan }}</strong>
                     <span>ULP: {{ $row->ulp?->nama }} · {{ $laporan?->dikirim_at?->format('d/m/Y H:i') }}</span>
                 </div>
-                <span class="pill pill-hijau">Terkirim ke Perencanaan</span>
+                <div class="history-badges">
+                    <span class="pill pill-hijau">Terkirim ke Perencanaan</span>
+                    @if (filled($row->pengirimanVendor?->status_kelayakan))
+                        <span class="pill vendor-eligibility {{ $row->pengirimanVendor->status_kelayakan === 'LAYAK' ? 'is-eligible' : 'is-not-eligible' }}">
+                            {{ $row->pengirimanVendor->status_kelayakan }}
+                        </span>
+                    @endif
+                </div>
             </div>
             <form method="POST" action="{{ route('vendor.tiang.report', $row->id) }}" enctype="multipart/form-data" class="history-edit-form">
                 @csrf
@@ -116,7 +130,12 @@
         .vendor-card-head b{font-size:13px;letter-spacing:.01em}
         .vendor-card-head strong{margin:5px 0;font-size:14px}
         .vendor-card-head span{color:#dbeafe;font-size:12px}
-        .vendor-card-head>.pill{display:inline-flex!important;align-items:center;justify-content:center;min-width:118px;min-height:34px;padding:7px 12px!important;border:1px solid rgba(255,255,255,.35)!important;border-radius:999px!important;background:#eaf3ff!important;color:#0d1b8c!important;font-size:11px!important;font-weight:800;white-space:nowrap}
+        .vendor-card-head>.pill,.vendor-card-badges>.pill-ungu{display:inline-flex!important;align-items:center;justify-content:center;min-width:118px;min-height:34px;padding:7px 12px!important;border:1px solid rgba(255,255,255,.35)!important;border-radius:999px!important;background:#eaf3ff!important;color:#0d1b8c!important;font-size:11px!important;font-weight:800;white-space:nowrap}
+        .vendor-card-badges,.history-badges{display:flex;align-items:flex-end;flex-direction:column;gap:8px}
+        .vendor-card-badges .pill,.history-badges .pill{display:inline-flex;align-items:center;justify-content:center;min-height:30px;padding:6px 11px;border-radius:999px;font-size:10px;font-weight:800;white-space:nowrap}
+        .vendor-card-badges .vendor-eligibility,.history-badges .vendor-eligibility{border:1px solid transparent}
+        .vendor-eligibility.is-eligible{background:#e8f7ef!important;color:#237a53!important;border-color:#b9e4ca!important}
+        .vendor-eligibility.is-not-eligible{background:#fff0ef!important;color:#c23f3a!important;border-color:#f1c1bd!important}
         .vendor-berkas,.vendor-report{margin:14px 16px;padding:15px;border:1px solid #d6e2ee;border-radius:10px;background:#f8fbff;box-shadow:none}
         .vendor-berkas b,.vendor-report>b{color:#123b5d;font-size:13px}
         .vendor-berkas a{display:flex;align-items:center;gap:7px;padding:10px 12px;border:1px solid #c8def5;border-radius:8px;background:#eaf3ff;color:#1e6fa8;font-size:12px;font-weight:700;text-decoration:none}
