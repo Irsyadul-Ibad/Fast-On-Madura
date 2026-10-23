@@ -135,6 +135,7 @@
                                     data-result-file-url="{{ route('vendor.tiang.result.file', ['pelanggan' => $row->id, 'index' => 0]) }}"
                                     data-result-delete-url="{{ route('vendor.tiang.result.delete', ['pelanggan' => $row->id, 'index' => 0]) }}"
                                     data-result-files="{{ base64_encode(json_encode($row->laporanVendor?->berkas_hasil_paths ?? [])) }}"
+                                    data-result-names="{{ base64_encode(json_encode($row->laporanVendor?->berkas_hasil_names ?? [])) }}"
                                     data-no-agenda="{{ $row->no_agenda }}"
                                     data-idpel="{{ $row->id_pelanggan }}"
                                     data-nama="{{ $row->nama_pelanggan }}"
@@ -174,6 +175,7 @@
                                     data-konstruksi-siap="{{ $pk?->siap_dilanjutkan ? 'Ya' : 'Tidak' }}"
                                     data-konstruksi-catatan="{{ $pk?->catatan }}"
                                     data-konstruksi-laporan-files="{{ base64_encode(json_encode($pk?->laporan_paths ?? [])) }}"
+                                    data-konstruksi-laporan-date="{{ $pk?->laporan_at?->format('Y-m-d H:i:s') }}"
                                     data-konstruksi-laporan-file-url="{{ route('vendor.konstruksi.report.file', ['pelanggan' => $row->id, 'index' => 0]) }}"
                                     data-konstruksi-hasil-file-url="{{ route('vendor.konstruksi.result.file', ['pelanggan' => $row->id, 'index' => 0]) }}"
                                     data-konstruksi-hasil-konstruksi-files="{{ base64_encode(json_encode($row->hasil_konstruksi_paths ?? [])) }}"
@@ -200,18 +202,19 @@
                                     data-laporan-foto="{{ $row->laporanVendor?->foto_terlampir ? 'Ya' : 'Tidak' }}"
                                     data-laporan-siap="{{ $row->laporanVendor?->siap_dilanjutkan ? 'Ya' : 'Tidak' }}"
                                     data-laporan-catatan="{{ $row->laporanVendor?->catatan }}"
+                                    data-laporan-date="{{ $row->laporanVendor?->vendor_report_at?->format('Y-m-d H:i:s') }}"
                                 ><svg class="icon-inline" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3.5h9l3 3V20.5H6z"/><path d="M15 3.5v4h3M9 12h6M9 16h6"/></svg></button>
                             </td>
                             @if ($showBerkasUlp)
                                 <td>
                                     <div class="berkas-ulp-cell">
                                         @forelse (($row->berkas_pendukung_paths ?? []) as $index => $path)
-                                            <a href="{{ route('pbpd.syarat.file', ['pelanggan' => $row->id, 'jenis' => 'pendukung', 'index' => $index]) }}" target="_blank" rel="noopener" title="Buka berkas pendukung">Pendukung {{ $index + 1 }}</a>
+                                            <a href="{{ route('pbpd.syarat.file', ['pelanggan' => $row->id, 'jenis' => 'pendukung', 'index' => $index]) }}" target="_blank" rel="noopener" title="Buka berkas pendukung">{{ $row->berkas_pendukung_names[$index] ?? basename($path) }}</a>
                                         @empty
                                             <span class="berkas-ulp-empty">Pendukung -</span>
                                         @endforelse
                                         @forelse (($row->berkas_ijin_paths ?? []) as $index => $path)
-                                            <a href="{{ route('pbpd.syarat.file', ['pelanggan' => $row->id, 'jenis' => 'ijin', 'index' => $index]) }}" target="_blank" rel="noopener" title="Buka berkas ijin">Ijin {{ $index + 1 }}</a>
+                                            <a href="{{ route('pbpd.syarat.file', ['pelanggan' => $row->id, 'jenis' => 'ijin', 'index' => $index]) }}" target="_blank" rel="noopener" title="Buka berkas ijin">{{ $row->berkas_ijin_names[$index] ?? basename($path) }}</a>
                                         @empty
                                             <span class="berkas-ulp-empty">Ijin -</span>
                                         @endforelse
@@ -370,7 +373,6 @@
                     <div><span>Foto tiang berdiri</span><b id="laporanFoto">-</b></div>
                     <div><span>Foto pekerjaan selesai</span><b id="laporanSiap">-</b></div>
                     <div><span>Catatan</span><b id="laporanCatatan">-</b></div>
-                    <div><span>Berkas laporan</span><b id="laporanFiles">-</b></div>
                 </div>
             @endif
             @endif
@@ -398,6 +400,10 @@
                     </form>
                 @endif
             </div>
+            <div class="planning-result-box vendor-upload-result-box">
+                <h4>Berkas Laporan Vendor</h4>
+                <div id="vendorReportFiles">-</div>
+            </div>
             <div class="planning-result-box nps-result-upload-box">
                 <h4>Berkas WO <small class="upload-owner-label">NPS</small></h4>
                 <div id="npsWoFiles">-</div>
@@ -419,6 +425,10 @@
                         <button type="submit" class="btn">Upload Berkas/Foto Konstruksi</button>
                     </form>
                 @endif
+            </div>
+            <div class="planning-result-box construction-vendor-report-box">
+                <h4>Berkas Laporan Vendor KHS</h4>
+                <div id="constructionVendorReportFiles">-</div>
             </div>
             <div class="planning-result-box transaksi-result-upload-box">
                 <h4>Foto Cek KWH Meter</h4>
@@ -453,7 +463,6 @@
                     <div><small>Pekerjaan Selesai</small><b id="constructionReportFoto">-</b></div>
                     <div><small>Pekerjaan Siap Untuk Dioperasikan</small><b id="constructionReportSiap">-</b></div>
                     <div class="detail-full"><small>Catatan</small><b id="constructionReportCatatan">-</b></div>
-                    <div class="detail-full"><small>Berkas laporan</small><div id="constructionReportFiles">-</div></div>
                 </div>
             </div>
             @endif
@@ -516,13 +525,18 @@
         .detail-modal-box .planning-result-box h4{margin:0!important;padding-bottom:8px!important;border-bottom:1px solid #e2e8f0!important;color:#123b5d!important;font-size:14px!important;line-height:1.35!important}
         .detail-modal-box .planning-result-box>div[id$="Files"]{min-height:32px;padding:8px 10px;border:1px solid #d9e2ec;border-radius:8px;background:#fff;color:#627d98;font-size:12px;line-height:1.4;overflow-wrap:anywhere}
         .detail-modal-box .planning-result-box>div[id$="Files"] a{color:#1e6fa8!important;font-weight:600;text-decoration:underline;overflow-wrap:anywhere}
+        .detail-modal-box .result-file-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0;padding:7px 0}
+        .detail-modal-box .result-file-row+.result-file-row{border-top:1px solid #edf1f6}
+        .detail-modal-box .result-file-info{display:flex;align-items:center;justify-content:space-between;gap:12px;min-width:0;flex:1}
+        .detail-modal-box .result-file-info a{min-width:0;overflow-wrap:anywhere}
+        .detail-modal-box .result-file-date{flex:0 0 auto;color:#718096;font-size:11px;white-space:nowrap}
         .detail-modal-box .planning-result-box form{display:flex!important;align-items:center!important;gap:9px!important;flex-wrap:wrap!important;margin:0!important}
         .detail-modal-box .planning-result-box form[hidden]{display:none!important}
         .detail-modal-box .planning-result-box form input[type=file]{flex:1 1 220px;min-height:36px;padding:6px 8px!important;border:1px solid #b8c9da!important;border-radius:8px!important;background:#fff!important;color:#627d98!important;font-size:12px!important}
         .detail-modal-box .planning-result-box form button{min-height:36px!important;padding:8px 12px!important;background:#111c91!important;color:#fff!important;border:0!important;border-radius:8px!important;font-size:12px!important;white-space:nowrap}
         .detail-modal-box .planning-result-box form button:hover{background:#0d166f!important}
         .detail-modal-box .result-waiting-message{padding:9px 10px;border:1px solid #f1d28a;border-radius:8px;background:#fffaf0;color:#8a6417;font-size:12px}
-        @media(max-width:600px){.detail-modal-box .planning-result-box form{align-items:stretch!important;flex-direction:column!important}.detail-modal-box .planning-result-box form input[type=file],.detail-modal-box .planning-result-box form button{width:100%!important;flex-basis:auto}}
+        @media(max-width:600px){.detail-modal-box .planning-result-box form{align-items:stretch!important;flex-direction:column!important}.detail-modal-box .planning-result-box form input[type=file],.detail-modal-box .planning-result-box form button{width:100%!important;flex-basis:auto}.detail-modal-box .result-file-row{align-items:flex-start}.detail-modal-box .result-file-info{align-items:flex-start;flex-direction:column;gap:3px}.detail-modal-box .result-file-date{white-space:normal}}
         .result-file-row { display:flex; align-items:center; justify-content:space-between; gap:10px; margin:4px 0; }
         .result-delete { padding:4px 8px; border:0; border-radius:4px; background:#a61b1b; color:#fff; cursor:pointer; font-size:12px; }
         .result-waiting-message { padding:10px; border-radius:6px; background:#fff5d6; color:#795900; }
@@ -588,6 +602,14 @@
             form?.addEventListener('submit', () => { if (rabValuePerluasan) rabValuePerluasan.value = (rabInputPerluasan?.value || '').replace(/\./g, '').replace(/,/g, '.'); });
             tanpaRabForm?.addEventListener('submit', () => { if (tanpaRabValue) tanpaRabValue.value = (tanpaRabInput?.value || '').replace(/\./g, '').replace(/,/g, '.'); });
             const date = (value) => value ? new Date(value).toLocaleDateString('id-ID') : '-';
+            const escapeHtml = (value) => String(value ?? '').replace(/[&<>"']/g, (character) => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;',
+            }[character]));
+            const fileRow = (url, fileName, uploadDate, deleteForm = '') => {
+                const safeName = escapeHtml(fileName);
+                const safeDate = uploadDate ? `Diunggah ${escapeHtml(date(uploadDate))}` : 'Tanggal tidak tersedia';
+                return `<div class="result-file-row"><div class="result-file-info"><a href="${url}" target="_blank" rel="noopener">📄 ${safeName}</a><span class="result-file-date">${safeDate}</span></div>${deleteForm}</div>`;
+            };
             const setProcess = (name, done, value) => {
                 const status = document.getElementById(`proses${name}Status`);
                 const tanggal = document.getElementById(`proses${name}Date`);
@@ -657,7 +679,7 @@
                     try { constructionResultFiles = JSON.parse(button.dataset.konstruksiHasilKonstruksiFiles ? atob(button.dataset.konstruksiHasilKonstruksiFiles) : '[]'); } catch (error) { constructionResultFiles = []; }
                     const constructionResultFilesBox = document.getElementById('constructionResultFiles');
                     if (constructionResultFilesBox) constructionResultFilesBox.innerHTML = constructionResultFiles.length
-                        ? constructionResultFiles.map((path, index) => `<div class="result-file-row"><a href="${button.dataset.konstruksiHasilFileUrl.replace(/\/0$/, '/' + index)}" target="_blank" rel="noopener">📄 ${String(path).split('/').pop() || 'Berkas hasil konstruksi ' + (index + 1)}</a>${constructionResultUploadForm ? `<form method="POST" action="{{ url('/vendor/konstruksi') }}/${button.dataset.id}/hasil-konstruksi/${index}"><input type="hidden" name="_token" value="{{ csrf_token() }}"><input type="hidden" name="_method" value="DELETE"><button type="submit" class="result-delete" onclick="return confirm('Hapus berkas ini?')">Hapus</button></form>` : ''}</div>`).join('')
+                        ? constructionResultFiles.map((path, index) => fileRow(button.dataset.konstruksiHasilFileUrl.replace(/\/0$/, '/' + index), String(path).split('/').pop() || 'Berkas hasil konstruksi ' + (index + 1), button.dataset.prosesKonstruksiDate, constructionResultUploadForm ? `<form method="POST" action="{{ url('/vendor/konstruksi') }}/${button.dataset.id}/hasil-konstruksi/${index}"><input type="hidden" name="_token" value="{{ csrf_token() }}"><input type="hidden" name="_method" value="DELETE"><button type="submit" class="result-delete" onclick="return confirm('Hapus berkas ini?')">Hapus</button></form>` : '')).join('')
                         : '-';
                     if (constructionResultUploadForm) {
                         constructionResultUploadForm.action = `{{ url('/vendor/konstruksi') }}/${button.dataset.id}/hasil-konstruksi`;
@@ -666,7 +688,7 @@
                     try { npsWoFiles = JSON.parse(button.dataset.npsWoFiles ? atob(button.dataset.npsWoFiles) : '[]'); } catch (error) { npsWoFiles = []; }
                     const npsWoFilesBox = document.getElementById('npsWoFiles');
                     if (npsWoFilesBox) npsWoFilesBox.innerHTML = npsWoFiles.length
-                        ? npsWoFiles.map((path, index) => `<div class="result-file-row"><a href="${button.dataset.npsWoFileUrl.replace(/\/0$/, '/' + index)}" target="_blank" rel="noopener">📄 ${String(path).split('/').pop() || 'Berkas WO NPS ' + (index + 1)}</a>${npsWoUploadForm ? `<form method="POST" action="{{ url('/pbpd') }}/${button.dataset.id}/nps-wo/${index}"><input type="hidden" name="_token" value="{{ csrf_token() }}"><input type="hidden" name="_method" value="DELETE"><button type="submit" class="result-delete" onclick="return confirm('Hapus berkas WO NPS ini?')">Hapus</button></form>` : ''}</div>`).join('')
+                        ? npsWoFiles.map((path, index) => fileRow(button.dataset.npsWoFileUrl.replace(/\/0$/, '/' + index), String(path).split('/').pop() || 'Berkas WO NPS ' + (index + 1), button.dataset.prosesNpsWoDate, npsWoUploadForm ? `<form method="POST" action="{{ url('/pbpd') }}/${button.dataset.id}/nps-wo/${index}"><input type="hidden" name="_token" value="{{ csrf_token() }}"><input type="hidden" name="_method" value="DELETE"><button type="submit" class="result-delete" onclick="return confirm('Hapus berkas WO NPS ini?')">Hapus</button></form>` : '')).join('')
                         : '-';
                     if (npsWoUploadForm) {
                         npsWoUploadForm.action = `{{ url('/pbpd') }}/${button.dataset.id}/nps-wo`;
@@ -675,7 +697,7 @@
                     try { transaksiResultFiles = JSON.parse(button.dataset.transaksiHasilFiles ? atob(button.dataset.transaksiHasilFiles) : '[]'); } catch (error) { transaksiResultFiles = []; }
                     const transaksiResultFilesBox = document.getElementById('transaksiResultFiles');
                     if (transaksiResultFilesBox) transaksiResultFilesBox.innerHTML = transaksiResultFiles.length
-                        ? transaksiResultFiles.map((path, index) => `<div class="result-file-row"><a href="${button.dataset.transaksiHasilFileUrl.replace(/\/0$/, '/' + index)}" target="_blank" rel="noopener">📄 ${String(path).split('/').pop() || 'Berkas hasil transaksi ' + (index + 1)}</a>${transaksiResultUploadForm ? `<form method="POST" action="{{ url('/pbpd') }}/${button.dataset.id}/hasil-transaksi/${index}"><input type="hidden" name="_token" value="{{ csrf_token() }}"><input type="hidden" name="_method" value="DELETE"><button type="submit" class="result-delete" onclick="return confirm('Hapus berkas ini?')">Hapus</button></form>` : ''}</div>`).join('')
+                        ? transaksiResultFiles.map((path, index) => fileRow(button.dataset.transaksiHasilFileUrl.replace(/\/0$/, '/' + index), String(path).split('/').pop() || 'Berkas hasil transaksi ' + (index + 1), button.dataset.prosesTransaksiDate, transaksiResultUploadForm ? `<form method="POST" action="{{ url('/pbpd') }}/${button.dataset.id}/hasil-transaksi/${index}"><input type="hidden" name="_token" value="{{ csrf_token() }}"><input type="hidden" name="_method" value="DELETE"><button type="submit" class="result-delete" onclick="return confirm('Hapus berkas ini?')">Hapus</button></form>` : '')).join('')
                         : '-';
                     if (transaksiResultUploadForm) {
                         transaksiResultUploadForm.action = `{{ url('/pbpd') }}/${button.dataset.id}/hasil-transaksi`;
@@ -684,7 +706,7 @@
                     try { jaringanResultFiles = JSON.parse(button.dataset.jaringanHasilFiles ? atob(button.dataset.jaringanHasilFiles) : '[]'); } catch (error) { jaringanResultFiles = []; }
                     const jaringanResultFilesBox = document.getElementById('jaringanResultFiles');
                     if (jaringanResultFilesBox) jaringanResultFilesBox.innerHTML = jaringanResultFiles.length
-                        ? jaringanResultFiles.map((path, index) => `<div class="result-file-row"><a href="${button.dataset.jaringanHasilFileUrl.replace(/\/0$/, '/' + index)}" target="_blank" rel="noopener">📄 ${String(path).split('/').pop() || 'Berkas hasil jaringan ' + (index + 1)}</a>${jaringanResultUploadForm ? `<form method="POST" action="{{ url('/pbpd') }}/${button.dataset.id}/hasil-jaringan/${index}"><input type="hidden" name="_token" value="{{ csrf_token() }}"><input type="hidden" name="_method" value="DELETE"><button type="submit" class="result-delete" onclick="return confirm('Hapus berkas ini?')">Hapus</button></form>` : ''}</div>`).join('')
+                        ? jaringanResultFiles.map((path, index) => fileRow(button.dataset.jaringanHasilFileUrl.replace(/\/0$/, '/' + index), String(path).split('/').pop() || 'Berkas hasil jaringan ' + (index + 1), button.dataset.prosesJaringanDate, jaringanResultUploadForm ? `<form method="POST" action="{{ url('/pbpd') }}/${button.dataset.id}/hasil-jaringan/${index}"><input type="hidden" name="_token" value="{{ csrf_token() }}"><input type="hidden" name="_method" value="DELETE"><button type="submit" class="result-delete" onclick="return confirm('Hapus berkas ini?')">Hapus</button></form>` : '')).join('')
                         : '-';
                     if (jaringanResultUploadForm) {
                         jaringanResultUploadForm.action = `{{ url('/pbpd') }}/${button.dataset.id}/hasil-jaringan`;
@@ -697,13 +719,13 @@
                         setText('constructionReportFoto', button.dataset.konstruksiFoto);
                         setText('constructionReportSiap', button.dataset.konstruksiSiap);
                         setText('constructionReportCatatan', button.dataset.konstruksiCatatan);
-                        let constructionReportFiles = [];
-                        try { constructionReportFiles = JSON.parse(button.dataset.konstruksiLaporanFiles ? atob(button.dataset.konstruksiLaporanFiles) : '[]'); } catch (error) { constructionReportFiles = []; }
-                        const constructionReportFilesBox = document.getElementById('constructionReportFiles');
-                        if (constructionReportFilesBox) constructionReportFilesBox.innerHTML = constructionReportFiles.length
-                            ? constructionReportFiles.map((path, index) => `<a href="${button.dataset.konstruksiLaporanFileUrl.replace(/\/0$/, '/' + index)}" target="_blank" rel="noopener">📄 ${String(path).split('/').pop() || 'Berkas laporan ' + (index + 1)}</a>`).join('<br>')
-                            : '-';
                     }
+                    let constructionVendorReportFiles = [];
+                    try { constructionVendorReportFiles = JSON.parse(button.dataset.konstruksiLaporanFiles ? atob(button.dataset.konstruksiLaporanFiles) : '[]'); } catch (error) { constructionVendorReportFiles = []; }
+                    const constructionVendorReportFilesBox = document.getElementById('constructionVendorReportFiles');
+                    if (constructionVendorReportFilesBox) constructionVendorReportFilesBox.innerHTML = constructionVendorReportFiles.length
+                        ? constructionVendorReportFiles.map((path, index) => fileRow(button.dataset.konstruksiLaporanFileUrl.replace(/\/0$/, '/' + index), String(path).split('/').pop() || `Berkas laporan konstruksi ${index + 1}`, button.dataset.konstruksiLaporanDate)).join('')
+                        : '-';
                     const reportResult = document.getElementById('vendorReportResult');
                     if (reportResult) {
                         setText('laporanLengkap', button.dataset.laporanLengkap);
@@ -711,18 +733,23 @@
                         setText('laporanFoto', button.dataset.laporanFoto);
                         setText('laporanSiap', button.dataset.laporanSiap);
                         setText('laporanCatatan', button.dataset.laporanCatatan);
-                        let files = [];
-                        try { files = JSON.parse(button.dataset.laporanFiles ? atob(button.dataset.laporanFiles) : '[]'); } catch (error) { files = []; }
-                        const filesBox = document.getElementById('laporanFiles');
-                        if (filesBox) filesBox.innerHTML = files.length
-                            ? files.map((path, index) => `<a href="${button.dataset.reportFileUrl.replace(/\/0$/, '/' + index)}" target="_blank">📄 Berkas laporan ${index + 1}</a>`).join('<br>')
-                            : '-';
                     }
+                    let vendorReportFiles = [];
+                    try { vendorReportFiles = JSON.parse(button.dataset.laporanFiles ? atob(button.dataset.laporanFiles) : '[]'); } catch (error) { vendorReportFiles = []; }
+                    const vendorReportFilesBox = document.getElementById('vendorReportFiles');
+                    if (vendorReportFilesBox) vendorReportFilesBox.innerHTML = vendorReportFiles.length
+                        ? vendorReportFiles.map((path, index) => fileRow(button.dataset.reportFileUrl.replace(/\/0$/, '/' + index), String(path).split('/').pop() || `Berkas laporan vendor ${index + 1}`, button.dataset.laporanDate)).join('')
+                        : '-';
                     const resultFilesBox = document.getElementById('resultFiles');
                     let resultFiles = [];
                     try { resultFiles = JSON.parse(button.dataset.resultFiles ? atob(button.dataset.resultFiles) : '[]'); } catch (error) { resultFiles = []; }
+                    let resultNames = [];
+                    try { resultNames = JSON.parse(button.dataset.resultNames ? atob(button.dataset.resultNames) : '[]'); } catch (error) { resultNames = []; }
                     if (resultFilesBox) resultFilesBox.innerHTML = resultFiles.length
-                            ? resultFiles.map((path, index) => `<div class="result-file-row"><a href="${button.dataset.resultFileUrl.replace(/\/0$/, '/' + index)}" target="_blank">📄 Berkas hasil ${index + 1}</a>${resultUploadForm ? `<form method="POST" action="${button.dataset.resultDeleteUrl.replace(/\/0$/, '/' + index)}"><input type="hidden" name="_token" value="{{ csrf_token() }}"><button type="submit" class="result-delete" onclick="return confirm('Hapus berkas ini?')">Hapus</button></form>` : ''}</div>`).join('')
+                            ? resultFiles.map((path, index) => {
+                                const fileName = resultNames[index] || String(path).split('/').pop() || `Berkas hasil ${index + 1}`;
+                                return fileRow(button.dataset.resultFileUrl.replace(/\/0$/, '/' + index), fileName, button.dataset.prosesPerencanaanDate, resultUploadForm ? `<form method="POST" action="${button.dataset.resultDeleteUrl.replace(/\/0$/, '/' + index)}"><input type="hidden" name="_token" value="{{ csrf_token() }}"><button type="submit" class="result-delete" onclick="return confirm('Hapus berkas ini?')">Hapus</button></form>` : '');
+                            }).join('')
                             : '-';
                     if (resultUploadForm) {
                         resultUploadForm.hidden = false;

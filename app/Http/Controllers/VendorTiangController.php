@@ -156,15 +156,26 @@ class VendorTiangController extends Controller
         // vendor_id null.
         $pengiriman = $pelanggan->pengirimanVendor()->first();
         $laporan = $pelanggan->laporanVendor()->firstOrNew(['pelanggan_id' => $pelanggan->id]);
+        $uploadedFiles = $request->file('berkas_hasil', []);
+        $existingPaths = $this->storedPaths($laporan->berkas_hasil_paths);
         $paths = $this->appendUploadedFiles(
-            $this->storedPaths($laporan->berkas_hasil_paths),
-            $request->file('berkas_hasil', []),
+            $existingPaths,
+            $uploadedFiles,
             'hasil-perencanaan',
         );
+        $names = array_slice(
+            array_pad($this->storedPaths($laporan->berkas_hasil_names), count($existingPaths), null),
+            0,
+            count($existingPaths),
+        );
+        foreach ($uploadedFiles as $file) {
+            $names[] = $file->getClientOriginalName();
+        }
 
         $laporan->fill([
             'vendor_id' => $laporan->vendor_id ?? $pengiriman?->vendor_id,
             'berkas_hasil_paths' => $paths,
+            'berkas_hasil_names' => $names,
             'berkas_hasil_at' => now(),
         ]);
         if (! $laporan->exists) {
@@ -204,7 +215,9 @@ class VendorTiangController extends Controller
         $path = $this->storedPaths($laporan->berkas_hasil_paths)[$index] ?? null;
         abort_unless($path && Storage::disk('public')->exists($path), 404);
 
-        return $this->publicFileResponse($path);
+        $name = $this->storedPaths($laporan->berkas_hasil_names)[$index] ?? basename($path);
+
+        return Storage::disk('public')->response($path, basename($name));
     }
 
     public function hapusHasil(PelangganPbpd $pelanggan, int $index)
@@ -213,12 +226,17 @@ class VendorTiangController extends Controller
 
         $laporan = $pelanggan->laporanVendor()->firstOrFail();
         $paths = $this->storedPaths($laporan->berkas_hasil_paths);
+        $names = $this->storedPaths($laporan->berkas_hasil_names);
         $path = $paths[$index] ?? null;
         abort_unless($path, 404);
 
         Storage::disk('public')->delete($path);
         array_splice($paths, $index, 1);
-        $laporan->update(['berkas_hasil_paths' => $paths ?: null]);
+        array_splice($names, $index, 1);
+        $laporan->update([
+            'berkas_hasil_paths' => $paths ?: null,
+            'berkas_hasil_names' => $names ?: null,
+        ]);
 
         return back()->with('success', 'Berkas hasil berhasil dihapus.');
     }

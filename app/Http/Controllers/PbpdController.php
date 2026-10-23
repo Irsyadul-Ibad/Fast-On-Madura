@@ -507,12 +507,27 @@ class PbpdController extends Controller
             'berkas.*' => ['required', 'file', 'mimes:pdf,doc,docx,xls,xlsx,jpg,jpeg,png', 'max:10240'],
         ]);
         $column = $jenis === 'pendukung' ? 'berkas_pendukung_paths' : 'berkas_ijin_paths';
+        $namesColumn = $jenis === 'pendukung' ? 'berkas_pendukung_names' : 'berkas_ijin_names';
+        $uploadedFiles = $request->file('berkas', []);
+        $existingPaths = $this->arrayPaths($pelanggan->{$column});
         $paths = $this->appendUploadedFiles(
-            $this->arrayPaths($pelanggan->{$column}),
-            $request->file('berkas', []),
+            $existingPaths,
+            $uploadedFiles,
             'syarat/'.$jenis,
         );
-        $pelanggan->update([$column => $paths]);
+        $names = array_slice(
+            array_pad($this->arrayPaths($pelanggan->{$namesColumn}), count($existingPaths), null),
+            0,
+            count($existingPaths),
+        );
+        foreach ($uploadedFiles as $file) {
+            $names[] = $file->getClientOriginalName();
+        }
+
+        $pelanggan->update([
+            $column => $paths,
+            $namesColumn => $names,
+        ]);
         NotifikasiService::untukData($pelanggan, 'Berkas syarat diupload', 'Berkas '.$jenis.' untuk '.$pelanggan->no_agenda.' telah diupload oleh ULP.', route('laporan'));
 
         return back()->with('success', 'Berkas syarat berhasil disimpan.');
@@ -522,9 +537,12 @@ class PbpdController extends Controller
     {
         abort_unless(in_array($jenis, ['pendukung', 'ijin'], true), 404);
         $column = $jenis === 'pendukung' ? 'berkas_pendukung_paths' : 'berkas_ijin_paths';
+        $namesColumn = $jenis === 'pendukung' ? 'berkas_pendukung_names' : 'berkas_ijin_names';
         $path = $this->arrayPaths($pelanggan->{$column})[$index] ?? null;
         abort_unless($path && Storage::disk('public')->exists($path), 404);
 
-        return $this->publicFileResponse($path);
+        $name = $this->arrayPaths($pelanggan->{$namesColumn})[$index] ?? basename($path);
+
+        return Storage::disk('public')->response($path, basename($name));
     }
 }

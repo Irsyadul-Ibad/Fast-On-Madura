@@ -29,6 +29,8 @@ class PelangganPbpd extends Model
             'hasil_jaringan_paths' => 'array',
             'berkas_pendukung_paths' => 'array',
             'berkas_ijin_paths' => 'array',
+            'berkas_pendukung_names' => 'array',
+            'berkas_ijin_names' => 'array',
             'hasil_konstruksi_at' => 'datetime',
             'nps_wo_at' => 'datetime',
             'nps_checklist_at' => 'datetime',

@@ -163,8 +163,8 @@
                                 ><svg class="icon-inline" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3.5h9l3 3V20.5H6z"/><path d="M15 3.5v4h3M9 12h6M9 16h6"/></svg></button>
                             </td>
                             @if ($showSyarat)
-                                <td><button type="button" class="ikon-syarat tombol-syarat {{ count($row->berkas_pendukung_paths ?? []) ? 'berkas-lengkap' : 'berkas-belum' }}" data-id="{{ $row->id }}" data-jenis="pendukung" data-files="{{ base64_encode(json_encode($row->berkas_pendukung_paths ?? [])) }}" data-file-url="{{ route('pbpd.syarat.file', ['pelanggan' => $row->id, 'jenis' => 'pendukung', 'index' => 0]) }}" title="Berkas Pendukung">@if(count($row->berkas_pendukung_paths ?? []))<svg class="icon-inline" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg>@else<svg class="icon-inline" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8v4M12 16h.01"/><circle cx="12" cy="12" r="9"/></svg>@endif</button></td>
-                                <td><button type="button" class="ikon-syarat tombol-syarat {{ count($row->berkas_ijin_paths ?? []) ? 'berkas-lengkap' : 'berkas-belum' }}" data-id="{{ $row->id }}" data-jenis="ijin" data-files="{{ base64_encode(json_encode($row->berkas_ijin_paths ?? [])) }}" data-file-url="{{ route('pbpd.syarat.file', ['pelanggan' => $row->id, 'jenis' => 'ijin', 'index' => 0]) }}" title="Berkas Ijin">@if(count($row->berkas_ijin_paths ?? []))<svg class="icon-inline" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg>@else<svg class="icon-inline" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8v4M12 16h.01"/><circle cx="12" cy="12" r="9"/></svg>@endif</button></td>
+                                <td><button type="button" class="ikon-syarat tombol-syarat {{ count($row->berkas_pendukung_paths ?? []) ? 'berkas-lengkap' : 'berkas-belum' }}" data-id="{{ $row->id }}" data-jenis="pendukung" data-files="{{ base64_encode(json_encode($row->berkas_pendukung_paths ?? [])) }}" data-file-names="{{ base64_encode(json_encode($row->berkas_pendukung_names ?? [])) }}" data-file-url="{{ route('pbpd.syarat.file', ['pelanggan' => $row->id, 'jenis' => 'pendukung', 'index' => 0]) }}" title="Berkas Pendukung">@if(count($row->berkas_pendukung_paths ?? []))<svg class="icon-inline" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg>@else<svg class="icon-inline" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8v4M12 16h.01"/><circle cx="12" cy="12" r="9"/></svg>@endif</button></td>
+                                <td><button type="button" class="ikon-syarat tombol-syarat {{ count($row->berkas_ijin_paths ?? []) ? 'berkas-lengkap' : 'berkas-belum' }}" data-id="{{ $row->id }}" data-jenis="ijin" data-files="{{ base64_encode(json_encode($row->berkas_ijin_paths ?? [])) }}" data-file-names="{{ base64_encode(json_encode($row->berkas_ijin_names ?? [])) }}" data-file-url="{{ route('pbpd.syarat.file', ['pelanggan' => $row->id, 'jenis' => 'ijin', 'index' => 0]) }}" title="Berkas Ijin">@if(count($row->berkas_ijin_paths ?? []))<svg class="icon-inline" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg>@else<svg class="icon-inline" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8v4M12 16h.01"/><circle cx="12" cy="12" r="9"/></svg>@endif</button></td>
                             @endif
                             <td>
                                 <span class="pill pill-ungu">
@@ -453,9 +453,22 @@
                     document.getElementById('syaratModalTitle').textContent = jenis === 'ijin' ? 'Berkas Ijin' : 'Berkas Pendukung';
                     let files = [];
                     try { files = JSON.parse(button.dataset.files ? atob(button.dataset.files) : '[]'); } catch (error) { files = []; }
+                    let fileNames = [];
+                    try { fileNames = JSON.parse(button.dataset.fileNames ? atob(button.dataset.fileNames) : '[]'); } catch (error) { fileNames = []; }
                     const filesBox = document.getElementById('syaratFiles');
                     filesBox.innerHTML = files.length
-                        ? files.map((path, index) => `<a href="${button.dataset.fileUrl.replace(/\/0$/, '/' + index)}" target="_blank" rel="noopener">📄 ${String(path).split('/').pop() || 'Berkas ' + (index + 1)}</a>`).join('')
+                        ? files.map((path, index) => {
+                            const fileName = fileNames[index] || String(path).split('/').pop() || `Berkas ${index + 1}`;
+                            const safeFileName = String(fileName).replace(/[&<>"']/g, (character) => ({
+                                '&': '&amp;',
+                                '<': '&lt;',
+                                '>': '&gt;',
+                                '"': '&quot;',
+                                "'": '&#039;',
+                            }[character]));
+
+                            return `<a href="${button.dataset.fileUrl.replace(/\/0$/, '/' + index)}" target="_blank" rel="noopener">📄 ${safeFileName}</a>`;
+                        }).join('')
                         : '<span>Belum ada berkas.</span>';
                     if (syaratUploadForm) syaratUploadForm.action = `{{ url('/pbpd') }}/${button.dataset.id}/syarat/${jenis}`;
                     syaratModal.hidden = false;

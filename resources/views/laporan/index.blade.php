@@ -153,7 +153,9 @@
                                     data-tujuan="{{ $row->tujuan_perluasan ?: ($material?->jenis_perluasan ?? '-') }}"
                                     data-rab="{{ $row->rab }}"
                                     data-pendukung="{{ base64_encode(json_encode($row->berkas_pendukung_paths ?? [])) }}"
+                                    data-pendukung-names="{{ base64_encode(json_encode($row->berkas_pendukung_names ?? [])) }}"
                                     data-ijin="{{ base64_encode(json_encode($row->berkas_ijin_paths ?? [])) }}"
+                                    data-ijin-names="{{ base64_encode(json_encode($row->berkas_ijin_names ?? [])) }}"
                                     data-file-url="{{ route('pbpd.syarat.file', ['pelanggan' => $row->id, 'jenis' => 'pendukung', 'index' => 0]) }}"
                                     data-jenis-tiang-tm="{{ $material?->jenis_tiang_tm ?? $material?->jenis_tiang }}"
                                     data-jml-tiang-tm="{{ $material?->jml_tiang_tm ?? $material?->jml_tiang }}"
@@ -253,14 +255,29 @@
             const text = (id, value) => {
                 document.getElementById(id).textContent = value || '-';
             };
-            const files = (id, encoded, url, jenis) => {
+            const files = (id, encoded, encodedNames, url, jenis) => {
                 let list = [];
+                let names = [];
                 try {
                     list = JSON.parse(atob(encoded || ''));
                 } catch (e) {}
+                try {
+                    names = JSON.parse(atob(encodedNames || ''));
+                } catch (e) {}
 
                 document.getElementById(id).innerHTML = list.length
-                    ? list.map((path, i) => `<a href="${url.replace(/pendukung\/0$/, jenis + '/' + i)}" target="_blank" rel="noopener">📄 ${String(path).split('/').pop() || 'Berkas ' + (i + 1)}</a>`).join('')
+                    ? list.map((path, i) => {
+                        const fileName = names[i] || String(path).split('/').pop() || `Berkas ${i + 1}`;
+                        const safeFileName = String(fileName).replace(/[&<>"']/g, (character) => ({
+                            '&': '&amp;',
+                            '<': '&lt;',
+                            '>': '&gt;',
+                            '"': '&quot;',
+                            "'": '&#039;',
+                        }[character]));
+
+                        return `<a href="${url.replace(/pendukung\/0$/, jenis + '/' + i)}" target="_blank" rel="noopener">📄 ${safeFileName}</a>`;
+                    }).join('')
                     : '-';
             };
 
@@ -279,8 +296,8 @@
                 text('ldKonduktorTr', button.dataset.jenisKonduktorTr ? `${button.dataset.jenisKonduktorTr} (${button.dataset.jmlKonduktorTr || 0})` : '-');
                 text('ldTrafo', button.dataset.jenisTrafo ? `${button.dataset.jenisTrafo} (${button.dataset.jmlTrafo || 0})` : '-');
                 text('ldKwh', button.dataset.jenisKwh ? `${button.dataset.jenisKwh} (${button.dataset.jmlKwh || 0})` : '-');
-                files('ldPendukung', button.dataset.pendukung, button.dataset.fileUrl, 'pendukung');
-                files('ldIjin', button.dataset.ijin, button.dataset.fileUrl, 'ijin');
+                files('ldPendukung', button.dataset.pendukung, button.dataset.pendukungNames, button.dataset.fileUrl, 'pendukung');
+                files('ldIjin', button.dataset.ijin, button.dataset.ijinNames, button.dataset.fileUrl, 'ijin');
                 modal.hidden = false;
             }));
 
