@@ -2,15 +2,30 @@
 @section('title', 'Notifikasi')
 @section('judul', 'Notifikasi')
 @section('isi')
-<div class="box notif-box">
-    <div class="notif-head"><h2>Notifikasi</h2><form method="POST" action="{{ route('notifikasi.read-all') }}">@csrf<button type="submit">Tandai semua dibaca</button></form></div>
-    @forelse ($notifications as $notification)
-        <form method="POST" action="{{ route('notifikasi.read', $notification) }}">@csrf<button type="submit" class="notif-item {{ $notification->read_at ? 'read' : 'unread' }}">
-            <strong>{{ $notification->title }}</strong><span>{{ $notification->message }}</span><small>{{ $notification->created_at?->format('d/m/Y H:i') }}</small>
-        </button></form>
-    @empty <p>Belum ada notifikasi.</p> @endforelse
-    <div class="halaman">{{ $notifications->links() }}</div>
-</div>
+    <div class="box notif-box">
+        <div class="notif-head">
+            <h2>Notifikasi</h2>
+            <form method="POST" action="{{ route('notifikasi.read-all') }}">
+                @csrf
+                <button type="submit">Tandai semua dibaca</button>
+            </form>
+        </div>
+
+        @forelse ($notifications as $notification)
+            <form method="POST" action="{{ route('notifikasi.read', $notification) }}">
+                @csrf
+                <button type="submit" class="notif-item {{ $notification->read_at ? 'read' : 'unread' }}">
+                    <strong>{{ $notification->title }}</strong>
+                    <span>{{ $notification->message }}</span>
+                    <small>{{ $notification->created_at?->format('d/m/Y H:i') }}</small>
+                </button>
+            </form>
+        @empty
+            <p>Belum ada notifikasi.</p>
+        @endforelse
+
+        <div class="halaman">{{ $notifications->links() }}</div>
+    </div>
 @push('page-styles')
 <style>
     .notif-box{padding:18px!important;background:#f8fbff!important}

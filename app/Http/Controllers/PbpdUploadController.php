@@ -16,7 +16,7 @@ class PbpdUploadController extends Controller
     {
         return view('pbpd.upload', [
             'riwayat' => ImportExcel::orderByDesc('id')->limit(15)->get(),
-            'ulps'    => Ulp::orderBy('kode')->get(),
+            'ulps' => Ulp::orderBy('kode')->get(),
         ]);
     }
 
@@ -35,7 +35,7 @@ class PbpdUploadController extends Controller
             : 'mimes:xlsx,xls';
 
         $request->validate([
-            'file'   => $fileRules,
+            'file' => $fileRules,
             'ulp_id' => ['nullable', 'exists:ulp,id'],
         ]);
 
@@ -50,10 +50,10 @@ class PbpdUploadController extends Controller
         }
 
         $import = ImportExcel::create([
-            'file_name'   => $file->getClientOriginalName(),
+            'file_name' => $file->getClientOriginalName(),
             'uploaded_by' => Auth::id(),
-            'status'      => 'queued',
-            'file_path'   => $path,
+            'status' => 'queued',
+            'file_path' => $path,
         ]);
 
         try {

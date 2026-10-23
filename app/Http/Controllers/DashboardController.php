@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\PelangganPbpd;
-use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
@@ -13,8 +12,7 @@ class DashboardController extends Controller
         $base = PelangganPbpd::query()
             ->statusTampil()
             ->when($ulpId, fn ($q) => $q->where('ulp_id', $ulpId))
-            ->where('status', '!=', 'MOHON')
-            ;
+            ->where('status', '!=', 'MOHON');
 
         $rows = (clone $base)->with('ulp')->orderByDesc('id')->get();
         $tahapLabel = function ($value): string {
@@ -24,6 +22,7 @@ class DashboardController extends Controller
             if ($value === 'SELESAI') {
                 return 'SELESAI';
             }
+
             return 'SEDANG DIPROSES';
         };
         $tahap = $rows->groupBy(fn ($row) => $tahapLabel($row->tahap))->map->count()

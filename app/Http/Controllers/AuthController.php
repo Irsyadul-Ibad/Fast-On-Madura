@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
-use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
@@ -22,20 +22,19 @@ class AuthController extends Controller
             'password' => 'required|string',
         ]);
 
-        $key = Str::lower($data['user_id']) . '|' . $request->ip();
+        $key = Str::lower($data['user_id']).'|'.$request->ip();
 
         if (RateLimiter::tooManyAttempts($key, 5)) {
-             $detik = RateLimiter::availableIn($key);
+            $detik = RateLimiter::availableIn($key);
             throw ValidationException::withMessages([
                 'user_id' => "Terlalu banyak percobaan. Coba lagi dalam {$detik} detik.",
             ]);
         }
-    
 
-     $ok = Auth::attempt([
-            'user_id'  => $data['user_id'],
+        $ok = Auth::attempt([
+            'user_id' => $data['user_id'],
             'password' => $data['password'],
-            'aktif'    => true,
+            'aktif' => true,
         ]);
 
         if (! $ok) {
@@ -48,10 +47,13 @@ class AuthController extends Controller
         RateLimiter::clear($key);
         $request->session()->regenerate();
 
-        if (in_array($this->currentUser()->role?->role_code, ['VENDOR_TIANG', 'VENDOR_TIANG2', '5170T1', '5170T2', '5170T3', '5170T4', '5170T5', '5170T6', '5170T7', '5170T8', '5170T9'], true)) {
+        $roleCode = $this->currentUser()->role?->role_code;
+
+        if (in_array($roleCode, self::VENDOR_TIANG_ROLE_CODES, true)) {
             return redirect()->route('vendor.tiang');
         }
-        if (in_array($this->currentUser()->role?->role_code, ['VENDOR_KONSTRUKSI', 'VENDOR_KONSTRUKSI2', '5170K1', '5170K2', '5170K3', '5170K4', '5170K5', '5170K6', '5170K7'], true)) {
+
+        if (in_array($roleCode, self::VENDOR_KONSTRUKSI_ROLE_CODES, true)) {
             return redirect()->route('vendor.konstruksi');
         }
 

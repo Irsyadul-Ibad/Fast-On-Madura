@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\AppNotification;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class NotifikasiController extends Controller
@@ -34,7 +33,7 @@ class NotifikasiController extends Controller
             $path = route('laporan', [], false);
         }
 
-        $relativeUrl = $path . (isset($parts['query']) ? '?' . $parts['query'] : '');
+        $relativeUrl = $path.(isset($parts['query']) ? '?'.$parts['query'] : '');
 
         return redirect($relativeUrl);
     }
@@ -42,6 +41,7 @@ class NotifikasiController extends Controller
     public function readAll()
     {
         AppNotification::where('user_id', Auth::id())->whereNull('read_at')->update(['read_at' => now()]);
+
         return back()->with('success', 'Semua notifikasi sudah dibaca.');
     }
 }

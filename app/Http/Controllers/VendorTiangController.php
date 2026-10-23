@@ -13,7 +13,7 @@ class VendorTiangController extends Controller
 {
     private function authorizeVendor(): void
     {
-        abort_unless(in_array($this->currentUser()->role?->role_code, ['VENDOR_TIANG', 'VENDOR_TIANG2', '5170T1', '5170T2', '5170T3', '5170T4', '5170T5', '5170T6', '5170T7', '5170T8', '5170T9'], true), 403);
+        abort_unless(in_array($this->currentUser()->role?->role_code, self::VENDOR_TIANG_ROLE_CODES, true), 403);
     }
 
     public function index()
@@ -77,10 +77,11 @@ class VendorTiangController extends Controller
         ]);
 
         $laporan = LaporanVendor::firstOrNew(['pelanggan_id' => $pelanggan->id]);
-        $paths = $this->paths($laporan->berkas_paths);
-        foreach ($request->file('berkas', []) as $file) {
-            $paths[] = $file->store('laporan-vendor', 'public');
-        }
+        $paths = $this->appendUploadedFiles(
+            $this->storedPaths($laporan->berkas_paths),
+            $request->file('berkas', []),
+            'laporan-vendor',
+        );
 
         $laporan->fill([
             'vendor_id' => $pelanggan->pengirimanVendor?->vendor_id,
@@ -98,7 +99,7 @@ class VendorTiangController extends Controller
         if ($pelanggan->tahap === 'VENDOR_TIANG') {
             $pelanggan->update(['tahap' => 'PERENCANAAN']);
         }
-        NotifikasiService::untukData($pelanggan, 'Laporan vendor tiang masuk', 'Vendor tiang telah mengirim laporan untuk ' . $pelanggan->no_agenda . '.', route('laporan'));
+        NotifikasiService::untukData($pelanggan, 'Laporan vendor tiang masuk', 'Vendor tiang telah mengirim laporan untuk '.$pelanggan->no_agenda.'.', route('laporan'));
 
         return back()->with('success', 'Laporan berhasil dikirim ke Perencanaan.');
     }
@@ -107,7 +108,7 @@ class VendorTiangController extends Controller
     {
         $roleCode = $this->currentUser()->role?->role_code;
         $isPlanning = $roleCode === '5170REN';
-        $isVendor = in_array($roleCode, ['VENDOR_TIANG', 'VENDOR_TIANG2', '5170T1', '5170T2', '5170T3', '5170T4', '5170T5', '5170T6', '5170T7', '5170T8', '5170T9'], true);
+        $isVendor = in_array($roleCode, self::VENDOR_TIANG_ROLE_CODES, true);
 
         abort_unless($isPlanning || $isVendor, 403);
 
@@ -126,7 +127,7 @@ class VendorTiangController extends Controller
         $roleCode = $this->currentUser()->role?->role_code;
         $isPlanning = $roleCode === '5170REN';
         $isUp3 = $this->currentUser()->role?->type === 'UP3';
-        $isVendor = in_array($roleCode, ['VENDOR_TIANG', 'VENDOR_TIANG2', '5170T1', '5170T2', '5170T3', '5170T4', '5170T5', '5170T6', '5170T7', '5170T8', '5170T9'], true);
+        $isVendor = in_array($roleCode, self::VENDOR_TIANG_ROLE_CODES, true);
         abort_unless($isPlanning || $isUp3 || $isVendor, 403);
 
         $pengiriman = $pelanggan->pengirimanVendor()->with('vendor')->firstOrFail();
@@ -135,7 +136,7 @@ class VendorTiangController extends Controller
         }
 
         $laporan = $pelanggan->laporanVendor()->firstOrFail();
-        $path = $this->paths($laporan->berkas_paths)[$index] ?? null;
+        $path = $this->storedPaths($laporan->berkas_paths)[$index] ?? null;
         abort_unless($path && Storage::disk('public')->exists($path), 404);
 
         return $this->publicFileResponse($path);
@@ -155,10 +156,11 @@ class VendorTiangController extends Controller
         // vendor_id null.
         $pengiriman = $pelanggan->pengirimanVendor()->first();
         $laporan = $pelanggan->laporanVendor()->firstOrNew(['pelanggan_id' => $pelanggan->id]);
-        $paths = $this->paths($laporan->berkas_hasil_paths);
-        foreach ($request->file('berkas_hasil', []) as $file) {
-            $paths[] = $file->store('hasil-perencanaan', 'public');
-        }
+        $paths = $this->appendUploadedFiles(
+            $this->storedPaths($laporan->berkas_hasil_paths),
+            $request->file('berkas_hasil', []),
+            'hasil-perencanaan',
+        );
 
         $laporan->fill([
             'vendor_id' => $laporan->vendor_id ?? $pengiriman?->vendor_id,
@@ -172,19 +174,9 @@ class VendorTiangController extends Controller
         }
         $laporan->save();
         $pelanggan->tandaiSelesaiJikaLengkap(Auth::id());
-        NotifikasiService::untukData($pelanggan, 'Berkas hasil perencanaan diupload', 'Berkas hasil perencanaan untuk ' . $pelanggan->no_agenda . ' telah diupload.', route('laporan'));
+        NotifikasiService::untukData($pelanggan, 'Berkas hasil perencanaan diupload', 'Berkas hasil perencanaan untuk '.$pelanggan->no_agenda.' telah diupload.', route('laporan'));
 
         return back()->with('success', 'Berkas hasil perencanaan berhasil disimpan.');
-    }
-
-    private function paths(mixed $value): array
-    {
-        if (is_array($value)) return $value;
-        if (is_string($value) && $value !== '') {
-            $decoded = json_decode($value, true);
-            return is_array($decoded) ? $decoded : [$value];
-        }
-        return [];
     }
 
     public function uploadHasilFromExpansion(Request $request)
@@ -200,7 +192,7 @@ class VendorTiangController extends Controller
         $roleCode = $this->currentUser()->role?->role_code;
         $isPlanning = $roleCode === '5170REN';
         $isUp3 = $this->currentUser()->role?->type === 'UP3';
-        $isVendor = in_array($roleCode, ['VENDOR_TIANG', 'VENDOR_TIANG2', '5170T1', '5170T2', '5170T3', '5170T4', '5170T5', '5170T6', '5170T7', '5170T8', '5170T9'], true);
+        $isVendor = in_array($roleCode, self::VENDOR_TIANG_ROLE_CODES, true);
         abort_unless($isPlanning || $isUp3 || $isVendor, 403);
 
         $pengiriman = $pelanggan->pengirimanVendor()->with('vendor')->firstOrFail();
@@ -209,7 +201,7 @@ class VendorTiangController extends Controller
         }
 
         $laporan = $pelanggan->laporanVendor()->firstOrFail();
-        $path = $this->paths($laporan->berkas_hasil_paths)[$index] ?? null;
+        $path = $this->storedPaths($laporan->berkas_hasil_paths)[$index] ?? null;
         abort_unless($path && Storage::disk('public')->exists($path), 404);
 
         return $this->publicFileResponse($path);
@@ -220,7 +212,7 @@ class VendorTiangController extends Controller
         abort_unless($this->currentUser()->role?->role_code === '5170REN', 403);
 
         $laporan = $pelanggan->laporanVendor()->firstOrFail();
-        $paths = $this->paths($laporan->berkas_hasil_paths);
+        $paths = $this->storedPaths($laporan->berkas_hasil_paths);
         $path = $paths[$index] ?? null;
         abort_unless($path, 404);
 

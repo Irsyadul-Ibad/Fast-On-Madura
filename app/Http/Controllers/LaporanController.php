@@ -6,7 +6,6 @@ use App\Exports\LaporanExport;
 use App\Models\PelangganPbpd;
 use App\Models\Ulp;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 
 class LaporanController extends Controller
@@ -52,7 +51,7 @@ class LaporanController extends Controller
     {
         $rows = $this->laporanQuery($request)->with(['ulp', 'permintaan', 'pengirimanVendor', 'pengirimanKonstruksi', 'laporanVendor'])->get();
 
-        return Excel::download(new LaporanExport($rows), 'laporan-pbpd-' . now()->format('Ymd-His') . '.xlsx');
+        return Excel::download(new LaporanExport($rows), 'laporan-pbpd-'.now()->format('Ymd-His').'.xlsx');
     }
 
     private function laporanQuery(Request $request)
@@ -65,15 +64,6 @@ class LaporanController extends Controller
 
         return PelangganPbpd::query()
             ->whereIn('jenis_transaksi', self::JENIS_TRANSAKSI_LAPORAN)
-            // Logika lama untuk memasukkan PEREMAJAAN langsung ke laporan,
-            // meskipun belum melewati tahap ULP, disimpan sebagai referensi:
-            // ->where(function ($query) {
-            //     $query->whereRaw("UPPER(TRIM(status)) = 'PEREMAJAAN'")
-            //         ->orWhere(function ($sent) {
-            //             $sent->whereNotNull('tahap')
-            //                 ->whereRaw("UPPER(TRIM(tahap)) <> 'ULP'");
-            //         });
-            // })
             // Hanya data yang sudah diproses/dikirim melewati tahap ULP yang
             // boleh masuk laporan.
             ->whereNotNull('tahap')
@@ -98,7 +88,7 @@ class LaporanController extends Controller
             ->when($tahap === 'JARINGAN', fn ($q) => $q->whereRaw("jsonb_array_length(COALESCE(hasil_jaringan_paths::jsonb, '[]'::jsonb)) > 0"))
             ->when($request->filled('no_agenda'), function ($q) use ($request) {
                 $noAgenda = trim((string) $request->input('no_agenda'));
-                $q->whereRaw('CAST(no_agenda AS TEXT) LIKE ?', ['%' . $noAgenda . '%']);
+                $q->whereRaw('CAST(no_agenda AS TEXT) LIKE ?', ['%'.$noAgenda.'%']);
             })
             ->when($request->filled('jenis'), fn ($q) => $q->where('jenis_transaksi', $request->jenis))
             ->when($request->filled('status'), fn ($q) => $q->whereRaw('UPPER(TRIM(status)) = ?', [strtoupper(trim((string) $request->status))]));

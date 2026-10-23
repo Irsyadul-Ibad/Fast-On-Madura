@@ -12,7 +12,7 @@ class VendorKonstruksiController extends Controller
 {
     private function authorizeVendor(): void
     {
-        abort_unless(in_array($this->currentUser()->role?->role_code, ['VENDOR_KONSTRUKSI', 'VENDOR_KONSTRUKSI2', '5170K1', '5170K2', '5170K3', '5170K4', '5170K5', '5170K6', '5170K7'], true), 403);
+        abort_unless(in_array($this->currentUser()->role?->role_code, self::VENDOR_KONSTRUKSI_ROLE_CODES, true), 403);
     }
 
     public function index()
@@ -61,10 +61,11 @@ class VendorKonstruksiController extends Controller
         $pengiriman = $pelanggan->pengirimanKonstruksi()->with('vendor')->firstOrFail();
         abort_unless($pengiriman->vendor?->jenis === 'KONSTRUKSI', 403);
         abort_unless($pengiriman->vendor?->user_id === Auth::id(), 403);
-        $paths = is_array($pengiriman->laporan_paths) ? $pengiriman->laporan_paths : [];
-        foreach ($request->file('berkas_laporan', []) as $file) {
-            $paths[] = $file->store('laporan-konstruksi', 'public');
-        }
+        $paths = $this->appendUploadedFiles(
+            $this->arrayPaths($pengiriman->laporan_paths),
+            $request->file('berkas_laporan', []),
+            'laporan-konstruksi',
+        );
 
         $pengiriman->update([
             'pekerjaan_lengkap' => $request->boolean('pekerjaan_lengkap'),
@@ -77,7 +78,8 @@ class VendorKonstruksiController extends Controller
         ]);
 
         $pelanggan->update(['tahap' => 'PERENCANAAN']);
-        NotifikasiService::untukData($pelanggan, 'Laporan vendor konstruksi masuk', 'Vendor konstruksi telah mengirim laporan untuk ' . $pelanggan->no_agenda . '.', route('laporan'));
+        NotifikasiService::untukData($pelanggan, 'Laporan vendor konstruksi masuk', 'Vendor konstruksi telah mengirim laporan untuk '.$pelanggan->no_agenda.'.', route('laporan'));
+
         return back()->with('success', 'Laporan vendor konstruksi berhasil dikirim.');
     }
 
@@ -88,7 +90,7 @@ class VendorKonstruksiController extends Controller
         abort_unless($pengiriman->vendor?->jenis === 'KONSTRUKSI', 403);
         abort_unless($pengiriman->vendor?->user_id === Auth::id(), 403);
 
-        foreach ($this->paths($pengiriman->laporan_paths) as $path) {
+        foreach ($this->storedPaths($pengiriman->laporan_paths) as $path) {
             Storage::disk('public')->delete($path);
         }
         $pengiriman->update([
@@ -113,13 +115,14 @@ class VendorKonstruksiController extends Controller
         ]);
 
         $pengiriman = $pelanggan->pengirimanKonstruksi()->firstOrFail();
-        $paths = is_array($pengiriman->hasil_paths) ? $pengiriman->hasil_paths : [];
-        foreach ($request->file('berkas_hasil', []) as $file) {
-            $paths[] = $file->store('hasil-konstruksi', 'public');
-        }
+        $paths = $this->appendUploadedFiles(
+            $this->arrayPaths($pengiriman->hasil_paths),
+            $request->file('berkas_hasil', []),
+            'hasil-konstruksi',
+        );
         $pengiriman->update(['hasil_paths' => $paths, 'hasil_perencanaan_at' => now()]);
         $pelanggan->tandaiSelesaiJikaLengkap(Auth::id());
-        NotifikasiService::untukData($pelanggan, 'Berkas hasil perencanaan diupload', 'Berkas hasil perencanaan untuk konstruksi ' . $pelanggan->no_agenda . ' telah diupload.', route('laporan'));
+        NotifikasiService::untukData($pelanggan, 'Berkas hasil perencanaan diupload', 'Berkas hasil perencanaan untuk konstruksi '.$pelanggan->no_agenda.' telah diupload.', route('laporan'));
 
         return back()->with('success', 'Berkas hasil Perencanaan berhasil disimpan.');
     }
@@ -129,7 +132,7 @@ class VendorKonstruksiController extends Controller
         $roleCode = $this->currentUser()->role?->role_code;
         $isPlanning = $roleCode === '5170REN';
         $isConstructionUp3 = $roleCode === '5170KON';
-        $isVendor = in_array($roleCode, ['VENDOR_KONSTRUKSI', 'VENDOR_KONSTRUKSI2', '5170K1', '5170K2', '5170K3', '5170K4', '5170K5', '5170K6', '5170K7'], true);
+        $isVendor = in_array($roleCode, self::VENDOR_KONSTRUKSI_ROLE_CODES, true);
         abort_unless($isPlanning || $isConstructionUp3 || $isVendor, 403);
 
         $pengiriman = $pelanggan->pengirimanKonstruksi()->with('vendor')->firstOrFail();
@@ -138,7 +141,7 @@ class VendorKonstruksiController extends Controller
             abort_unless($pengiriman->vendor?->user_id === Auth::id(), 403);
         }
 
-        $path = $this->paths($pengiriman->laporan_paths)[$index] ?? null;
+        $path = $this->storedPaths($pengiriman->laporan_paths)[$index] ?? null;
         abort_unless($path && Storage::disk('public')->exists($path), 404);
 
         return $this->publicFileResponse($path);
@@ -151,7 +154,7 @@ class VendorKonstruksiController extends Controller
         abort_unless($pengiriman->vendor?->jenis === 'KONSTRUKSI', 403);
         abort_unless($pengiriman->vendor?->user_id === Auth::id(), 403);
 
-        $path = $this->paths($pengiriman->berkas_paths)[$index] ?? null;
+        $path = $this->storedPaths($pengiriman->berkas_paths)[$index] ?? null;
         abort_unless($path && Storage::disk('public')->exists($path), 404);
 
         return $this->publicFileResponse($path);
@@ -164,13 +167,14 @@ class VendorKonstruksiController extends Controller
             'berkas_hasil_konstruksi.*' => ['required', 'file', 'mimes:pdf,doc,docx,xls,xlsx,jpg,jpeg,png', 'max:10240'],
         ]);
 
-        $paths = is_array($pelanggan->hasil_konstruksi_paths) ? $pelanggan->hasil_konstruksi_paths : [];
-        foreach ($request->file('berkas_hasil_konstruksi', []) as $file) {
-            $paths[] = $file->store('hasil-konstruksi', 'public');
-        }
+        $paths = $this->appendUploadedFiles(
+            $this->arrayPaths($pelanggan->hasil_konstruksi_paths),
+            $request->file('berkas_hasil_konstruksi', []),
+            'hasil-konstruksi',
+        );
         $pelanggan->update(['hasil_konstruksi_paths' => $paths, 'hasil_konstruksi_at' => now()]);
         $pelanggan->tandaiSelesaiJikaLengkap(Auth::id());
-        NotifikasiService::untukData($pelanggan, 'Berkas hasil konstruksi diupload', 'Berkas hasil konstruksi untuk ' . $pelanggan->no_agenda . ' telah diupload.', route('laporan'));
+        NotifikasiService::untukData($pelanggan, 'Berkas hasil konstruksi diupload', 'Berkas hasil konstruksi untuk '.$pelanggan->no_agenda.' telah diupload.', route('laporan'));
 
         return back()->with('success', 'Berkas hasil konstruksi berhasil disimpan.');
     }
@@ -178,7 +182,7 @@ class VendorKonstruksiController extends Controller
     public function hasilKonstruksiFile(PelangganPbpd $pelanggan, int $index)
     {
         abort_unless($this->currentUser()->role?->type === 'UP3', 403);
-        $path = (is_array($pelanggan->hasil_konstruksi_paths) ? $pelanggan->hasil_konstruksi_paths : [])[$index] ?? null;
+        $path = $this->arrayPaths($pelanggan->hasil_konstruksi_paths)[$index] ?? null;
         abort_unless($path && Storage::disk('public')->exists($path), 404);
 
         return $this->publicFileResponse($path);
@@ -188,7 +192,7 @@ class VendorKonstruksiController extends Controller
     {
         abort_unless($this->currentUser()->role?->role_code === '5170KON', 403);
 
-        $paths = is_array($pelanggan->hasil_konstruksi_paths) ? $pelanggan->hasil_konstruksi_paths : [];
+        $paths = $this->arrayPaths($pelanggan->hasil_konstruksi_paths);
         $path = $paths[$index] ?? null;
         abort_unless($path, 404);
 
@@ -197,15 +201,5 @@ class VendorKonstruksiController extends Controller
         $pelanggan->update(['hasil_konstruksi_paths' => $paths ?: null]);
 
         return back()->with('success', 'Berkas BA Checklist berhasil dihapus.');
-    }
-
-    private function paths(mixed $value): array
-    {
-        if (is_array($value)) return $value;
-        if (is_string($value) && $value !== '') {
-            $decoded = json_decode($value, true);
-            return is_array($decoded) ? $decoded : [$value];
-        }
-        return [];
     }
 }

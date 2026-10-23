@@ -2,7 +2,7 @@
 @section('title', 'Agenda Vendor Konstruksi')
 @section('judul', 'Agenda Vendor Konstruksi')
 @section('isi')
-    @if (!$showHistory)
+                    @if (! $showHistory)
         <div class="box kartu">
             <div class="kartu-judul"><span>AGENDA VENDOR KONSTRUKSI</span><span class="pill">{{ $data->count() }} data</span></div>
             @forelse ($data as $row)
@@ -35,7 +35,7 @@
             @endforelse
         </div>
     @endif
-    <div class="box kartu" @if (!$showHistory) hidden @endif>
+    <div class="box kartu" @if (! $showHistory) hidden @endif>
         <div class="kartu-judul"><span>RIWAYAT PENGIRIMAN</span></div>
         @forelse ($riwayat as $row)
             @php($pengiriman = $row->pengirimanKonstruksi)
@@ -56,7 +56,8 @@
                         <button type="submit" class="btn">Simpan Perubahan</button>
                     </form>
                     <form method="POST" action="{{ route('vendor.konstruksi.report.delete', $row->id) }}" onsubmit="return confirm('Hapus laporan ini?')">
-                        @csrf @method('DELETE')
+                        @csrf
+                        @method('DELETE')
                         <button type="submit" class="btn btn-hapus">Hapus Laporan</button>
                     </form>
                 </div>

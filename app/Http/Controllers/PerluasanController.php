@@ -6,7 +6,6 @@ use App\Models\PelangganPbpd;
 use App\Models\Ulp;
 use App\Models\Vendor;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class PerluasanController extends Controller
 {
@@ -56,7 +55,7 @@ class PerluasanController extends Controller
             ->whereRaw("UPPER(REPLACE(tujuan_perluasan, ' ', '_')) = ?", [$tujuan])
             ->when($ulpUser, fn ($q) => $q->where('ulp_id', $ulpUser))
             ->when($request->filled('cari'), function ($q) use ($request) {
-                $term = '%' . $request->input('cari') . '%';
+                $term = '%'.$request->input('cari').'%';
                 $q->where(function ($inner) use ($term) {
                     $inner->where('no_agenda', 'like', $term)
                         ->orWhere('id_pelanggan', 'like', $term)

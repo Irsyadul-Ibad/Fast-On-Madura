@@ -21,19 +21,55 @@
     </style>
 </head>
 <body>
-    <div class="bg-logo"><img src="{{ asset('images/faston.png') }}" alt=""></div><div class="bg-glow"></div>
+    <div class="bg-logo">
+        <img src="{{ asset('images/faston.png') }}" alt="">
+    </div>
+    <div class="bg-glow"></div>
     <div class="login-wrapper">
         <div class="top-brand">FAST ON &trade;</div>
         <div class="login-card">
-            <div class="login-header"><h1>Login</h1><p>Silakan masuk dengan akun yang diberikan</p></div>
+            <div class="login-header">
+                <h1>Login</h1>
+                <p>Silakan masuk dengan akun yang diberikan</p>
+            </div>
             <form method="POST" action="{{ route('login.attempt') }}">
                 @csrf
-                <div class="form-group"><div class="input-wrapper"><input id="user_id" name="user_id" value="{{ old('user_id') }}" placeholder="User ID" autofocus required autocomplete="username"><span class="input-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5zm6-3.75V8.25m-6 3.75h6m-6 0a3 3 0 116 0 3 3 0 01-6 0z"/></svg></span></div>@error('user_id')<span class="error-message">{{ $message }}</span>@enderror</div>
-                <div class="form-group"><div class="input-wrapper"><input id="password" type="password" name="password" placeholder="Password" required autocomplete="current-password"><span class="input-icon"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"/></svg></span></div>@error('password')<span class="error-message">{{ $message }}</span>@enderror</div>
+                <div class="form-group">
+                    <div class="input-wrapper">
+                        <input id="user_id" name="user_id" value="{{ old('user_id') }}" placeholder="User ID" autofocus required autocomplete="username">
+                        <span class="input-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5zm6-3.75V8.25m-6 3.75h6m-6 0a3 3 0 116 0 3 3 0 01-6 0z"/>
+                            </svg>
+                        </span>
+                    </div>
+                    @error('user_id')
+                        <span class="error-message">{{ $message }}</span>
+                    @enderror
+                </div>
+                <div class="form-group">
+                    <div class="input-wrapper">
+                        <input id="password" type="password" name="password" placeholder="Password" required autocomplete="current-password">
+                        <span class="input-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"/>
+                            </svg>
+                        </span>
+                    </div>
+                    @error('password')
+                        <span class="error-message">{{ $message }}</span>
+                    @enderror
+                </div>
                 <button type="submit" class="btn-submit">Masuk</button>
-                @if(session('error') || $errors->has('error'))<div class="error-message" style="text-align:center;margin-top:1rem;margin-left:0">{{ session('error') ?? $errors->first('error') }}</div>@endif
+                @if (session('error') || $errors->has('error'))
+                    <div class="error-message" style="text-align:center;margin-top:1rem;margin-left:0">
+                        {{ session('error') ?? $errors->first('error') }}
+                    </div>
+                @endif
             </form>
-            <div class="card-footer"><span>Fast Acceleration &amp; Service Tracking ON 360&deg;</span></div>
+            <div class="card-footer">
+                <span>Fast Acceleration &amp; Service Tracking ON 360&deg;</span>
+            </div>
         </div>
     </div>
     <script>const bgLogo=document.querySelector('.bg-logo');let targetX=0,targetY=0,currentX=0,currentY=0;const strength=18;document.addEventListener('mousemove',e=>{const cx=innerWidth/2,cy=innerHeight/2;targetX=((e.clientX-cx)/cx)*strength;targetY=((e.clientY-cy)/cy)*strength});(function loop(){currentX+=(targetX-currentX)*.06;currentY+=(targetY-currentY)*.06;if(bgLogo)bgLogo.style.transform=`translate(${currentX}px,${currentY}px)`;requestAnimationFrame(loop)})();</script>

@@ -12,11 +12,11 @@
         @csrf
         <input type="file" name="file" accept=".xlsx,.xls,.csv" required>
         <select name="ulp_id">
-    <option value="">ULP dari kolom Excel</option>
-    @foreach ($ulps as $u)
-        <option value="{{ $u->id }}">{{ $u->nama }} (jika kolom ULP kosong)</option>
-    @endforeach
-</select>
+            <option value="">ULP dari kolom Excel</option>
+            @foreach ($ulps as $u)
+                <option value="{{ $u->id }}">{{ $u->nama }} (jika kolom ULP kosong)</option>
+            @endforeach
+        </select>
         <button class="btn" type="submit">Upload</button>
         @error('file') <span style="color:#a61b1b">{{ $message }}</span> @enderror
     </form>
@@ -51,7 +51,9 @@
                                     <details>
                                         <summary>Detail baris yang dilewati</summary>
                                         <ul style="margin-top:8px;color:#a61b1b">
-                                            @foreach ($r->failed_rows as $rowError) <li>{{ $rowError }}</li> @endforeach
+                                            @foreach ($r->failed_rows as $rowError)
+                                                <li>{{ $rowError }}</li>
+                                            @endforeach
                                             @if ($r->jml_gagal > count($r->failed_rows))
                                                 <li>Menampilkan 100 dari {{ $r->jml_gagal }} baris.</li>
                                             @endif
@@ -61,13 +63,18 @@
                             @else
                                 <span>Gagal</span>
                                 @if ($r->error_message)
-                                    <details><summary>Lihat penyebab</summary><div>{{ $r->error_message }}</div></details>
+                                    <details>
+                                        <summary>Lihat penyebab</summary>
+                                        <div>{{ $r->error_message }}</div>
+                                    </details>
                                 @endif
                             @endif
                         </td>
                     </tr>
                 @empty
-                    <tr><td colspan="4" style="text-align:center">Belum ada upload.</td></tr>
+                    <tr>
+                        <td colspan="4" style="text-align:center">Belum ada upload.</td>
+                    </tr>
                 @endforelse
                 </tbody>
             </table>

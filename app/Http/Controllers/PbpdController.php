@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\PelangganPbpd;
-use App\Models\PermintaanMaterial;
-use App\Models\PengirimanVendor;
 use App\Models\PengirimanKonstruksi;
+use App\Models\PengirimanVendor;
+use App\Models\PermintaanMaterial;
 use App\Models\Ulp;
+use App\Models\Vendor;
 use App\Services\NotifikasiService;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -34,11 +36,11 @@ class PbpdController extends Controller
             ->when($request->filled('status'), fn ($q) => $q->where('status', $request->status))
             ->when($request->filled('tahap'), fn ($q) => $q->where('tahap', $request->tahap))
             ->when($request->filled('cari'), function ($q) use ($request) {
-                $kata = '%' . $request->cari . '%';
+                $kata = '%'.$request->cari.'%';
                 $q->where(function ($w) use ($kata) {
                     $w->where('nama_pelanggan', 'ilike', $kata)
-                      ->orWhere('alamat', 'ilike', $kata)
-                      ->orWhereRaw('CAST(no_agenda AS TEXT) LIKE ?', [$kata]);
+                        ->orWhere('alamat', 'ilike', $kata)
+                        ->orWhereRaw('CAST(no_agenda AS TEXT) LIKE ?', [$kata]);
                 });
             })
             ->orderByDesc('id')
@@ -50,8 +52,7 @@ class PbpdController extends Controller
             ->when($ulpUser, fn ($q) => $q->where('ulp_id', $ulpUser))
             ->when($isUlpRole, fn ($q) => $q->where('tahap', 'ULP'))
             ->when($request->filled('import'), fn ($q) => $q->where('import_id', $request->import))
-            ->where('status', '!=', 'MOHON')
-            ;
+            ->where('status', '!=', 'MOHON');
 
         $summaryByJenisRaw = (clone $summaryBase)
             ->selectRaw('UPPER(TRIM(jenis_transaksi)) AS jenis, COUNT(*) AS jumlah')
@@ -83,15 +84,15 @@ class PbpdController extends Controller
         })->values();
 
         return view('pbpd.index', [
-            'data'    => $data,
+            'data' => $data,
             'canKirim' => $canKirim,
             'canEditRab' => $canEditRab,
             'canUploadSyarat' => $canKirim,
             'showSyarat' => $role?->type !== 'UP3',
-            'ulps'    => $ulpUser ? collect() : Ulp::orderBy('kode')->get(),
+            'ulps' => $ulpUser ? collect() : Ulp::orderBy('kode')->get(),
             'statuss' => PelangganPbpd::whereIn('status', PelangganPbpd::STATUS_TAMPIL)
                 ->distinct()->orderBy('status')->pluck('status'),
-            'tahaps'  => [
+            'tahaps' => [
                 'ULP' => 'ULP',
                 'PERENCANAAN' => 'PERENCANAAN',
                 'VENDOR_TIANG' => 'KONSTRUKSI (TIANG)',
@@ -114,7 +115,7 @@ class PbpdController extends Controller
         ]);
     }
 
-    public function updateRab(Request $request, PelangganPbpd $pelanggan): \Illuminate\Http\RedirectResponse
+    public function updateRab(Request $request, PelangganPbpd $pelanggan): RedirectResponse
     {
         $role = $this->currentUser()->role;
         $canEditRab = (bool) $role?->ulp_id || $role?->role_code === '5170REN';
@@ -128,12 +129,12 @@ class PbpdController extends Controller
         ]);
 
         $pelanggan->update(['rab' => $data['rab'] ?? null]);
-        NotifikasiService::untukData($pelanggan, 'RAB diperbarui', 'RAB data pelanggan ' . $pelanggan->no_agenda . ' telah diperbarui.', route('laporan'));
+        NotifikasiService::untukData($pelanggan, 'RAB diperbarui', 'RAB data pelanggan '.$pelanggan->no_agenda.' telah diperbarui.', route('laporan'));
 
         return back()->with('success', 'RAB berhasil disimpan.');
     }
 
-    public function kirim(Request $request): \Illuminate\Http\RedirectResponse
+    public function kirim(Request $request): RedirectResponse
     {
         abort_unless((bool) $this->currentUser()->role?->ulp_id, 403);
 
@@ -184,6 +185,7 @@ class PbpdController extends Controller
 
                 if ($data['tujuan'] === 'TANPA_PERLUASAN') {
                     $row->permintaan()->delete();
+
                     return;
                 }
 
@@ -216,12 +218,12 @@ class PbpdController extends Controller
             });
         });
 
-        $pelanggan->each(fn ($row) => NotifikasiService::untukData($row, 'Data dikirim ULP', 'Data ' . $row->no_agenda . ' dikirim ke ' . $data['tujuan'] . '.', route('laporan')));
+        $pelanggan->each(fn ($row) => NotifikasiService::untukData($row, 'Data dikirim ULP', 'Data '.$row->no_agenda.' dikirim ke '.$data['tujuan'].'.', route('laporan')));
 
-        return back()->with('success', $pelanggan->count() . ' data berhasil dikirim ke ' . $data['tujuan'] . '.');
+        return back()->with('success', $pelanggan->count().' data berhasil dikirim ke '.$data['tujuan'].'.');
     }
 
-    public function updateDetail(Request $request, PelangganPbpd $pelanggan): \Illuminate\Http\RedirectResponse
+    public function updateDetail(Request $request, PelangganPbpd $pelanggan): RedirectResponse
     {
         $role = $this->currentUser()->role;
         $isUlp = (bool) $role?->ulp_id;
@@ -288,12 +290,12 @@ class PbpdController extends Controller
             }
         });
 
-        NotifikasiService::untukData($pelanggan, 'Detail/RAB diperbarui', 'Detail material atau RAB ' . $pelanggan->no_agenda . ' telah diperbarui.', route('laporan'));
+        NotifikasiService::untukData($pelanggan, 'Detail/RAB diperbarui', 'Detail material atau RAB '.$pelanggan->no_agenda.' telah diperbarui.', route('laporan'));
 
         return back()->with('success', 'RAB dan kebutuhan perluasan berhasil diperbarui.');
     }
 
-    public function kirimVendor(Request $request, PelangganPbpd $pelanggan): \Illuminate\Http\RedirectResponse
+    public function kirimVendor(Request $request, PelangganPbpd $pelanggan): RedirectResponse
     {
         abort_unless($this->currentUser()->role?->role_code === '5170REN', 403);
 
@@ -303,7 +305,7 @@ class PbpdController extends Controller
             'wo_tiang' => ['nullable', 'file', 'mimes:pdf,doc,docx,xls,xlsx,jpg,jpeg,png', 'max:10240'],
         ]);
 
-        $vendor = \App\Models\Vendor::whereKey($data['vendor_id'])->where('jenis', 'TIANG')->firstOrFail();
+        $vendor = Vendor::whereKey($data['vendor_id'])->where('jenis', 'TIANG')->firstOrFail();
         $pengiriman = PengirimanVendor::firstOrNew(['pelanggan_id' => $pelanggan->id]);
 
         if ($request->hasFile('wo_tiang')) {
@@ -321,12 +323,12 @@ class PbpdController extends Controller
         ])->save();
 
         $pelanggan->update(['tahap' => 'VENDOR_TIANG']);
-        NotifikasiService::untukData($pelanggan, 'Data dikirim ke vendor tiang', 'Data ' . $pelanggan->no_agenda . ' dikirim ke vendor tiang.', route('laporan'), [$vendor->user_id]);
+        NotifikasiService::untukData($pelanggan, 'Data dikirim ke vendor tiang', 'Data '.$pelanggan->no_agenda.' dikirim ke vendor tiang.', route('laporan'), [$vendor->user_id]);
 
         return back()->with('success', 'Data berhasil dikirim ke vendor tiang.');
     }
 
-    public function kirimKonstruksi(Request $request, PelangganPbpd $pelanggan): \Illuminate\Http\RedirectResponse
+    public function kirimKonstruksi(Request $request, PelangganPbpd $pelanggan): RedirectResponse
     {
         abort_unless($this->currentUser()->role?->role_code === '5170KON', 403);
 
@@ -335,12 +337,13 @@ class PbpdController extends Controller
             'berkas.*' => ['nullable', 'file', 'mimes:pdf,doc,docx,xls,xlsx,jpg,jpeg,png', 'max:10240'],
         ]);
 
-        $vendor = \App\Models\Vendor::whereKey($data['vendor_id'])->where('jenis', 'KONSTRUKSI')->firstOrFail();
+        $vendor = Vendor::whereKey($data['vendor_id'])->where('jenis', 'KONSTRUKSI')->firstOrFail();
         $pengiriman = PengirimanKonstruksi::firstOrNew(['pelanggan_id' => $pelanggan->id]);
-        $paths = is_array($pengiriman->berkas_paths) ? $pengiriman->berkas_paths : [];
-        foreach ($request->file('berkas', []) as $file) {
-            $paths[] = $file->store('pengiriman-konstruksi', 'public');
-        }
+        $paths = $this->appendUploadedFiles(
+            $this->arrayPaths($pengiriman->berkas_paths),
+            $request->file('berkas', []),
+            'pengiriman-konstruksi',
+        );
 
         $pengiriman->fill([
             'vendor_id' => $vendor->id,
@@ -349,12 +352,12 @@ class PbpdController extends Controller
             'dikirim_at' => now(),
         ])->save();
         $pelanggan->update(['tahap' => 'VENDOR_KONSTRUKSI']);
-        NotifikasiService::untukData($pelanggan, 'Data dikirim ke vendor konstruksi', 'Data ' . $pelanggan->no_agenda . ' dikirim ke vendor konstruksi.', route('laporan'), [$vendor->user_id]);
+        NotifikasiService::untukData($pelanggan, 'Data dikirim ke vendor konstruksi', 'Data '.$pelanggan->no_agenda.' dikirim ke vendor konstruksi.', route('laporan'), [$vendor->user_id]);
 
         return back()->with('success', 'Data berhasil dikirim ke vendor konstruksi.');
     }
 
-    public function uploadNpsWo(Request $request, PelangganPbpd $pelanggan): \Illuminate\Http\RedirectResponse
+    public function uploadNpsWo(Request $request, PelangganPbpd $pelanggan): RedirectResponse
     {
         $this->authorizeNpsUpload($pelanggan);
 
@@ -363,13 +366,14 @@ class PbpdController extends Controller
             'berkas_nps_wo.*' => ['required', 'file', 'mimes:pdf,doc,docx,xls,xlsx,jpg,jpeg,png', 'max:10240'],
         ]);
 
-        $paths = is_array($pelanggan->nps_wo_paths) ? $pelanggan->nps_wo_paths : [];
-        foreach ($request->file('berkas_nps_wo', []) as $file) {
-            $paths[] = $file->store('nps/wo', 'public');
-        }
+        $paths = $this->appendUploadedFiles(
+            $this->arrayPaths($pelanggan->nps_wo_paths),
+            $request->file('berkas_nps_wo', []),
+            'nps/wo',
+        );
 
         $pelanggan->update(['nps_wo_paths' => $paths, 'nps_wo_at' => now()]);
-        NotifikasiService::untukData($pelanggan, 'Berkas WO NPS diupload', 'Berkas WO NPS untuk ' . $pelanggan->no_agenda . ' telah diupload.', route('laporan'));
+        NotifikasiService::untukData($pelanggan, 'Berkas WO NPS diupload', 'Berkas WO NPS untuk '.$pelanggan->no_agenda.' telah diupload.', route('laporan'));
 
         return back()->with('success', 'Berkas WO NPS berhasil disimpan.');
     }
@@ -377,16 +381,16 @@ class PbpdController extends Controller
     public function npsWoFile(PelangganPbpd $pelanggan, int $index)
     {
         $this->authorizeNpsFileView();
-        $path = (is_array($pelanggan->nps_wo_paths) ? $pelanggan->nps_wo_paths : [])[$index] ?? null;
+        $path = $this->arrayPaths($pelanggan->nps_wo_paths)[$index] ?? null;
         abort_unless($path && Storage::disk('public')->exists($path), 404);
 
         return $this->publicFileResponse($path);
     }
 
-    public function hapusNpsWo(PelangganPbpd $pelanggan, int $index): \Illuminate\Http\RedirectResponse
+    public function hapusNpsWo(PelangganPbpd $pelanggan, int $index): RedirectResponse
     {
         $this->authorizeNpsUpload($pelanggan);
-        $paths = is_array($pelanggan->nps_wo_paths) ? $pelanggan->nps_wo_paths : [];
+        $paths = $this->arrayPaths($pelanggan->nps_wo_paths);
         $path = $paths[$index] ?? null;
         abort_unless($path, 404);
 
@@ -407,20 +411,21 @@ class PbpdController extends Controller
         abort_unless($this->currentUser()->role?->type === 'UP3', 403);
     }
 
-    public function uploadHasilTransaksi(Request $request, PelangganPbpd $pelanggan): \Illuminate\Http\RedirectResponse
+    public function uploadHasilTransaksi(Request $request, PelangganPbpd $pelanggan): RedirectResponse
     {
         abort_unless($this->currentUser()->role?->role_code === '5170TE', 403);
         $request->validate([
             'berkas_hasil_transaksi.*' => ['required', 'file', 'mimes:pdf,doc,docx,xls,xlsx,jpg,jpeg,png', 'max:10240'],
         ]);
 
-        $paths = is_array($pelanggan->hasil_transaksi_paths) ? $pelanggan->hasil_transaksi_paths : [];
-        foreach ($request->file('berkas_hasil_transaksi', []) as $file) {
-            $paths[] = $file->store('hasil-transaksi', 'public');
-        }
+        $paths = $this->appendUploadedFiles(
+            $this->arrayPaths($pelanggan->hasil_transaksi_paths),
+            $request->file('berkas_hasil_transaksi', []),
+            'hasil-transaksi',
+        );
         $pelanggan->update(['hasil_transaksi_paths' => $paths, 'hasil_transaksi_at' => now()]);
         $pelanggan->tandaiSelesaiJikaLengkap(Auth::id());
-        NotifikasiService::untukData($pelanggan, 'Berkas hasil transaksi diupload', 'Berkas hasil transaksi untuk ' . $pelanggan->no_agenda . ' telah diupload.', route('laporan'));
+        NotifikasiService::untukData($pelanggan, 'Berkas hasil transaksi diupload', 'Berkas hasil transaksi untuk '.$pelanggan->no_agenda.' telah diupload.', route('laporan'));
 
         return back()->with('success', 'Berkas hasil transaksi berhasil disimpan.');
     }
@@ -428,17 +433,17 @@ class PbpdController extends Controller
     public function hasilTransaksiFile(PelangganPbpd $pelanggan, int $index)
     {
         abort_unless($this->currentUser()->role?->type === 'UP3', 403);
-        $path = (is_array($pelanggan->hasil_transaksi_paths) ? $pelanggan->hasil_transaksi_paths : [])[$index] ?? null;
+        $path = $this->arrayPaths($pelanggan->hasil_transaksi_paths)[$index] ?? null;
         abort_unless($path && Storage::disk('public')->exists($path), 404);
 
         return $this->publicFileResponse($path);
     }
 
-    public function hapusHasilTransaksi(PelangganPbpd $pelanggan, int $index): \Illuminate\Http\RedirectResponse
+    public function hapusHasilTransaksi(PelangganPbpd $pelanggan, int $index): RedirectResponse
     {
         abort_unless($this->currentUser()->role?->role_code === '5170TE', 403);
 
-        $paths = is_array($pelanggan->hasil_transaksi_paths) ? $pelanggan->hasil_transaksi_paths : [];
+        $paths = $this->arrayPaths($pelanggan->hasil_transaksi_paths);
         $path = $paths[$index] ?? null;
         abort_unless($path, 404);
 
@@ -449,20 +454,21 @@ class PbpdController extends Controller
         return back()->with('success', 'Foto Cek KWH Meter berhasil dihapus.');
     }
 
-    public function uploadHasilJaringan(Request $request, PelangganPbpd $pelanggan): \Illuminate\Http\RedirectResponse
+    public function uploadHasilJaringan(Request $request, PelangganPbpd $pelanggan): RedirectResponse
     {
         abort_unless($this->currentUser()->role?->role_code === '5170JAR', 403);
         $request->validate([
             'berkas_hasil_jaringan.*' => ['required', 'file', 'mimes:pdf,doc,docx,xls,xlsx,jpg,jpeg,png', 'max:10240'],
         ]);
 
-        $paths = is_array($pelanggan->hasil_jaringan_paths) ? $pelanggan->hasil_jaringan_paths : [];
-        foreach ($request->file('berkas_hasil_jaringan', []) as $file) {
-            $paths[] = $file->store('hasil-jaringan', 'public');
-        }
+        $paths = $this->appendUploadedFiles(
+            $this->arrayPaths($pelanggan->hasil_jaringan_paths),
+            $request->file('berkas_hasil_jaringan', []),
+            'hasil-jaringan',
+        );
         $pelanggan->update(['hasil_jaringan_paths' => $paths, 'hasil_jaringan_at' => now()]);
         $pelanggan->tandaiSelesaiJikaLengkap(Auth::id());
-        NotifikasiService::untukData($pelanggan, 'Berkas hasil jaringan diupload', 'Berkas hasil jaringan untuk ' . $pelanggan->no_agenda . ' telah diupload.', route('laporan'));
+        NotifikasiService::untukData($pelanggan, 'Berkas hasil jaringan diupload', 'Berkas hasil jaringan untuk '.$pelanggan->no_agenda.' telah diupload.', route('laporan'));
 
         return back()->with('success', 'Berkas hasil jaringan berhasil disimpan.');
     }
@@ -470,17 +476,17 @@ class PbpdController extends Controller
     public function hasilJaringanFile(PelangganPbpd $pelanggan, int $index)
     {
         abort_unless($this->currentUser()->role?->type === 'UP3', 403);
-        $path = (is_array($pelanggan->hasil_jaringan_paths) ? $pelanggan->hasil_jaringan_paths : [])[$index] ?? null;
+        $path = $this->arrayPaths($pelanggan->hasil_jaringan_paths)[$index] ?? null;
         abort_unless($path && Storage::disk('public')->exists($path), 404);
 
         return $this->publicFileResponse($path);
     }
 
-    public function hapusHasilJaringan(PelangganPbpd $pelanggan, int $index): \Illuminate\Http\RedirectResponse
+    public function hapusHasilJaringan(PelangganPbpd $pelanggan, int $index): RedirectResponse
     {
         abort_unless($this->currentUser()->role?->role_code === '5170JAR', 403);
 
-        $paths = is_array($pelanggan->hasil_jaringan_paths) ? $pelanggan->hasil_jaringan_paths : [];
+        $paths = $this->arrayPaths($pelanggan->hasil_jaringan_paths);
         $path = $paths[$index] ?? null;
         abort_unless($path, 404);
 
@@ -491,7 +497,7 @@ class PbpdController extends Controller
         return back()->with('success', 'Berkas BA Operasi berhasil dihapus.');
     }
 
-    public function uploadSyarat(Request $request, PelangganPbpd $pelanggan, string $jenis): \Illuminate\Http\RedirectResponse
+    public function uploadSyarat(Request $request, PelangganPbpd $pelanggan, string $jenis): RedirectResponse
     {
         abort_unless($this->currentUser()->role?->ulp_id, 403);
         abort_unless(in_array($jenis, ['pendukung', 'ijin'], true), 404);
@@ -501,12 +507,13 @@ class PbpdController extends Controller
             'berkas.*' => ['required', 'file', 'mimes:pdf,doc,docx,xls,xlsx,jpg,jpeg,png', 'max:10240'],
         ]);
         $column = $jenis === 'pendukung' ? 'berkas_pendukung_paths' : 'berkas_ijin_paths';
-        $paths = is_array($pelanggan->{$column}) ? $pelanggan->{$column} : [];
-        foreach ($request->file('berkas', []) as $file) {
-            $paths[] = $file->store('syarat/' . $jenis, 'public');
-        }
+        $paths = $this->appendUploadedFiles(
+            $this->arrayPaths($pelanggan->{$column}),
+            $request->file('berkas', []),
+            'syarat/'.$jenis,
+        );
         $pelanggan->update([$column => $paths]);
-        NotifikasiService::untukData($pelanggan, 'Berkas syarat diupload', 'Berkas ' . $jenis . ' untuk ' . $pelanggan->no_agenda . ' telah diupload oleh ULP.', route('laporan'));
+        NotifikasiService::untukData($pelanggan, 'Berkas syarat diupload', 'Berkas '.$jenis.' untuk '.$pelanggan->no_agenda.' telah diupload oleh ULP.', route('laporan'));
 
         return back()->with('success', 'Berkas syarat berhasil disimpan.');
     }
@@ -515,7 +522,7 @@ class PbpdController extends Controller
     {
         abort_unless(in_array($jenis, ['pendukung', 'ijin'], true), 404);
         $column = $jenis === 'pendukung' ? 'berkas_pendukung_paths' : 'berkas_ijin_paths';
-        $path = (is_array($pelanggan->{$column}) ? $pelanggan->{$column} : [])[$index] ?? null;
+        $path = $this->arrayPaths($pelanggan->{$column})[$index] ?? null;
         abort_unless($path && Storage::disk('public')->exists($path), 404);
 
         return $this->publicFileResponse($path);

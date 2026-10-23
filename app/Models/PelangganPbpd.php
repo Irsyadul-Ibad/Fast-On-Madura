@@ -69,9 +69,7 @@ class PelangganPbpd extends Model
         $this->loadMissing(['pengirimanKonstruksi', 'laporanVendor']);
 
         $planningDone = count($this->laporanVendor?->berkas_hasil_paths ?? []) > 0
-            || count($this->pengirimanKonstruksi?->hasil_paths ?? []) > 0
-            || count($this->nps_wo_paths ?? []) > 0
-            || filled($this->nps_wo_at);
+            || count($this->pengirimanKonstruksi?->hasil_paths ?? []) > 0;
         $constructionDone = count($this->hasil_konstruksi_paths ?? []) > 0
             || count($this->pengirimanKonstruksi?->hasil_konstruksi_paths ?? []) > 0;
         $transactionDone = count($this->hasil_transaksi_paths ?? []) > 0;

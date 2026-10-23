@@ -111,10 +111,8 @@
         .vendor-report label { color:#536477; font-size:13px; }
         .vendor-report textarea { min-height:70px; padding:9px; border:1px solid #b9c7d5; border-radius:6px; }
         .vendor-report input[type=file] { padding:8px; border:1px solid #b9c7d5; border-radius:6px; }
-        .history-button { float:right; margin-top:-48px; padding:9px 14px; border:0; border-radius:8px; background:#2947a8; color:#fff; cursor:pointer; }
         .history-panel { margin-top:16px; }
         .history-panel[hidden] { display:none; }
-        .history-close { padding:6px 10px; border:0; border-radius:6px; background:#e8eef5; color:#223; cursor:pointer; }
         .history-item { display:flex; justify-content:space-between; align-items:center; gap:16px; padding:14px 0; border-bottom:1px solid #dce5ee; }
         .history-item:last-child { border-bottom:0; }
         .history-item b, .history-item strong, .history-item span { display:block; }
@@ -152,14 +150,10 @@
         .vendor-report .btn,.history-edit-form .btn{min-height:36px;border:0;border-radius:8px;background:#0d1b8c;color:#fff;font-weight:700;box-shadow:0 4px 10px rgba(13,27,140,.18)}
         .vendor-report .btn:hover,.history-edit-form .btn:hover{background:#091267}
         .history-item{padding:14px 16px;background:#f8fbff;border:1px solid #d6e2ee;border-radius:10px}
-        .history-close{background:#0d1b8c;color:#fff}
-        .history-close:hover{background:#091267}
         .history-edit-form{margin:10px 16px 16px;padding:15px;border-color:#d6e2ee;border-radius:10px;background:#f8fbff}
         .history-panel{overflow:hidden;padding:0!important;border:1px solid #d6e2ee!important;border-radius:14px!important;background:#fff!important;box-shadow:0 6px 18px rgba(13,27,140,.07)!important}
         .history-panel>.kartu-judul{display:flex;align-items:center;justify-content:space-between;min-height:45px;margin:0!important;padding:12px 16px!important;background:#0d1b8c!important;color:#fff!important;border-radius:12px 12px 0 0!important;font-size:13px;font-weight:800;letter-spacing:.03em}
         .history-panel>.kartu-judul span{color:#fff!important}
-        .history-close{min-height:30px;padding:6px 12px;border:1px solid rgba(255,255,255,.35);border-radius:8px;background:#fff;color:#0d1b8c;font-size:11px;font-weight:800;cursor:pointer}
-        .history-close:hover{background:#eaf3ff;color:#091267}
         .history-item{margin:14px 16px 0;padding:14px 16px;border:1px solid #d6e2ee;border-radius:10px;background:#f8fbff}
         .history-item b,.history-item strong{color:#123b5d!important}
         .history-item div span{color:#64748b!important;font-size:12px}
@@ -170,14 +164,7 @@
         .history-edit-form label input[type=checkbox]{width:15px;height:15px;accent-color:#0d1b8c}
         .history-edit-form textarea,.history-edit-form input[type=file]{background:#fff!important;color:#334155!important;border:1px solid #b8c9da!important;border-radius:8px}
         .history-edit-form textarea::placeholder{color:#94a3b8}
-        @media (max-width:600px) { .history-button { float:none; margin:12px 0 0; } .history-item { align-items:flex-start; flex-direction:column; } }
+        @media (max-width:600px) { .history-item { align-items:flex-start; flex-direction:column; } }
     </style>
     @endpush
-    <script>
-        (() => {
-            const panel = document.getElementById('historyPanel');
-            const openHistory = document.getElementById('openHistory');
-            if (openHistory) openHistory.addEventListener('click', () => { panel.hidden = false; panel.scrollIntoView({ behavior: 'smooth' }); });
-        })();
-    </script>
 @endsection

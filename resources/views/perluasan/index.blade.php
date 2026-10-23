@@ -63,8 +63,8 @@
         @if (auth()->user()->role?->type !== 'UP3')
             <select name="tahap">
                 <option value="">Semua tahap</option>
-                    @foreach ($tahapPilihan as $tahapOption => $tahapLabel)
-                        <option value="{{ $tahapOption }}" @selected(request('tahap') === $tahapOption)>{{ $tahapLabel }}</option>
+                @foreach ($tahapPilihan as $tahapOption => $tahapLabel)
+                    <option value="{{ $tahapOption }}" @selected(request('tahap') === $tahapOption)>{{ $tahapLabel }}</option>
                 @endforeach
             </select>
         @endif
@@ -113,7 +113,7 @@
                             $ulpSent = $row->tahap !== 'ULP' || $row->tujuan_perluasan;
                             $vendorReportDone = filled($row->laporanVendor?->vendor_report_at);
                             $npsWoDone = count($row->nps_wo_paths ?? []) > 0 || filled($row->nps_wo_at);
-                            $planningDone = count($row->laporanVendor?->berkas_hasil_paths ?? []) > 0 || count($pk?->hasil_paths ?? []) > 0 || $npsWoDone;
+                            $planningDone = count($row->laporanVendor?->berkas_hasil_paths ?? []) > 0 || count($pk?->hasil_paths ?? []) > 0;
                             $constructionDone = count($row->hasil_konstruksi_paths ?? []) > 0 || count($pk?->hasil_konstruksi_paths ?? []) > 0;
                             $transactionDone = count($row->hasil_transaksi_paths ?? []) > 0;
                             $networkDone = count($row->hasil_jaringan_paths ?? []) > 0;
@@ -186,7 +186,7 @@
                                     data-proses-ulp="{{ $ulpSent ? '1' : '0' }}"
                                     data-proses-ulp-date="{{ $m?->dikirim_at?->format('Y-m-d H:i:s') ?? $row->created_at }}"
                                     data-proses-perencanaan="{{ $planningDone ? '1' : '0' }}"
-                                    data-proses-perencanaan-date="{{ $row->laporanVendor?->berkas_hasil_at?->format('Y-m-d H:i:s') ?? $pk?->hasil_perencanaan_at?->format('Y-m-d H:i:s') ?? $row->nps_wo_at?->format('Y-m-d H:i:s') }}"
+                                    data-proses-perencanaan-date="{{ $row->laporanVendor?->berkas_hasil_at?->format('Y-m-d H:i:s') ?? $pk?->hasil_perencanaan_at?->format('Y-m-d H:i:s') }}"
                                     data-proses-nps-wo="{{ $npsWoDone ? '1' : '0' }}"
                                     data-proses-nps-wo-date="{{ $row->nps_wo_at?->format('Y-m-d H:i:s') }}"
                                     data-proses-konstruksi="{{ $constructionDone ? '1' : '0' }}"
@@ -200,7 +200,6 @@
                                     data-laporan-foto="{{ $row->laporanVendor?->foto_terlampir ? 'Ya' : 'Tidak' }}"
                                     data-laporan-siap="{{ $row->laporanVendor?->siap_dilanjutkan ? 'Ya' : 'Tidak' }}"
                                     data-laporan-catatan="{{ $row->laporanVendor?->catatan }}"
-                                    data-laporan-exists="{{ $vendorReportDone ? '1' : '0' }}"
                                 ><svg class="icon-inline" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3.5h9l3 3V20.5H6z"/><path d="M15 3.5v4h3M9 12h6M9 16h6"/></svg></button>
                             </td>
                             @if ($showBerkasUlp)
@@ -294,7 +293,7 @@
                 </tbody></table>
             </div>
             @if ($canViewMaterial)
-            @if ($canViewMaterial && $tujuan !== 'TANPA_PERLUASAN')
+            @if ($tujuan !== 'TANPA_PERLUASAN')
                 <form id="detailFormPerluasan" method="POST">
                     @csrf
                     <div class="detail-edit-table">
@@ -391,8 +390,6 @@
                 <h4>Berkas Kajian Kelayakan</h4>
                 <div id="resultFiles">-</div>
                 @if ($canSendVendor)
-                {{-- untuk bagian pemberitahuan yang dihilangkan --}}
-                    {{-- <div id="resultWaitingMessage" class="result-waiting-message" hidden>Laporan vendor tiang belum masuk. Perencanaan tetap dapat mengupload berkas hasil.</div> --}}
                     <form id="resultUploadForm" method="POST" action="{{ request()->url() }}" enctype="multipart/form-data">
                         @csrf
                         <input type="hidden" name="pelanggan_id" id="resultPelangganId">
@@ -572,7 +569,6 @@
             const jaringanResultUploadForm = document.getElementById('jaringanResultUploadForm');
             const constructionReportBox = document.getElementById('constructionReportBox');
             const resultUploadForm = document.getElementById('resultUploadForm');
-            // const resultWaitingMessage = document.getElementById('resultWaitingMessage');
             const setText = (id, value) => { document.getElementById(id).textContent = value || '-'; };
             const money = (value) => value ? Number(value).toLocaleString('id-ID') : '-';
             const formatRupiah = (value) => {
@@ -729,10 +725,8 @@
                             ? resultFiles.map((path, index) => `<div class="result-file-row"><a href="${button.dataset.resultFileUrl.replace(/\/0$/, '/' + index)}" target="_blank">📄 Berkas hasil ${index + 1}</a>${resultUploadForm ? `<form method="POST" action="${button.dataset.resultDeleteUrl.replace(/\/0$/, '/' + index)}"><input type="hidden" name="_token" value="{{ csrf_token() }}"><button type="submit" class="result-delete" onclick="return confirm('Hapus berkas ini?')">Hapus</button></form>` : ''}</div>`).join('')
                             : '-';
                     if (resultUploadForm) {
-                        // const hasVendorReport = button.dataset.laporanExists === '1';
                         resultUploadForm.hidden = false;
                         resultUploadForm.action = `{{ url('/vendor/tiang') }}/${button.dataset.id}/hasil`;
-                        // if (resultWaitingMessage) resultWaitingMessage.hidden = hasVendorReport;
                     }
                 });
             });

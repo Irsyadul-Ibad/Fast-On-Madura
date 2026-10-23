@@ -3,24 +3,70 @@
 @section('judul', 'Laporan')
 @section('isi')
     <div class="grid statistik">
-        <div class="stat-card"><small>Total Data</small><strong>{{ number_format($total, 0, ',', '.') }}</strong></div>
-        @foreach ($perJenis as $jenis => $jumlah)<div class="stat-card"><small>{{ $jenis ?: 'LAINNYA' }}</small><strong>{{ number_format($jumlah, 0, ',', '.') }}</strong></div>@endforeach
+        <div class="stat-card">
+            <small>Total Data</small>
+            <strong>{{ number_format($total, 0, ',', '.') }}</strong>
+        </div>
+        @foreach ($perJenis as $jenis => $jumlah)
+            <div class="stat-card">
+                <small>{{ $jenis ?: 'LAINNYA' }}</small>
+                <strong>{{ number_format($jumlah, 0, ',', '.') }}</strong>
+            </div>
+        @endforeach
     </div>
     <div class="box">
-        <form class="filter" method="GET"><input type="text" name="no_agenda" value="{{ request('no_agenda') }}" placeholder="No agenda">@if ($showUlpFilter)<select name="ulp"><option value="">Semua ULP</option>@foreach ($ulps as $ulp)<option value="{{ $ulp->id }}" @selected((string) request('ulp') === (string) $ulp->id)>{{ $ulp->nama }}</option>@endforeach</select>@endif @if (in_array(auth()->user()->role?->type, ['ULP', 'UP3'], true))<select name="tahap"><option value="">Semua tahap</option>@foreach ($tahapPilihan as $tahap => $label)<option value="{{ $tahap }}" @selected(request('tahap') === $tahap)>{{ $label }}</option>@endforeach</select>@endif<select name="jenis"><option value="">Semua transaksi</option>@foreach ($jenisPilihan as $jenis)<option value="{{ $jenis }}" @selected(request('jenis') === $jenis)>{{ $jenis }}</option>@endforeach</select><select name="status"><option value="">Semua status</option>@foreach ($statusPilihan as $status)<option value="{{ $status }}" @selected(request('status') === $status)>{{ $status }}</option>@endforeach</select><button type="submit" class="btn">Filter</button><a class="btn btn-excel" href="{{ route('laporan.export', request()->only(['no_agenda', 'ulp', 'tahap', 'jenis', 'status'])) }}">Export Excel</a></form>
+        <form class="filter" method="GET">
+            <input type="text" name="no_agenda" value="{{ request('no_agenda') }}" placeholder="No agenda">
+            @if ($showUlpFilter)
+                <select name="ulp">
+                    <option value="">Semua ULP</option>
+                    @foreach ($ulps as $ulp)
+                        <option value="{{ $ulp->id }}" @selected((string) request('ulp') === (string) $ulp->id)>
+                            {{ $ulp->nama }}
+                        </option>
+                    @endforeach
+                </select>
+            @endif
+            @if (in_array(auth()->user()->role?->type, ['ULP', 'UP3'], true))
+                <select name="tahap">
+                    <option value="">Semua tahap</option>
+                    @foreach ($tahapPilihan as $tahap => $label)
+                        <option value="{{ $tahap }}" @selected(request('tahap') === $tahap)>
+                            {{ $label }}
+                        </option>
+                    @endforeach
+                </select>
+            @endif
+            <select name="jenis">
+                <option value="">Semua transaksi</option>
+                @foreach ($jenisPilihan as $jenis)
+                    <option value="{{ $jenis }}" @selected(request('jenis') === $jenis)>{{ $jenis }}</option>
+                @endforeach
+            </select>
+            <select name="status">
+                <option value="">Semua status</option>
+                @foreach ($statusPilihan as $status)
+                    <option value="{{ $status }}" @selected(request('status') === $status)>{{ $status }}</option>
+                @endforeach
+            </select>
+            <button type="submit" class="btn">Filter</button>
+            <a class="btn btn-excel" href="{{ route('laporan.export', request()->only(['no_agenda', 'ulp', 'tahap', 'jenis', 'status'])) }}">
+                Export Excel
+            </a>
+        </form>
         @php($showSyarat = ! in_array(auth()->user()->role?->type, ['UP3', 'ULP'], true))
         @php($processMap = $data->getCollection()->mapWithKeys(function ($row) {
             $material = $row->permintaan;
             $konstruksi = $row->pengirimanKonstruksi;
             $npsWoDone = count($row->nps_wo_paths ?? []) > 0 || filled($row->nps_wo_at);
             $npsChecklistDone = count($row->nps_checklist_paths ?? []) > 0 || filled($row->nps_checklist_at);
-            $planningDone = count($row->laporanVendor?->berkas_hasil_paths ?? []) > 0 || count($konstruksi?->hasil_paths ?? []) > 0 || $npsWoDone;
+            $planningDone = count($row->laporanVendor?->berkas_hasil_paths ?? []) > 0 || count($konstruksi?->hasil_paths ?? []) > 0;
             $constructionDone = count($row->hasil_konstruksi_paths ?? []) > 0 || count($konstruksi?->hasil_konstruksi_paths ?? []) > 0;
             return [$row->no_agenda => [
                 'ulp' => $row->tahap !== 'ULP' || $row->tujuan_perluasan,
                 'ulpDate' => $material?->dikirim_at?->format('Y-m-d H:i:s') ?? $row->created_at,
                 'planning' => $planningDone,
-                'planningDate' => $row->laporanVendor?->berkas_hasil_at?->format('Y-m-d H:i:s') ?? $konstruksi?->hasil_perencanaan_at?->format('Y-m-d H:i:s') ?? $row->nps_wo_at?->format('Y-m-d H:i:s'),
+                'planningDate' => $row->laporanVendor?->berkas_hasil_at?->format('Y-m-d H:i:s') ?? $konstruksi?->hasil_perencanaan_at?->format('Y-m-d H:i:s'),
                 'nps' => $npsWoDone,
                 'npsWo' => $npsWoDone,
                 'npsWoDate' => $row->nps_wo_at?->format('Y-m-d H:i:s'),
@@ -37,20 +83,218 @@
         @php($panelMap = $data->getCollection()->mapWithKeys(fn ($row) => [$row->no_agenda => ['jenis' => $row->permintaan?->jenis_panel_meter, 'jumlah' => $row->permintaan?->jml_panel_meter]])->all())
         <script id="laporanPanelData" type="application/json">@json($panelMap)</script>
         <script id="laporanProsesData" type="application/json">@json($processMap)</script>
-        <div class="scroll laporan-scroll"><table class="tabel tabel-biru laporan-table"><thead>
-            <tr><th rowspan="2">NO.</th><th rowspan="2">ASAL ULP</th><th rowspan="2">DETAIL</th>@if($showSyarat)<th colspan="2" class="grup">SYARAT</th>@endif<th colspan="15" class="grup">DETAIL MATERIAL</th><th rowspan="2">JENIS PERLUASAN</th><th rowspan="2">TRANSAKSI</th><th rowspan="2">STATUS</th><th rowspan="2">NO AGENDA</th><th rowspan="2">NAMA PELANGGAN</th><th rowspan="2">IDPEL</th><th rowspan="2">TOTAL BIAYA</th><th rowspan="2">TANGGAL MOHON</th><th rowspan="2">TANGGAL BAYAR</th><th colspan="2" class="grup">LAMA</th><th colspan="2" class="grup">BARU</th><th rowspan="2">DURASI HARI KERJA</th></tr>
-            <tr>@if($showSyarat)<th class="sub">BERKAS PENDUKUNG</th><th class="sub">BERKAS IJIN</th>@endif<th class="sub">RAB</th><th class="sub">JENIS TIANG TM</th><th class="sub">JUMLAH TIANG TM</th><th class="sub">JENIS TIANG TR</th><th class="sub">JUMLAH TIANG TR</th><th class="sub">JENIS KONDUKTOR TM</th><th class="sub">JUMLAH KONDUKTOR TM</th><th class="sub">JENIS KONDUKTOR TR</th><th class="sub">JUMLAH KONDUKTOR TR</th><th class="sub">JENIS TRAFO</th><th class="sub">JUMLAH TRAFO</th><th class="sub">JENIS KWH METER</th><th class="sub">JUMLAH KWH METER</th><th class="sub">JENIS PANEL</th><th class="sub">JUMLAH PANEL</th><th class="sub">TARIF</th><th class="sub">DAYA</th><th class="sub">TARIF</th><th class="sub">DAYA</th></tr>
-        </thead><tbody>
-            @forelse ($data as $row) @php($material = $row->permintaan) <tr><td>{{ $data->firstItem() + $loop->index }}.</td><td><b>{{ $row->asal_ulp }}</b></td><td><button type="button" class="detail-link laporan-detail" title="Lihat detail" data-no-agenda="{{ $row->no_agenda }}" data-idpel="{{ $row->id_pelanggan }}" data-nama="{{ $row->nama_pelanggan }}" data-alamat="{{ $row->alamat }}" data-transaksi="{{ $row->jenis_transaksi }}" data-status="{{ $row->status }}" data-tujuan="{{ $row->tujuan_perluasan ?: ($material?->jenis_perluasan ?? '-') }}" data-rab="{{ $row->rab }}" data-pendukung="{{ base64_encode(json_encode($row->berkas_pendukung_paths ?? [])) }}" data-ijin="{{ base64_encode(json_encode($row->berkas_ijin_paths ?? [])) }}" data-file-url="{{ route('pbpd.syarat.file', ['pelanggan' => $row->id, 'jenis' => 'pendukung', 'index' => 0]) }}" data-jenis-tiang-tm="{{ $material?->jenis_tiang_tm ?? $material?->jenis_tiang }}" data-jml-tiang-tm="{{ $material?->jml_tiang_tm ?? $material?->jml_tiang }}" data-jenis-tiang-tr="{{ $material?->jenis_tiang_tr }}" data-jml-tiang-tr="{{ $material?->jml_tiang_tr }}" data-jenis-konduktor-tm="{{ $material?->jenis_konduktor_tm }}" data-jml-konduktor-tm="{{ $material?->jml_konduktor_tm }}" data-jenis-konduktor-tr="{{ $material?->jenis_konduktor_tr }}" data-jml-konduktor-tr="{{ $material?->jml_konduktor_tr }}" data-jenis-trafo="{{ $material?->jenis_trafo }}" data-jml-trafo="{{ $material?->jml_trafo }}" data-jenis-kwh="{{ $material?->jenis_kwh_meter }}" data-jml-kwh="{{ $material?->jml_kwh_meter }}">📋</button></td>@if($showSyarat)<td>{{ count($row->berkas_pendukung_paths ?? []) ? '📎' : '-' }}</td><td>{{ count($row->berkas_ijin_paths ?? []) ? '📎' : '-' }}</td>@endif<td>{{ $row->rab !== null ? number_format($row->rab, 0, ',', '.') : '-' }}</td><td>{{ $material?->jenis_tiang_tm ?? $material?->jenis_tiang ?? '-' }}</td><td>{{ $material?->jml_tiang_tm ?? $material?->jml_tiang ?? '-' }}</td><td>{{ $material?->jenis_tiang_tr ?? '-' }}</td><td>{{ $material?->jml_tiang_tr ?? '-' }}</td><td>{{ $material?->jenis_konduktor_tm ?? '-' }}</td><td>{{ $material?->jml_konduktor_tm ?? '-' }}</td><td>{{ $material?->jenis_konduktor_tr ?? '-' }}</td><td>{{ $material?->jml_konduktor_tr ?? '-' }}</td><td>{{ $material?->jenis_trafo ?? '-' }}</td><td>{{ $material?->jml_trafo ?? '-' }}</td><td>{{ $material?->jenis_kwh_meter ?? '-' }}</td><td>{{ $material?->jml_kwh_meter ?? '-' }}</td><td>{{ $material?->jenis_panel_meter ?? '-' }}</td><td>{{ $material?->jml_panel_meter ?? '-' }}</td><td>{{ $row->tujuan_perluasan ?: ($material?->jenis_perluasan ?? '-') }}</td><td>{{ $row->jenis_transaksi }}</td><td>{{ $row->status }}</td><td>{{ $row->no_agenda }}</td><td>{{ $row->nama_pelanggan }}</td><td>{{ $row->id_pelanggan }}</td><td>{{ $row->total_biaya !== null ? number_format($row->total_biaya, 0, ',', '.') : '-' }}</td><td>{{ $row->tgl_mohon?->format('d/m/Y') ?? '-' }}</td><td>{{ $row->tgl_bayar?->format('d/m/Y') ?? '-' }}</td><td>{{ $row->tarif_lama }}</td><td>{{ filled($row->daya_lama) ? $row->daya_lama . ' VA' : '' }}</td><td><b>{{ $row->tarif_baru }}</b></td><td><b>{{ filled($row->daya_baru) ? $row->daya_baru . ' VA' : '' }}</b></td><td>{{ $row->keterangan }}</td></tr>@empty<tr><td colspan="{{ $showSyarat ? 32 : 30 }}" style="text-align:center">Belum ada data laporan.</td></tr>@endforelse
-        </tbody></table></div><div class="halaman">{{ $data->links() }}</div>
+        <div class="scroll laporan-scroll">
+            <table class="tabel tabel-biru laporan-table">
+                <thead>
+                    <tr>
+                        <th rowspan="2">NO.</th>
+                        <th rowspan="2">ASAL ULP</th>
+                        <th rowspan="2">DETAIL</th>
+                        @if ($showSyarat)
+                            <th colspan="2" class="grup">SYARAT</th>
+                        @endif
+                        <th colspan="15" class="grup">DETAIL MATERIAL</th>
+                        <th rowspan="2">JENIS PERLUASAN</th>
+                        <th rowspan="2">TRANSAKSI</th>
+                        <th rowspan="2">STATUS</th>
+                        <th rowspan="2">NO AGENDA</th>
+                        <th rowspan="2">NAMA PELANGGAN</th>
+                        <th rowspan="2">IDPEL</th>
+                        <th rowspan="2">TOTAL BIAYA</th>
+                        <th rowspan="2">TANGGAL MOHON</th>
+                        <th rowspan="2">TANGGAL BAYAR</th>
+                        <th colspan="2" class="grup">LAMA</th>
+                        <th colspan="2" class="grup">BARU</th>
+                        <th rowspan="2">DURASI HARI KERJA</th>
+                    </tr>
+                    <tr>
+                        @if ($showSyarat)
+                            <th class="sub">BERKAS PENDUKUNG</th>
+                            <th class="sub">BERKAS IJIN</th>
+                        @endif
+                        <th class="sub">RAB</th>
+                        <th class="sub">JENIS TIANG TM</th>
+                        <th class="sub">JUMLAH TIANG TM</th>
+                        <th class="sub">JENIS TIANG TR</th>
+                        <th class="sub">JUMLAH TIANG TR</th>
+                        <th class="sub">JENIS KONDUKTOR TM</th>
+                        <th class="sub">JUMLAH KONDUKTOR TM</th>
+                        <th class="sub">JENIS KONDUKTOR TR</th>
+                        <th class="sub">JUMLAH KONDUKTOR TR</th>
+                        <th class="sub">JENIS TRAFO</th>
+                        <th class="sub">JUMLAH TRAFO</th>
+                        <th class="sub">JENIS KWH METER</th>
+                        <th class="sub">JUMLAH KWH METER</th>
+                        <th class="sub">JENIS PANEL</th>
+                        <th class="sub">JUMLAH PANEL</th>
+                        <th class="sub">TARIF</th>
+                        <th class="sub">DAYA</th>
+                        <th class="sub">TARIF</th>
+                        <th class="sub">DAYA</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse ($data as $row)
+                        @php($material = $row->permintaan)
+                        <tr>
+                            <td>{{ $data->firstItem() + $loop->index }}.</td>
+                            <td><b>{{ $row->asal_ulp }}</b></td>
+                            <td>
+                                <button
+                                    type="button"
+                                    class="detail-link laporan-detail"
+                                    title="Lihat detail"
+                                    data-no-agenda="{{ $row->no_agenda }}"
+                                    data-idpel="{{ $row->id_pelanggan }}"
+                                    data-nama="{{ $row->nama_pelanggan }}"
+                                    data-alamat="{{ $row->alamat }}"
+                                    data-transaksi="{{ $row->jenis_transaksi }}"
+                                    data-status="{{ $row->status }}"
+                                    data-tujuan="{{ $row->tujuan_perluasan ?: ($material?->jenis_perluasan ?? '-') }}"
+                                    data-rab="{{ $row->rab }}"
+                                    data-pendukung="{{ base64_encode(json_encode($row->berkas_pendukung_paths ?? [])) }}"
+                                    data-ijin="{{ base64_encode(json_encode($row->berkas_ijin_paths ?? [])) }}"
+                                    data-file-url="{{ route('pbpd.syarat.file', ['pelanggan' => $row->id, 'jenis' => 'pendukung', 'index' => 0]) }}"
+                                    data-jenis-tiang-tm="{{ $material?->jenis_tiang_tm ?? $material?->jenis_tiang }}"
+                                    data-jml-tiang-tm="{{ $material?->jml_tiang_tm ?? $material?->jml_tiang }}"
+                                    data-jenis-tiang-tr="{{ $material?->jenis_tiang_tr }}"
+                                    data-jml-tiang-tr="{{ $material?->jml_tiang_tr }}"
+                                    data-jenis-konduktor-tm="{{ $material?->jenis_konduktor_tm }}"
+                                    data-jml-konduktor-tm="{{ $material?->jml_konduktor_tm }}"
+                                    data-jenis-konduktor-tr="{{ $material?->jenis_konduktor_tr }}"
+                                    data-jml-konduktor-tr="{{ $material?->jml_konduktor_tr }}"
+                                    data-jenis-trafo="{{ $material?->jenis_trafo }}"
+                                    data-jml-trafo="{{ $material?->jml_trafo }}"
+                                    data-jenis-kwh="{{ $material?->jenis_kwh_meter }}"
+                                    data-jml-kwh="{{ $material?->jml_kwh_meter }}"
+                                >📋</button>
+                            </td>
+                            @if ($showSyarat)
+                                <td>{{ count($row->berkas_pendukung_paths ?? []) ? '📎' : '-' }}</td>
+                                <td>{{ count($row->berkas_ijin_paths ?? []) ? '📎' : '-' }}</td>
+                            @endif
+                            <td>{{ $row->rab !== null ? number_format($row->rab, 0, ',', '.') : '-' }}</td>
+                            <td>{{ $material?->jenis_tiang_tm ?? $material?->jenis_tiang ?? '-' }}</td>
+                            <td>{{ $material?->jml_tiang_tm ?? $material?->jml_tiang ?? '-' }}</td>
+                            <td>{{ $material?->jenis_tiang_tr ?? '-' }}</td>
+                            <td>{{ $material?->jml_tiang_tr ?? '-' }}</td>
+                            <td>{{ $material?->jenis_konduktor_tm ?? '-' }}</td>
+                            <td>{{ $material?->jml_konduktor_tm ?? '-' }}</td>
+                            <td>{{ $material?->jenis_konduktor_tr ?? '-' }}</td>
+                            <td>{{ $material?->jml_konduktor_tr ?? '-' }}</td>
+                            <td>{{ $material?->jenis_trafo ?? '-' }}</td>
+                            <td>{{ $material?->jml_trafo ?? '-' }}</td>
+                            <td>{{ $material?->jenis_kwh_meter ?? '-' }}</td>
+                            <td>{{ $material?->jml_kwh_meter ?? '-' }}</td>
+                            <td>{{ $material?->jenis_panel_meter ?? '-' }}</td>
+                            <td>{{ $material?->jml_panel_meter ?? '-' }}</td>
+                            <td>{{ $row->tujuan_perluasan ?: ($material?->jenis_perluasan ?? '-') }}</td>
+                            <td>{{ $row->jenis_transaksi }}</td>
+                            <td>{{ $row->status }}</td>
+                            <td>{{ $row->no_agenda }}</td>
+                            <td>{{ $row->nama_pelanggan }}</td>
+                            <td>{{ $row->id_pelanggan }}</td>
+                            <td>{{ $row->total_biaya !== null ? number_format($row->total_biaya, 0, ',', '.') : '-' }}</td>
+                            <td>{{ $row->tgl_mohon?->format('d/m/Y') ?? '-' }}</td>
+                            <td>{{ $row->tgl_bayar?->format('d/m/Y') ?? '-' }}</td>
+                            <td>{{ $row->tarif_lama }}</td>
+                            <td>{{ filled($row->daya_lama) ? $row->daya_lama . ' VA' : '' }}</td>
+                            <td><b>{{ $row->tarif_baru }}</b></td>
+                            <td><b>{{ filled($row->daya_baru) ? $row->daya_baru . ' VA' : '' }}</b></td>
+                            <td>{{ $row->keterangan }}</td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="{{ $showSyarat ? 32 : 30 }}" style="text-align:center">Belum ada data laporan.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+        <div class="halaman">{{ $data->links() }}</div>
     </div>
-    <div id="laporanDetailModal" class="laporan-modal" hidden><div class="laporan-modal-box" role="dialog" aria-modal="true"><button type="button" class="laporan-close" aria-label="Tutup">&times;</button><h3>Detail Data Laporan</h3><div class="laporan-detail-grid"><div><small>No Agenda</small><b id="ldNoAgenda"></b></div><div><small>IDPEL</small><b id="ldIdpel"></b></div><div><small>Nama Pelanggan</small><b id="ldNama"></b></div><div><small>Transaksi</small><b id="ldTransaksi"></b></div><div><small>Status</small><b id="ldStatus"></b></div><div><small>Jenis Perluasan</small><b id="ldTujuan"></b></div><div class="laporan-full"><small>Alamat</small><b id="ldAlamat"></b></div></div><h4>Detail Material</h4><div class="laporan-material-grid"><div><small>RAB</small><b id="ldRab"></b></div><div><small>Tiang TM</small><b id="ldTiangTm"></b></div><div><small>Tiang TR</small><b id="ldTiangTr"></b></div><div><small>Konduktor TM</small><b id="ldKonduktorTm"></b></div><div><small>Konduktor TR</small><b id="ldKonduktorTr"></b></div><div><small>Trafo</small><b id="ldTrafo"></b></div><div><small>KWH Meter</small><b id="ldKwh"></b></div><div><small>Panel Meter</small><b id="ldPanelMeter"></b></div></div><h4>Berkas Pendukung</h4><div id="ldPendukung" class="laporan-files">-</div><h4>Berkas Ijin</h4><div id="ldIjin" class="laporan-files">-</div></div></div>
+    <div id="laporanDetailModal" class="laporan-modal" hidden>
+        <div class="laporan-modal-box" role="dialog" aria-modal="true">
+            <button type="button" class="laporan-close" aria-label="Tutup">&times;</button>
+            <h3>Detail Data Laporan</h3>
+            <div class="laporan-detail-grid">
+                <div><small>No Agenda</small><b id="ldNoAgenda"></b></div>
+                <div><small>IDPEL</small><b id="ldIdpel"></b></div>
+                <div><small>Nama Pelanggan</small><b id="ldNama"></b></div>
+                <div><small>Transaksi</small><b id="ldTransaksi"></b></div>
+                <div><small>Status</small><b id="ldStatus"></b></div>
+                <div><small>Jenis Perluasan</small><b id="ldTujuan"></b></div>
+                <div class="laporan-full"><small>Alamat</small><b id="ldAlamat"></b></div>
+            </div>
+            <h4>Detail Material</h4>
+            <div class="laporan-material-grid">
+                <div><small>RAB</small><b id="ldRab"></b></div>
+                <div><small>Tiang TM</small><b id="ldTiangTm"></b></div>
+                <div><small>Tiang TR</small><b id="ldTiangTr"></b></div>
+                <div><small>Konduktor TM</small><b id="ldKonduktorTm"></b></div>
+                <div><small>Konduktor TR</small><b id="ldKonduktorTr"></b></div>
+                <div><small>Trafo</small><b id="ldTrafo"></b></div>
+                <div><small>KWH Meter</small><b id="ldKwh"></b></div>
+                <div><small>Panel Meter</small><b id="ldPanelMeter"></b></div>
+            </div>
+            <h4>Berkas Pendukung</h4>
+            <div id="ldPendukung" class="laporan-files">-</div>
+            <h4>Berkas Ijin</h4>
+            <div id="ldIjin" class="laporan-files">-</div>
+        </div>
+    </div>
     @push('page-styles')
     <style>.statistik{margin-bottom:16px}.stat-card{padding:18px;border:1px solid #d6e2ee;border-radius:10px;background:#fff}.stat-card small,.stat-card strong{display:block}.stat-card small{color:#637487}.stat-card strong{margin-top:6px;font-size:24px;color:#0b3d6b}.ringkasan{display:flex;gap:10px;flex-wrap:wrap}.ringkasan span{padding:8px 12px;border-radius:6px;background:#eef5fb;color:#536477}.filter{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap}.filter select{padding:8px;border:1px solid #b9c7d5;border-radius:5px;background:#fff}.btn{background:#0b3d6b}.halaman{margin-top:16px}.laporan-table{width:100%;min-width:0;table-layout:fixed;font-size:10px}.laporan-table th,.laporan-table td{padding:7px 5px;white-space:normal;overflow-wrap:anywhere;word-break:normal;line-height:1.25}.laporan-table th{font-size:9px}.laporan-table td:nth-child(1){width:30px;text-align:center}.laporan-table td:nth-child(2){width:75px}.laporan-table td:nth-child(3){width:45px}.laporan-table td:nth-child(4),.laporan-table td:nth-child(5),.laporan-table td:nth-child(6){width:58px}.laporan-table td:nth-child(7),.laporan-table td:nth-child(8){width:82px}.laporan-table td:nth-child(9){width:65px}.laporan-table td:nth-child(10){width:70px}.laporan-table td:nth-child(11),.laporan-table td:nth-child(12){width:55px}.laporan-table td:nth-child(13){width:70px}.laporan-table td:nth-child(14){width:58px}.laporan-table td:nth-child(15){width:70px}.laporan-table td:nth-child(16){width:58px}.laporan-table td:nth-child(17){width:75px}.laporan-table td:nth-child(18){width:58px}.laporan-table td:nth-child(19){width:72px}.laporan-table td:nth-child(20),.laporan-table td:nth-child(21){width:70px}.laporan-table td:nth-child(n+22){width:55px}.laporan-detail{border:0;cursor:pointer}.laporan-modal{position:fixed;inset:0;z-index:30;display:grid;place-items:center;padding:20px;background:rgba(0,0,0,.45)}.laporan-modal[hidden]{display:none}.laporan-modal-box{position:relative;width:min(700px,100%);max-height:90vh;overflow:auto;padding:24px;border-radius:10px;background:#fff;box-shadow:0 12px 40px rgba(0,0,0,.25)}.laporan-modal-box h3{margin:0 0 18px;color:#0b3d6b}.laporan-modal-box h4{margin:18px 0 8px;color:#0b3d6b}.laporan-close{position:absolute;top:10px;right:10px;padding:2px 9px;background:#e8eef5;font-size:20px}.laporan-detail-grid,.laporan-material-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.laporan-detail-grid>div,.laporan-material-grid>div{padding:9px;border:1px solid #d6e2ee;border-radius:6px}.laporan-detail-grid small,.laporan-detail-grid b,.laporan-material-grid small,.laporan-material-grid b{display:block}.laporan-detail-grid small,.laporan-material-grid small{color:#637487;margin-bottom:3px}.laporan-full{grid-column:1/-1}.laporan-files{display:grid;gap:6px;padding:10px;border:1px solid #d6e2ee;border-radius:6px}.laporan-files a{color:#0b3d6b;overflow-wrap:anywhere}@media(max-width:1100px){.laporan-table{font-size:9px}.laporan-table th{font-size:8px}.laporan-table th,.laporan-table td{padding:5px 3px}}@media(max-width:600px){.laporan-detail-grid,.laporan-material-grid{grid-template-columns:1fr}.laporan-full{grid-column:auto}}
     </style>
     @endpush
     <script>
-        (() => { const modal=document.getElementById('laporanDetailModal'); const text=(id,value)=>{document.getElementById(id).textContent=value||'-';}; const files=(id,encoded,url,jenis)=>{let list=[];try{list=JSON.parse(atob(encoded||''))}catch(e){};document.getElementById(id).innerHTML=list.length?list.map((path,i)=>`<a href="${url.replace(/pendukung\/0$/,jenis+'/'+i)}" target="_blank" rel="noopener">📄 ${String(path).split('/').pop()||'Berkas '+(i+1)}</a>`).join(''):'-';}; document.querySelectorAll('.laporan-detail').forEach((button)=>button.addEventListener('click',()=>{text('ldNoAgenda',button.dataset.noAgenda);text('ldIdpel',button.dataset.idpel);text('ldNama',button.dataset.nama);text('ldTransaksi',button.dataset.transaksi);text('ldStatus',button.dataset.status);text('ldTujuan',button.dataset.tujuan);text('ldAlamat',button.dataset.alamat);text('ldRab',button.dataset.rab?Number(button.dataset.rab).toLocaleString('id-ID'):'-');text('ldTiangTm',button.dataset.jenisTiangTm?`${button.dataset.jenisTiangTm} (${button.dataset.jmlTiangTm||0})`:'-');text('ldTiangTr',button.dataset.jenisTiangTr?`${button.dataset.jenisTiangTr} (${button.dataset.jmlTiangTr||0})`:'-');text('ldKonduktorTm',button.dataset.jenisKonduktorTm?`${button.dataset.jenisKonduktorTm} (${button.dataset.jmlKonduktorTm||0})`:'-');text('ldKonduktorTr',button.dataset.jenisKonduktorTr?`${button.dataset.jenisKonduktorTr} (${button.dataset.jmlKonduktorTr||0})`:'-');text('ldTrafo',button.dataset.jenisTrafo?`${button.dataset.jenisTrafo} (${button.dataset.jmlTrafo||0})`:'-');text('ldKwh',button.dataset.jenisKwh?`${button.dataset.jenisKwh} (${button.dataset.jmlKwh||0})`:'-');files('ldPendukung',button.dataset.pendukung,button.dataset.fileUrl,'pendukung');files('ldIjin',button.dataset.ijin,button.dataset.fileUrl,'ijin');modal.hidden=false;})); const close=()=>{modal.hidden=true};modal.querySelector('.laporan-close').addEventListener('click',close);modal.addEventListener('click',e=>{if(e.target===modal)close()});document.addEventListener('keydown',e=>{if(e.key==='Escape')close()}); })();
+        (() => {
+            const modal = document.getElementById('laporanDetailModal');
+            const text = (id, value) => {
+                document.getElementById(id).textContent = value || '-';
+            };
+            const files = (id, encoded, url, jenis) => {
+                let list = [];
+                try {
+                    list = JSON.parse(atob(encoded || ''));
+                } catch (e) {}
+
+                document.getElementById(id).innerHTML = list.length
+                    ? list.map((path, i) => `<a href="${url.replace(/pendukung\/0$/, jenis + '/' + i)}" target="_blank" rel="noopener">📄 ${String(path).split('/').pop() || 'Berkas ' + (i + 1)}</a>`).join('')
+                    : '-';
+            };
+
+            document.querySelectorAll('.laporan-detail').forEach((button) => button.addEventListener('click', () => {
+                text('ldNoAgenda', button.dataset.noAgenda);
+                text('ldIdpel', button.dataset.idpel);
+                text('ldNama', button.dataset.nama);
+                text('ldTransaksi', button.dataset.transaksi);
+                text('ldStatus', button.dataset.status);
+                text('ldTujuan', button.dataset.tujuan);
+                text('ldAlamat', button.dataset.alamat);
+                text('ldRab', button.dataset.rab ? Number(button.dataset.rab).toLocaleString('id-ID') : '-');
+                text('ldTiangTm', button.dataset.jenisTiangTm ? `${button.dataset.jenisTiangTm} (${button.dataset.jmlTiangTm || 0})` : '-');
+                text('ldTiangTr', button.dataset.jenisTiangTr ? `${button.dataset.jenisTiangTr} (${button.dataset.jmlTiangTr || 0})` : '-');
+                text('ldKonduktorTm', button.dataset.jenisKonduktorTm ? `${button.dataset.jenisKonduktorTm} (${button.dataset.jmlKonduktorTm || 0})` : '-');
+                text('ldKonduktorTr', button.dataset.jenisKonduktorTr ? `${button.dataset.jenisKonduktorTr} (${button.dataset.jmlKonduktorTr || 0})` : '-');
+                text('ldTrafo', button.dataset.jenisTrafo ? `${button.dataset.jenisTrafo} (${button.dataset.jmlTrafo || 0})` : '-');
+                text('ldKwh', button.dataset.jenisKwh ? `${button.dataset.jenisKwh} (${button.dataset.jmlKwh || 0})` : '-');
+                files('ldPendukung', button.dataset.pendukung, button.dataset.fileUrl, 'pendukung');
+                files('ldIjin', button.dataset.ijin, button.dataset.fileUrl, 'ijin');
+                modal.hidden = false;
+            }));
+
+            const close = () => {
+                modal.hidden = true;
+            };
+            modal.querySelector('.laporan-close').addEventListener('click', close);
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) close();
+            });
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') close();
+            });
+        })();
     </script>
     <script>
         (() => {

@@ -113,8 +113,8 @@
     </style>
     @stack('page-styles')
 
-<style>.notif-badge{display:inline-block;min-width:18px;margin-left:6px;padding:2px 5px;border-radius:10px;background:#c0392b;color:#fff;font-size:11px;text-align:center}.global-flash-error{margin:14px 20px;padding:11px 14px;border:1px solid #f1c1bd;border-left:4px solid #d9534f;border-radius:9px;background:#fff5f4;color:#a33b36;font-size:13px;font-weight:600}</style>
-<style>
+<style>.notif-badge{display:inline-block;min-width:18px;margin-left:6px;padding:2px 5px;border-radius:10px;background:#c0392b;color:#fff;font-size:11px;text-align:center}.global-flash-error{margin:14px 20px;padding:11px 14px;border:1px solid #f1c1bd;border-left:4px solid #d9534f;border-radius:9px;background:#fff5f4;color:#a33b36;font-size:13px;font-weight:600}
+
     :root { --pln-navy:#003b70; --pln-blue:#0072ce; --pln-light:#eef7fd; --pln-yellow:#ffc900; --ink:#183247; }
     header { position:sticky; top:0; z-index:10; min-height:64px; background:rgba(255,255,255,.92); box-shadow:0 1px 12px rgba(20,62,95,.05); backdrop-filter:blur(10px); }
     header strong { color:var(--pln-navy); font-size:16px; letter-spacing:.01em; }
@@ -150,8 +150,8 @@
     body:has(.modern-dashboard){background:var(--ref-page);color:var(--ref-text)}body:has(.modern-dashboard) header{background:#fff;border-bottom-color:var(--ref-line)}body:has(.modern-dashboard) .dashboard-topline h1{color:var(--ref-navy)}body:has(.modern-dashboard) .dashboard-topline p,body:has(.modern-dashboard) .panel-heading p{color:var(--ref-muted)}body:has(.modern-dashboard) .metric-card,body:has(.modern-dashboard) .modern-panel{background:#fff;border-color:var(--ref-line);box-shadow:0 2px 8px rgba(15,23,42,.08)}body:has(.modern-dashboard) .metric-card strong,body:has(.modern-dashboard) .panel-heading h2{color:#1e293b}body:has(.modern-dashboard) .metric-label,body:has(.modern-dashboard) .metric-card small{color:var(--ref-muted)}body:has(.modern-dashboard) .modern-table th{color:var(--ref-muted);border-bottom-color:var(--ref-line)}body:has(.modern-dashboard) .modern-table td{color:var(--ref-text);border-bottom-color:#edf1f5}body:has(.modern-dashboard) .modern-table td b{color:#1e293b}body:has(.modern-dashboard) .modern-table tbody tr:hover{background:#f0f7fb}body:has(.modern-dashboard) .status-tag.stage{background:#eff6ff;color:#1e6fa8}body:has(.modern-dashboard) .status-dot{background:#2e9b68}body:has(.modern-dashboard) .stage-track{background:#e2e8f0}body:has(.modern-dashboard) .stage-track i{background:linear-gradient(90deg,var(--ref-blue),var(--ref-cyan))}
     /* Reference-style outline icons. */
     .icon-inline,.metric-icon svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;display:block}.metric-icon svg{width:15px;height:15px}.file-icon{display:inline-flex;align-items:center;justify-content:center;margin-right:6px;color:#1e6fa8}.tabel .ikon-dtl,.tabel .detail-link,.laporan-detail{display:inline-grid;place-items:center}.tabel .ikon-syarat{display:inline-grid;place-items:center}
-</style>
-<style>
+
+
     /* FAST ON global dark theme: visual styling only. */
     :root{color-scheme:dark}
     body{background:#0a1020;color:#d8e2f0;font-family:Inter,"Plus Jakarta Sans","Segoe UI",system-ui,-apple-system,BlinkMacSystemFont,sans-serif;font-size:13px;letter-spacing:.005em;-webkit-font-smoothing:antialiased}
@@ -331,11 +331,11 @@
     .laporan-modal,.detail-modal{background:rgba(15,23,42,.45)}.laporan-modal-box,.detail-modal-box{background:#fff;color:var(--ref-text);border-color:var(--ref-line);box-shadow:0 12px 36px rgba(15,23,42,.2)}.laporan-modal-box h3,.laporan-modal-box h4,.detail-modal-box h3{color:var(--ref-navy)}.laporan-close,.detail-modal-close,.history-close{background:#f1f5f9;color:#334155}.laporan-detail-grid>div,.laporan-material-grid>div,.detail-grid div{border-color:var(--ref-line);background:#fff}.laporan-detail-grid small,.laporan-material-grid small,.detail-grid small{color:var(--ref-muted)}.laporan-files{border-color:var(--ref-line);background:#f8fafc}.laporan-files a,.vendor-berkas a{color:#1e6fa8}
     .vendor-form{border-top-color:var(--ref-line)}.vendor-form h4,.planning-result-box h4,.construction-report-box h4,.proses-box h4{color:var(--ref-navy)}.vendor-form label,.vendor-kelayakan,.detail-edit-table label{color:var(--ref-muted)}.vendor-report-result,.planning-result-box,.construction-report-box,.proses-box{background:#f8fafc;border-color:var(--ref-line);color:var(--ref-text)}.proses-tabel{border-color:var(--ref-line);color:var(--ref-text)}.proses-tabel th,.proses-tabel td{border-bottom-color:var(--ref-line)}.proses-tabel th,.kebutuhan-tabel thead th{background:#edf4ff;color:var(--ref-navy)}.proses-selesai{color:#2e9b68}.proses-belum{color:#d9534f}.result-waiting-message{background:#fff7ed;color:#9a651d}.result-delete{background:#d9534f;color:#fff}.kebutuhan-tabel{border-color:var(--ref-line);background:#fff;color:var(--ref-text)}.kebutuhan-tabel th,.kebutuhan-tabel td{border-bottom-color:var(--ref-line)}.kebutuhan-tabel select,.kebutuhan-tabel input,#tujuanKirim{background:#fff!important;color:var(--ref-text);border-color:#cbd5e1!important}
     body:has(.modern-dashboard){background:var(--ref-page);color:var(--ref-text)}body:has(.modern-dashboard) header{background:#fff;border-bottom-color:var(--ref-line)}body:has(.modern-dashboard) .dashboard-topline h1{color:var(--ref-navy)}body:has(.modern-dashboard) .dashboard-topline p,body:has(.modern-dashboard) .panel-heading p{color:var(--ref-muted)}body:has(.modern-dashboard) .metric-card,body:has(.modern-dashboard) .modern-panel{background:#fff;border-color:var(--ref-line);box-shadow:0 2px 8px rgba(15,23,42,.08)}body:has(.modern-dashboard) .metric-card strong,body:has(.modern-dashboard) .panel-heading h2{color:#1e293b}body:has(.modern-dashboard) .metric-label,body:has(.modern-dashboard) .metric-card small{color:var(--ref-muted)}body:has(.modern-dashboard) .modern-table th{color:var(--ref-muted);border-bottom-color:var(--ref-line)}body:has(.modern-dashboard) .modern-table td{color:var(--ref-text);border-bottom-color:#edf1f5}body:has(.modern-dashboard) .modern-table td b{color:#1e293b}body:has(.modern-dashboard) .modern-table tbody tr:hover{background:#f0f7fb}body:has(.modern-dashboard) .status-tag.stage{background:#eff6ff;color:#1e6fa8}body:has(.modern-dashboard) .status-dot{background:#2e9b68}body:has(.modern-dashboard) .stage-track{background:#e2e8f0}body:has(.modern-dashboard) .stage-track i{background:linear-gradient(90deg,var(--ref-blue),var(--ref-cyan))}
-</style>
-<style>
+
+
     .icon-inline,.metric-icon svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;display:block}.metric-icon svg{width:15px;height:15px}.file-icon{display:inline-flex;align-items:center;justify-content:center;margin-right:6px;color:#1e6fa8}.tabel .ikon-dtl,.tabel .detail-link,.laporan-detail{display:inline-grid;place-items:center}.tabel .ikon-syarat{display:inline-grid;place-items:center}
-</style>
-<style>
+
+
     /* Shared modern dashboard language across every role and page. */
     .content{background:#f5f8fc!important}
     .content>h1,.content>h2,.content>h3{color:#123b5d!important;font-weight:750;letter-spacing:-.025em}
@@ -362,8 +362,8 @@
     .vendor-form,.planning-result-box,.construction-report-box,.proses-box{border-radius:12px!important;border-color:#dbe5f0!important;box-shadow:0 3px 12px rgba(13,27,140,.05)}
     .notif-item{border-radius:11px!important}.notif-item.unread{border-left:4px solid #f4c300!important;background:#fffaf0!important}
     @media(max-width:700px){.box:not(.filter),.card,.notif-box{padding:14px!important}.content>h1,.content>h2,.content>h3{font-size:20px!important}.tabel{font-size:11px!important}}
-</style>
-<style>
+
+
     /* PB/PD table shell: keep the record bar, action area and table as one visual panel. */
     .content .kartu{padding:0!important;background:#fff!important;border-color:#dbe5f0!important}
     .content .kartu .kartu-judul{min-height:45px!important;padding:12px 16px!important;background:#0d1b8c!important;margin:0!important;border-radius:12px 12px 0 0!important}
@@ -502,7 +502,12 @@
                                     <svg class="sidebar-modern-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="8"/></svg>
                             @endswitch
                         </span>
-                        {{ $m['label'] }}@if ($m['route'] === 'notifikasi' && auth()->check()) <span class="notif-badge">{{ \App\Models\AppNotification::where('user_id', auth()->id())->whereNull('read_at')->count() }}</span>@endif
+                        {{ $m['label'] }}
+                        @if ($m['route'] === 'notifikasi' && auth()->check())
+                            <span class="notif-badge">
+                                {{ \App\Models\AppNotification::where('user_id', auth()->id())->whereNull('read_at')->count() }}
+                            </span>
+                        @endif
                     </a>
                 @endcan
             @endif
@@ -511,7 +516,10 @@
 
     <div class="content">
         <header>
-            <div class="header-title"><button type="button" class="menu-toggle" id="menuToggle" aria-label="Buka menu" aria-controls="mainSidebar" aria-expanded="false">☰</button><strong>@yield('judul', 'FAST ON')</strong></div>
+            <div class="header-title">
+                <button type="button" class="menu-toggle" id="menuToggle" aria-label="Buka menu" aria-controls="mainSidebar" aria-expanded="false">☰</button>
+                <strong>@yield('judul', 'FAST ON')</strong>
+            </div>
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
                 <button type="submit">Keluar</button>
