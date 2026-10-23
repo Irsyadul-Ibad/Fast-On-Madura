@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\PelangganPbpd;
+use App\Models\PengirimanKonstruksi;
 use App\Services\NotifikasiService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -25,7 +26,11 @@ class VendorKonstruksiController extends Controller
                 ->whereHas('vendor', fn ($v) => $v->where('jenis', 'KONSTRUKSI')->where('user_id', Auth::id()))
                 ->whereHas('dikirimOleh.role', fn ($r) => $r->where('role_code', '5170KON'))
             )
-            ->orderByDesc('id')->get();
+            ->orderByDesc(
+                PengirimanKonstruksi::query()
+                    ->select('dikirim_at')
+                    ->whereColumn('pelanggan_id', 'pelanggan_pbpd.id')
+            )->orderByDesc('id')->get();
 
         return view('vendor.konstruksi', ['data' => $data, 'riwayat' => collect(), 'showHistory' => false]);
     }
@@ -41,7 +46,11 @@ class VendorKonstruksiController extends Controller
                 ->whereNotNull('laporan_at')
             )
             ->whereIn('tahap', ['VENDOR_KONSTRUKSI', 'PERENCANAAN', 'KONSTRUKSI'])
-            ->orderByDesc('id')->get();
+            ->orderByDesc(
+                PengirimanKonstruksi::query()
+                    ->select('laporan_at')
+                    ->whereColumn('pelanggan_id', 'pelanggan_pbpd.id')
+            )->orderByDesc('id')->get();
 
         return view('vendor.konstruksi', ['data' => collect(), 'riwayat' => $riwayat, 'showHistory' => true]);
     }
@@ -61,11 +70,21 @@ class VendorKonstruksiController extends Controller
         $pengiriman = $pelanggan->pengirimanKonstruksi()->with('vendor')->firstOrFail();
         abort_unless($pengiriman->vendor?->jenis === 'KONSTRUKSI', 403);
         abort_unless($pengiriman->vendor?->user_id === Auth::id(), 403);
+        $existingPaths = $this->arrayPaths($pengiriman->laporan_paths);
+        $uploadedFiles = $request->file('berkas_laporan', []);
         $paths = $this->appendUploadedFiles(
-            $this->arrayPaths($pengiriman->laporan_paths),
-            $request->file('berkas_laporan', []),
+            $existingPaths,
+            $uploadedFiles,
             'laporan-konstruksi',
         );
+        $names = array_slice(
+            array_pad($this->arrayPaths($pengiriman->laporan_names), count($existingPaths), null),
+            0,
+            count($existingPaths),
+        );
+        foreach ($uploadedFiles as $file) {
+            $names[] = $file->getClientOriginalName();
+        }
 
         $pengiriman->update([
             'pekerjaan_lengkap' => $request->boolean('pekerjaan_lengkap'),
@@ -74,6 +93,7 @@ class VendorKonstruksiController extends Controller
             'siap_dilanjutkan' => $request->boolean('siap_dilanjutkan'),
             'catatan' => $data['catatan'] ?? null,
             'laporan_paths' => $paths ?: null,
+            'laporan_names' => $names ?: null,
             'laporan_at' => now(),
         ]);
 
@@ -100,6 +120,7 @@ class VendorKonstruksiController extends Controller
             'siap_dilanjutkan' => null,
             'catatan' => null,
             'laporan_paths' => null,
+            'laporan_names' => null,
             'laporan_at' => null,
         ]);
         $pelanggan->update(['tahap' => 'VENDOR_KONSTRUKSI']);

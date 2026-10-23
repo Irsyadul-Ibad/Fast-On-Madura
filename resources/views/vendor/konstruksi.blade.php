@@ -14,7 +14,7 @@
                         <b>Berkas Pengiriman</b>
                         @foreach (($row->pengirimanKonstruksi?->berkas_paths ?? []) as $i => $path)
                             <a class="vendor-file-link" href="{{ route('vendor.konstruksi.delivery.file', ['pelanggan' => $row->id, 'index' => $i]) }}" target="_blank" rel="noopener">
-                                📄 {{ basename($path) ?: 'Berkas ' . ($i + 1) }}
+                                📄 {{ $row->pengirimanKonstruksi?->berkas_names[$i] ?? (basename($path) ?: 'Berkas ' . ($i + 1)) }}
                             </a>
                         @endforeach
                     </div>
@@ -44,6 +44,11 @@
                     <b>{{ $row->no_agenda }}</b>
                     <strong>{{ $row->nama_pelanggan }}</strong>
                     <span>ULP: {{ $row->ulp?->nama }}</span>
+                    @foreach (($pengiriman?->laporan_paths ?? []) as $i => $path)
+                        <a class="vendor-file-link" href="{{ route('vendor.konstruksi.report.file', ['pelanggan' => $row->id, 'index' => $i]) }}" target="_blank" rel="noopener">
+                            📄 {{ $pengiriman?->laporan_names[$i] ?? (basename($path) ?: 'Berkas laporan ' . ($i + 1)) }}
+                        </a>
+                    @endforeach
                     <form class="history-edit-form" method="POST" action="{{ route('vendor.konstruksi.report', $row->id) }}" enctype="multipart/form-data">
                         @csrf
                         <b>Edit Laporan</b>

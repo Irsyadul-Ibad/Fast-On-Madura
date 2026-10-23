@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\LaporanVendor;
 use App\Models\PelangganPbpd;
+use App\Models\PengirimanVendor;
 use App\Services\NotifikasiService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -27,6 +28,11 @@ class VendorTiangController extends Controller
                 ->where('jenis', 'TIANG')
                 ->where('user_id', Auth::id())
             ))
+            ->orderByDesc(
+                PengirimanVendor::query()
+                    ->select('dikirim_at')
+                    ->whereColumn('pelanggan_id', 'pelanggan_pbpd.id')
+            )
             ->orderByDesc('id')
             ->get();
 
@@ -36,6 +42,11 @@ class VendorTiangController extends Controller
             ->whereHas('pengirimanVendor.vendor', fn ($q) => $q
                 ->where('jenis', 'TIANG')
                 ->where('user_id', Auth::id())
+            )
+            ->orderByDesc(
+                LaporanVendor::query()
+                    ->select('vendor_report_at')
+                    ->whereColumn('pelanggan_id', 'pelanggan_pbpd.id')
             )
             ->orderByDesc('id')
             ->get();
@@ -53,6 +64,11 @@ class VendorTiangController extends Controller
             ->whereHas('pengirimanVendor.vendor', fn ($q) => $q
                 ->where('jenis', 'TIANG')
                 ->where('user_id', Auth::id())
+            )
+            ->orderByDesc(
+                LaporanVendor::query()
+                    ->select('vendor_report_at')
+                    ->whereColumn('pelanggan_id', 'pelanggan_pbpd.id')
             )
             ->orderByDesc('id')
             ->get();

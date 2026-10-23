@@ -176,6 +176,7 @@
                                     data-konstruksi-siap="{{ $pk?->siap_dilanjutkan ? 'Ya' : 'Tidak' }}"
                                     data-konstruksi-catatan="{{ $pk?->catatan }}"
                                     data-konstruksi-laporan-files="{{ base64_encode(json_encode($pk?->laporan_paths ?? [])) }}"
+                                    data-konstruksi-laporan-names="{{ base64_encode(json_encode($pk?->laporan_names ?? [])) }}"
                                     data-konstruksi-laporan-date="{{ $pk?->laporan_at?->format('Y-m-d H:i:s') }}"
                                     data-konstruksi-laporan-file-url="{{ route('vendor.konstruksi.report.file', ['pelanggan' => $row->id, 'index' => 0]) }}"
                                     data-konstruksi-hasil-file-url="{{ route('vendor.konstruksi.result.file', ['pelanggan' => $row->id, 'index' => 0]) }}"
@@ -723,9 +724,11 @@
                     }
                     let constructionVendorReportFiles = [];
                     try { constructionVendorReportFiles = JSON.parse(button.dataset.konstruksiLaporanFiles ? atob(button.dataset.konstruksiLaporanFiles) : '[]'); } catch (error) { constructionVendorReportFiles = []; }
+                    let constructionVendorReportNames = [];
+                    try { constructionVendorReportNames = JSON.parse(button.dataset.konstruksiLaporanNames ? atob(button.dataset.konstruksiLaporanNames) : '[]'); } catch (error) { constructionVendorReportNames = []; }
                     const constructionVendorReportFilesBox = document.getElementById('constructionVendorReportFiles');
                     if (constructionVendorReportFilesBox) constructionVendorReportFilesBox.innerHTML = constructionVendorReportFiles.length
-                        ? constructionVendorReportFiles.map((path, index) => fileRow(button.dataset.konstruksiLaporanFileUrl.replace(/\/0$/, '/' + index), String(path).split('/').pop() || `Berkas laporan konstruksi ${index + 1}`, button.dataset.konstruksiLaporanDate)).join('')
+                        ? constructionVendorReportFiles.map((path, index) => fileRow(button.dataset.konstruksiLaporanFileUrl.replace(/\/0$/, '/' + index), constructionVendorReportNames[index] || String(path).split('/').pop() || `Berkas laporan konstruksi ${index + 1}`, button.dataset.konstruksiLaporanDate)).join('')
                         : '-';
                     const reportResult = document.getElementById('vendorReportResult');
                     if (reportResult) {

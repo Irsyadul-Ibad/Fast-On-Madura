@@ -341,15 +341,26 @@ class PbpdController extends Controller
 
         $vendor = Vendor::whereKey($data['vendor_id'])->where('jenis', 'KONSTRUKSI')->firstOrFail();
         $pengiriman = PengirimanKonstruksi::firstOrNew(['pelanggan_id' => $pelanggan->id]);
+        $uploadedFiles = $request->file('berkas', []);
+        $existingPaths = $this->arrayPaths($pengiriman->berkas_paths);
         $paths = $this->appendUploadedFiles(
-            $this->arrayPaths($pengiriman->berkas_paths),
-            $request->file('berkas', []),
+            $existingPaths,
+            $uploadedFiles,
             'pengiriman-konstruksi',
         );
+        $names = array_slice(
+            array_pad($this->arrayPaths($pengiriman->berkas_names), count($existingPaths), null),
+            0,
+            count($existingPaths),
+        );
+        foreach ($uploadedFiles as $file) {
+            $names[] = $file->getClientOriginalName();
+        }
 
         $pengiriman->fill([
             'vendor_id' => $vendor->id,
             'berkas_paths' => $paths,
+            'berkas_names' => $names,
             'dikirim_oleh' => Auth::id(),
             'dikirim_at' => now(),
         ])->save();

@@ -15,7 +15,9 @@ class PengirimanKonstruksi extends Model
     {
         return [
             'berkas_paths' => 'array',
+            'berkas_names' => 'array',
             'laporan_paths' => 'array',
+            'laporan_names' => 'array',
             'hasil_paths' => 'array',
             'hasil_konstruksi_paths' => 'array',
             'dikirim_at' => 'datetime',
