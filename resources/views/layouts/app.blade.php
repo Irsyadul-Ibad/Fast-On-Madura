@@ -490,6 +490,7 @@
                                     @break
                                 @case('vendor.tiang')
                                 @case('vendor.tiang.history')
+                                @case('stok.tiang')
                                 @case('vendor.konstruksi')
                                 @case('vendor.konstruksi.history')
                                     <svg class="sidebar-modern-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 21h18M5 21V9l7-5 7 5v12"/><path d="M9 21v-5h6v5M8 10h.01M12 10h.01M16 10h.01"/></svg>

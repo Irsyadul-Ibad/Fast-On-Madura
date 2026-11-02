@@ -334,10 +334,25 @@
                         <select id="vendorIdPerluasan" name="vendor_id" required>
                             <option value="">-- Pilih PT --</option>
                             @foreach ($vendors as $vendor)
-                                <option value="{{ $vendor->id }}">{{ $vendor->nama }} ({{ $vendor->user?->user_id }})</option>
+                                <option value="{{ $vendor->id }}"
+                                    data-stock-tr="{{ $vendor->stokTiang?->stok_tr ?? 0 }}"
+                                    data-stock-tm="{{ $vendor->stokTiang?->stok_tm ?? 0 }}">
+                                    {{ $vendor->nama }} — TR: {{ $vendor->stokTiang?->stok_tr ?? 0 }} | TM: {{ $vendor->stokTiang?->stok_tm ?? 0 }}
+                                </option>
                             @endforeach
                         </select>
                     </label>
+                    <div id="vendorStockInfoPerluasan" class="vendor-stock-info" hidden>
+                        <div class="vendor-stock-heading">
+                            <span>Stok vendor terpilih</span>
+                            <span id="vendorStockAvailabilityPerluasan" class="vendor-stock-availability"></span>
+                        </div>
+                        <div class="vendor-stock-values">
+                            <span><b>TR</b><strong id="vendorStockTrPerluasan">0</strong><small> tiang</small></span>
+                            <span><b>TM</b><strong id="vendorStockTmPerluasan">0</strong><small> tiang</small></span>
+                        </div>
+                    </div>
+                    <div id="vendorStockWarningPerluasan" class="vendor-stock-warning" hidden></div>
                     <div class="vendor-kelayakan">
                         <span>Status kelayakan</span>
                         <label><input type="radio" name="status_kelayakan" value="LAYAK" required> LAYAK</label>
@@ -368,7 +383,7 @@
                         <select id="constructionVendorId" name="vendor_id" required>
                             <option value="">-- Pilih PT --</option>
                             @foreach ($vendorsKonstruksi as $vendor)
-                                <option value="{{ $vendor->id }}">{{ $vendor->nama }} ({{ $vendor->user?->user_id }})</option>
+                                <option value="{{ $vendor->id }}">{{ $vendor->nama }}</option>
                             @endforeach
                         </select>
                     </label>
@@ -527,6 +542,10 @@
         .vendor-form h4 { margin:0; color:#0b3d6b; }
         .vendor-form label { display:grid; gap:5px; font-weight:600; color:#536477; }
         .vendor-form select, .vendor-form input[type=file] { width:100%; padding:8px; border:1px solid #b9c7d5; border-radius:5px; background:#fff; }
+        .vendor-stock-info{display:grid;gap:8px;padding:10px 12px;border:1px solid #c8ddef;border-radius:8px;background:#f3f8ff;color:#536477;font-size:12px}
+        .vendor-stock-heading{display:flex;align-items:center;justify-content:space-between;gap:10px}.vendor-stock-heading>span:first-child{font-weight:700;color:#123b5d}.vendor-stock-availability{font-size:11px;font-weight:700}.vendor-stock-availability.is-ready{color:#16834b}.vendor-stock-availability.is-empty{color:#c23f3a}
+        .vendor-stock-values{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.vendor-stock-values span{display:flex;align-items:baseline;gap:4px;padding:7px 9px;border-radius:6px;background:#fff;border:1px solid #d9e6f2}.vendor-stock-values b{color:#1e6fa8}.vendor-stock-values strong{margin-left:auto;color:#123b5d;font-size:15px}.vendor-stock-values small{color:#718096}
+        .vendor-stock-warning{padding:10px 12px;border:1px solid #f1d28a;border-radius:8px;background:#fffaf0;color:#8a6417;font-size:12px;line-height:1.45}.vendor-stock-warning[hidden],.vendor-stock-info[hidden]{display:none!important}
         .vendor-kelayakan { display:flex; gap:12px; align-items:center; flex-wrap:wrap; color:#536477; }
         .vendor-kelayakan label { display:inline-flex; align-items:center; gap:4px; }
         .vendor-delete-card{margin-top:12px;padding:14px;border:1px solid #e2caca;border-radius:9px;background:#fff8f7}
@@ -617,6 +636,13 @@
             const jaringanResultUploadForm = document.getElementById('jaringanResultUploadForm');
             const constructionReportBox = document.getElementById('constructionReportBox');
             const resultUploadForm = document.getElementById('resultUploadForm');
+            const vendorSelect = document.getElementById('vendorIdPerluasan');
+            const vendorStockInfo = document.getElementById('vendorStockInfoPerluasan');
+            const vendorStockWarning = document.getElementById('vendorStockWarningPerluasan');
+            const vendorStockTr = document.getElementById('vendorStockTrPerluasan');
+            const vendorStockTm = document.getElementById('vendorStockTmPerluasan');
+            const vendorStockAvailability = document.getElementById('vendorStockAvailabilityPerluasan');
+            const vendorSubmitButton = document.getElementById('vendorSubmitButton');
             const setText = (id, value) => { document.getElementById(id).textContent = value || '-'; };
             const money = (value) => value ? Number(value).toLocaleString('id-ID') : '-';
             const formatRupiah = (value) => {
@@ -652,6 +678,47 @@
                 status.className = done === '1' ? 'proses-selesai' : 'proses-belum';
                 tanggal.textContent = done === '1' ? date(value) : '-';
             };
+
+            const updateVendorStock = () => {
+                if (!vendorSelect || !vendorStockInfo || !vendorStockWarning || !vendorSubmitButton) return true;
+
+                const option = vendorSelect.selectedOptions[0];
+                const stockTr = Number(option?.dataset.stockTr || 0);
+                const stockTm = Number(option?.dataset.stockTm || 0);
+                const requiredTr = Number(vendorForm?.dataset.requiredTr || 0);
+                const requiredTm = Number(vendorForm?.dataset.requiredTm || 0);
+                const hasRequirement = requiredTr > 0 || requiredTm > 0;
+                const stockEmpty = stockTr === 0 && stockTm === 0;
+                const stockEnough = !stockEmpty && (!hasRequirement || (stockTr >= requiredTr && stockTm >= requiredTm));
+
+                vendorStockInfo.hidden = !option?.value;
+                vendorStockTr.textContent = stockTr.toLocaleString('id-ID');
+                vendorStockTm.textContent = stockTm.toLocaleString('id-ID');
+                vendorStockAvailability.textContent = stockEnough ? 'Stok tersedia' : 'Stok tidak mencukupi';
+                vendorStockAvailability.className = `vendor-stock-availability ${stockEnough ? 'is-ready' : 'is-empty'}`;
+                vendorStockWarning.hidden = !option?.value || stockEnough;
+                if (option?.value && stockEmpty) {
+                    vendorStockWarning.textContent = 'Vendor ini belum memiliki stok tiang. Isi stok TR/TM terlebih dahulu sebelum mengirim.';
+                } else if (option?.value && !stockEnough) {
+                    const kurang = [];
+                    if (requiredTr > stockTr) kurang.push(`TR membutuhkan ${requiredTr}, tersedia ${stockTr}`);
+                    if (requiredTm > stockTm) kurang.push(`TM membutuhkan ${requiredTm}, tersedia ${stockTm}`);
+                    vendorStockWarning.textContent = `Stok tidak cukup untuk kebutuhan ini: ${kurang.join('; ')}.`;
+                } else {
+                    vendorStockWarning.textContent = '';
+                }
+                vendorSubmitButton.disabled = Boolean(vendorForm?.dataset.reportReceived === '1') || !stockEnough;
+
+                return stockEnough;
+            };
+
+            vendorSelect?.addEventListener('change', updateVendorStock);
+            vendorForm?.addEventListener('submit', (event) => {
+                if (!updateVendorStock()) {
+                    event.preventDefault();
+                    vendorStockWarning?.removeAttribute('hidden');
+                }
+            });
 
             document.querySelectorAll('.tombol-detail-perluasan').forEach((button) => {
                 button.addEventListener('click', () => {
@@ -704,6 +771,9 @@
                         const vendorReportReceived = hasVendorDelivery && Boolean(button.dataset.laporanDate);
                         vendorForm.hidden = !stageAllowsTiang;
                         vendorForm.action = button.dataset.vendorUrl;
+                        vendorForm.dataset.requiredTr = button.dataset.jmlTiangTr || '0';
+                        vendorForm.dataset.requiredTm = button.dataset.jmlTiangTm || button.dataset.jmlTiang || '0';
+                        vendorForm.dataset.reportReceived = vendorReportReceived ? '1' : '0';
                         document.getElementById('vendorIdPerluasan').value = button.dataset.vendorId || '';
                         document.getElementById('vendorSubmitButton').textContent = vendorReportReceived ? 'Laporan sudah diterima' : (hasVendorDelivery ? 'Simpan Perubahan Pengiriman' : 'Kirim ke Vendor');
                         document.getElementById('vendorLockedNotice').hidden = !vendorReportReceived;
@@ -711,6 +781,7 @@
                         vendorForm.querySelectorAll('input[name="status_kelayakan"]').forEach((radio) => {
                             radio.checked = radio.value === button.dataset.kelayakan;
                         });
+                        updateVendorStock();
                         if (vendorDeleteForm) {
                             document.getElementById('vendorDeleteCard').hidden = !hasVendorDelivery || vendorReportReceived;
                             vendorDeleteForm.action = `{{ url('/pbpd') }}/${button.dataset.id}/kirim-vendor`;

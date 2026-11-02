@@ -33,6 +33,8 @@ class PermissionSeeder extends Seeder
             'vendor.tiang.view'      => 'Melihat agenda vendor tiang',
             'vendor.tiang.process'   => 'Mengirim laporan vendor tiang',
             'vendor.tiang.history'   => 'Melihat riwayat pengiriman vendor tiang',
+            'stok.tiang.view'         => 'Melihat stok tiang',
+            'stok.tiang.manage'       => 'Menginput stok tiang per vendor',
             'vendor.konstruksi.view' => 'Melihat agenda vendor konstruksi',
             'vendor.konstruksi.process' => 'Mengirim laporan vendor konstruksi',
             'vendor.konstruksi.history' => 'Melihat riwayat vendor konstruksi',
@@ -52,7 +54,7 @@ class PermissionSeeder extends Seeder
         $map = [
             '5170NPS' => array_merge($umum, ['pbpd.view'], $perluasan, ['pbpd.upload', 'permintaan.create', 'berkas.upload'] ),
             '5170MAN' => array_merge($umum, ['pbpd.view'], $perluasan, ['pengoperasian.view', 'laporan.view']),
-            '5170REN' => array_merge($umum, $perluasan, ['pbpd.view','perencanaan.process', 'berkas.upload']),
+            '5170REN' => array_merge($umum, $perluasan, ['pbpd.view','perencanaan.process', 'berkas.upload', 'stok.tiang.view', 'stok.tiang.manage']),
             '5170KON' => array_merge($umum, $perluasan, ['pbpd.view', 'konstruksi.process', 'berkas.upload']),
             '5170TE' => array_merge($umum, $perluasan, ['pbpd.view', 'pengoperasian.upload']),
             '5170JAR' => array_merge($umum, ['perluasan.jtm.view', 'perluasan.jtr.view'], ['pbpd.view', 'jaringan.upload']),

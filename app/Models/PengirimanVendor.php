@@ -13,7 +13,11 @@ class PengirimanVendor extends Model
 
     protected function casts(): array
     {
-        return ['dikirim_at' => 'datetime'];
+        return [
+            'dikirim_at' => 'datetime',
+            'stok_tr_dipakai' => 'integer',
+            'stok_tm_dipakai' => 'integer',
+        ];
     }
 
     public function vendor()

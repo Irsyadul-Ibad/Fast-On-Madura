@@ -6,6 +6,7 @@ use App\Models\PelangganPbpd;
 use App\Models\PengirimanKonstruksi;
 use App\Models\PengirimanVendor;
 use App\Models\PermintaanMaterial;
+use App\Models\StokTiang;
 use App\Models\Ulp;
 use App\Models\Vendor;
 use App\Services\NotifikasiService;
@@ -307,40 +308,141 @@ class PbpdController extends Controller
         ]);
 
         $vendor = Vendor::whereKey($data['vendor_id'])->where('jenis', 'TIANG')->firstOrFail();
-        $pengiriman = PengirimanVendor::firstOrNew(['pelanggan_id' => $pelanggan->id]);
-        $laporanSaatIni = $pelanggan->laporanVendor()->first();
-        if ($pengiriman->exists && filled($laporanSaatIni?->vendor_report_at)) {
-            return back()->with('error', 'Pengiriman terkunci karena vendor tiang sudah mengirim laporan.');
-        }
+        $pelanggan->loadMissing('permintaan');
 
-        $vendorBerubah = $pengiriman->exists && (int) $pengiriman->vendor_id !== (int) $vendor->id;
+        $kebutuhanTr = (int) ($pelanggan->permintaan?->jml_tiang_tr ?? 0);
+        $kebutuhanTm = (int) ($pelanggan->permintaan?->jml_tiang_tm ?? $pelanggan->permintaan?->jml_tiang ?? 0);
+        $woFile = $request->file('wo_tiang');
 
-        if ($vendorBerubah) {
-            $this->clearLaporanVendorTiang($pelanggan);
-        }
+        $result = DB::transaction(function () use ($data, $pelanggan, $vendor, $kebutuhanTr, $kebutuhanTm, $woFile) {
+            $pengiriman = PengirimanVendor::query()
+                ->where('pelanggan_id', $pelanggan->id)
+                ->lockForUpdate()
+                ->first();
+            $laporanSaatIni = $pelanggan->laporanVendor()->lockForUpdate()->first();
 
-        if ($request->hasFile('wo_tiang')) {
-            if ($pengiriman->wo_tiang_path) {
-                Storage::disk('public')->delete($pengiriman->wo_tiang_path);
+            if ($pengiriman && filled($laporanSaatIni?->vendor_report_at)) {
+                return ['error' => 'Pengiriman terkunci karena vendor tiang sudah mengirim laporan.'];
             }
-            $woFile = $request->file('wo_tiang');
-            $pengiriman->wo_tiang_path = $woFile->store('wo-tiang', 'public');
-            $pengiriman->wo_tiang_name = $woFile->getClientOriginalName();
+
+            $pengirimanLamaVendorId = $pengiriman?->vendor_id;
+            $vendorBerubah = $pengiriman
+                && (int) $pengirimanLamaVendorId !== (int) $vendor->id;
+            $stokTercatat = $pengiriman
+                && $pengiriman->stok_tr_dipakai !== null
+                && $pengiriman->stok_tm_dipakai !== null;
+            $perluPotongStokBaru = ! $pengiriman || $vendorBerubah || ! $stokTercatat;
+
+            $vendorIds = array_values(array_unique(array_filter([
+                (int) $vendor->id,
+                $pengirimanLamaVendorId ? (int) $pengirimanLamaVendorId : null,
+            ])));
+            $stokRows = StokTiang::query()
+                ->whereIn('vendor_id', $vendorIds)
+                ->orderBy('vendor_id')
+                ->lockForUpdate()
+                ->get()
+                ->keyBy('vendor_id');
+
+            $stokVendorBaru = $stokRows->get($vendor->id);
+            if ($perluPotongStokBaru && (! $stokVendorBaru || ((int) $stokVendorBaru->stok_tr === 0 && (int) $stokVendorBaru->stok_tm === 0))) {
+                return ['error' => 'Pengiriman tidak dapat dilakukan karena stok tiang vendor belum diisi atau sedang kosong.'];
+            }
+
+            $perubahanStok = [];
+            if (! $pengiriman) {
+                $perubahanStok[$vendor->id] = ['tr' => $kebutuhanTr, 'tm' => $kebutuhanTm];
+            } elseif ($vendorBerubah) {
+                if ($stokTercatat) {
+                    $perubahanStok[$pengirimanLamaVendorId] = [
+                        'tr' => -((int) $pengiriman->stok_tr_dipakai),
+                        'tm' => -((int) $pengiriman->stok_tm_dipakai),
+                    ];
+                }
+                $perubahanStok[$vendor->id] = ['tr' => $kebutuhanTr, 'tm' => $kebutuhanTm];
+            } elseif ($stokTercatat) {
+                $perubahanStok[$vendor->id] = [
+                    'tr' => $kebutuhanTr - (int) $pengiriman->stok_tr_dipakai,
+                    'tm' => $kebutuhanTm - (int) $pengiriman->stok_tm_dipakai,
+                ];
+            } else {
+                // Pengiriman lama belum memiliki catatan pemakaian stok.
+                // Potong sekali saat pengiriman tersebut disimpan kembali.
+                $perubahanStok[$vendor->id] = ['tr' => $kebutuhanTr, 'tm' => $kebutuhanTm];
+            }
+
+            foreach ($perubahanStok as $vendorId => $perubahan) {
+                $stok = $stokRows->get($vendorId);
+                if (! $stok) {
+                    if ($perubahan['tr'] > 0 || $perubahan['tm'] > 0) {
+                        return ['error' => 'Stok tiang vendor belum diisi.'];
+                    }
+                    continue;
+                }
+
+                $kurang = [];
+                if ($perubahan['tr'] > 0 && (int) $stok->stok_tr < $perubahan['tr']) {
+                    $kurang[] = 'TR membutuhkan '.($perubahan['tr']).', tersedia '.$stok->stok_tr;
+                }
+                if ($perubahan['tm'] > 0 && (int) $stok->stok_tm < $perubahan['tm']) {
+                    $kurang[] = 'TM membutuhkan '.($perubahan['tm']).', tersedia '.$stok->stok_tm;
+                }
+                if ($kurang !== []) {
+                    return ['error' => 'Stok vendor tidak mencukupi: '.implode('; ', $kurang).'.'];
+                }
+            }
+
+            foreach ($perubahanStok as $vendorId => $perubahan) {
+                $stok = $stokRows->get($vendorId);
+                if (! $stok) {
+                    continue;
+                }
+
+                $stok->update([
+                    'stok_tr' => (int) $stok->stok_tr - $perubahan['tr'],
+                    'stok_tm' => (int) $stok->stok_tm - $perubahan['tm'],
+                ]);
+            }
+
+            if (! $pengiriman) {
+                $pengiriman = new PengirimanVendor(['pelanggan_id' => $pelanggan->id]);
+            }
+            if ($vendorBerubah) {
+                $this->clearLaporanVendorTiang($pelanggan);
+            }
+
+            if ($woFile) {
+                if ($pengiriman->wo_tiang_path) {
+                    Storage::disk('public')->delete($pengiriman->wo_tiang_path);
+                }
+                $pengiriman->wo_tiang_path = $woFile->store('wo-tiang', 'public');
+                $pengiriman->wo_tiang_name = $woFile->getClientOriginalName();
+            }
+
+            $pengiriman->fill([
+                'vendor_id' => $vendor->id,
+                'status_kelayakan' => $data['status_kelayakan'],
+                'dikirim_oleh' => Auth::id(),
+                'dikirim_at' => now(),
+            ]);
+            $pengiriman->stok_tr_dipakai = $kebutuhanTr;
+            $pengiriman->stok_tm_dipakai = $kebutuhanTm;
+            $pengiriman->save();
+
+            $laporan = $pelanggan->laporanVendor()->first();
+            if ($laporan && (int) $laporan->vendor_id !== (int) $vendor->id) {
+                $laporan->update(['vendor_id' => $vendor->id]);
+            }
+
+            $pelanggan->update(['tahap' => 'VENDOR_TIANG']);
+
+            return ['success' => true];
+        });
+
+        if (! empty($result['error'])) {
+            return back()->with('error', $result['error']);
         }
 
-        $pengiriman->fill([
-            'vendor_id' => $vendor->id,
-            'status_kelayakan' => $data['status_kelayakan'],
-            'dikirim_oleh' => Auth::id(),
-            'dikirim_at' => now(),
-        ])->save();
-
-        $laporan = $pelanggan->laporanVendor()->first();
-        if ($laporan && (int) $laporan->vendor_id !== (int) $vendor->id) {
-            $laporan->update(['vendor_id' => $vendor->id]);
-        }
-
-        $pelanggan->update(['tahap' => 'VENDOR_TIANG']);
         NotifikasiService::untukData($pelanggan, 'Data dikirim ke vendor tiang', 'Data '.$pelanggan->no_agenda.' dikirim ke vendor tiang.', route('laporan'), [$vendor->user_id]);
 
         return back()->with('success', 'Data berhasil dikirim ke vendor tiang.');
@@ -350,20 +452,42 @@ class PbpdController extends Controller
     {
         abort_unless($this->currentUser()->role?->role_code === '5170REN', 403);
 
-        $pengiriman = $pelanggan->pengirimanVendor()->firstOrFail();
-        if (filled($pelanggan->laporanVendor()->value('vendor_report_at'))) {
-            return back()->with('error', 'Pengiriman tidak dapat dihapus karena vendor tiang sudah mengirim laporan.');
-        }
+        $result = DB::transaction(function () use ($pelanggan) {
+            $pengiriman = $pelanggan->pengirimanVendor()
+                ->lockForUpdate()
+                ->firstOrFail();
+            if (filled($pelanggan->laporanVendor()->value('vendor_report_at'))) {
+                return ['error' => 'Pengiriman tidak dapat dihapus karena vendor tiang sudah mengirim laporan.'];
+            }
 
-        if ($pengiriman->wo_tiang_path) {
-            Storage::disk('public')->delete($pengiriman->wo_tiang_path);
-        }
+            if ($pengiriman->stok_tr_dipakai !== null || $pengiriman->stok_tm_dipakai !== null) {
+                $stok = StokTiang::firstOrCreate(
+                    ['vendor_id' => $pengiriman->vendor_id],
+                    ['stok_tr' => 0, 'stok_tm' => 0],
+                );
+                $stok = StokTiang::whereKey($stok->id)->lockForUpdate()->first();
+                $stok->update([
+                    'stok_tr' => (int) $stok->stok_tr + (int) ($pengiriman->stok_tr_dipakai ?? 0),
+                    'stok_tm' => (int) $stok->stok_tm + (int) ($pengiriman->stok_tm_dipakai ?? 0),
+                ]);
+            }
 
-        $this->clearLaporanVendorTiang($pelanggan);
-        $pengiriman->delete();
+            if ($pengiriman->wo_tiang_path) {
+                Storage::disk('public')->delete($pengiriman->wo_tiang_path);
+            }
 
-        if ($pelanggan->tahap === 'VENDOR_TIANG') {
-            $pelanggan->update(['tahap' => 'PERENCANAAN']);
+            $this->clearLaporanVendorTiang($pelanggan);
+            $pengiriman->delete();
+
+            if ($pelanggan->tahap === 'VENDOR_TIANG') {
+                $pelanggan->update(['tahap' => 'PERENCANAAN']);
+            }
+
+            return ['success' => true];
+        });
+
+        if (! empty($result['error'])) {
+            return back()->with('error', $result['error']);
         }
 
         return back()->with('success', 'Pengiriman ke vendor tiang berhasil dihapus.');

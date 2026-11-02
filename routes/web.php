@@ -7,6 +7,7 @@ use App\Http\Controllers\NotifikasiController;
 use App\Http\Controllers\PbpdController;
 use App\Http\Controllers\PbpdUploadController;
 use App\Http\Controllers\PerluasanController;
+use App\Http\Controllers\StokTiangController;
 use App\Http\Controllers\VendorKonstruksiController;
 use App\Http\Controllers\VendorTiangController;
 use Illuminate\Http\Request;
@@ -104,6 +105,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/vendor/tiang/riwayat', [VendorTiangController::class, 'history'])
         ->middleware('permission:vendor.tiang.history')
         ->name('vendor.tiang.history');
+    Route::get('/stok-tiang', [StokTiangController::class, 'index'])
+        ->middleware('permission:stok.tiang.view')
+        ->name('stok.tiang');
+    Route::post('/stok-tiang', [StokTiangController::class, 'update'])
+        ->middleware('permission:stok.tiang.manage')
+        ->name('stok.tiang.update');
     Route::post('/vendor/tiang/{pelanggan}/laporan', [VendorTiangController::class, 'kirimLaporan'])
         ->middleware('permission:vendor.tiang.process')
         ->name('vendor.tiang.report');

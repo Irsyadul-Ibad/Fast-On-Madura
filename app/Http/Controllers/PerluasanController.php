@@ -124,7 +124,7 @@ class PerluasanController extends Controller
         $statusPilihan = (clone $query)->select('status')->whereNotNull('status')->distinct()->orderBy('status')->pluck('status');
         $tahapPilihan = collect($tahapLabels)->only($visibleTahaps);
 
-        $vendors = Vendor::with('user')->where('jenis', 'TIANG')->orderBy('nama')->get();
+        $vendors = Vendor::with(['user', 'stokTiang'])->where('jenis', 'TIANG')->orderBy('nama')->get();
         $vendorsKonstruksi = Vendor::with('user')->where('jenis', 'KONSTRUKSI')->orderBy('nama')->get();
 
         return view('perluasan.index', compact('data', 'judul', 'tujuan', 'canEditRab', 'canEditMaterial', 'canViewMaterial', 'canSendVendor', 'canSendKonstruksi', 'canUploadNps', 'canUploadTransaksi', 'canUploadJaringan', 'vendors', 'vendorsKonstruksi', 'ulps', 'jenisPilihan', 'statusPilihan', 'tahapPilihan', 'showSummaryCards', 'isUlpSummary', 'summaryTotal', 'summarySentByUlp', 'summaryUlpNames', 'summaryByJenis', 'summaryByStatus', 'showBerkasUlp'));

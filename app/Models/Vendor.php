@@ -14,4 +14,9 @@ class Vendor extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function stokTiang()
+    {
+        return $this->hasOne(StokTiang::class, 'vendor_id');
+    }
 }

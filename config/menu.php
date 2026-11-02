@@ -12,6 +12,8 @@ return [
     'permission' => 'pbpd.upload', 'placeholder' => false],
     ['label' => 'Agenda Vendor Tiang', 'route' => 'vendor.tiang', 'path' => '/vendor/tiang',
     'permission' => 'vendor.tiang.view', 'placeholder' => false],
+    ['label' => 'Stok Tiang', 'route' => 'stok.tiang', 'path' => '/stok-tiang',
+    'permission' => 'stok.tiang.view', 'placeholder' => false],
     ['label' => 'Riwayat Pengiriman', 'route' => 'vendor.tiang.history', 'path' => '/vendor/tiang/riwayat',
     'permission' => 'vendor.tiang.history', 'placeholder' => false],
     ['label' => 'Agenda Vendor Konstruksi', 'route' => 'vendor.konstruksi', 'path' => '/vendor/konstruksi',
