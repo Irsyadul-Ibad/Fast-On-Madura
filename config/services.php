@@ -2,7 +2,7 @@
 
 return [
 
-    'vendor_tiang_deadline_seconds' => (int) env('VENDOR_TIANG_DEADLINE_SECONDS', 259200),
+    'vendor_tiang_deadline_seconds' => 40, //(int) env('VENDOR_TIANG_DEADLINE_SECONDS', 259200),
 
     /*
     |--------------------------------------------------------------------------
