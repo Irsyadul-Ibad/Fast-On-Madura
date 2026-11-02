@@ -17,6 +17,8 @@ class PengirimanVendor extends Model
             'dikirim_at' => 'datetime',
             'stok_tr_dipakai' => 'integer',
             'stok_tm_dipakai' => 'integer',
+            'stok_tm_11_dipakai' => 'integer',
+            'stok_tm_13_dipakai' => 'integer',
         ];
     }
 

@@ -6,7 +6,8 @@
 @section('isi')
     @php
         $totalTr = $vendors->sum(fn ($vendor) => (int) ($vendor->stokTiang?->stok_tr ?? 0));
-        $totalTm = $vendors->sum(fn ($vendor) => (int) ($vendor->stokTiang?->stok_tm ?? 0));
+        $totalTm11 = $vendors->sum(fn ($vendor) => (int) ($vendor->stokTiang?->stok_tm_11 ?? 0));
+        $totalTm13 = $vendors->sum(fn ($vendor) => (int) ($vendor->stokTiang?->stok_tm_13 ?? 0));
     @endphp
 
     @if (session('success'))
@@ -49,10 +50,15 @@
             <strong id="totalStokTr">{{ number_format($totalTr, 0, ',', '.') }}</strong>
             <small>tiang tegangan rendah</small>
         </div>
-        <div class="stok-summary-card stok-summary-tm">
-            <span class="stok-summary-label">TOTAL STOK TM</span>
-            <strong id="totalStokTm">{{ number_format($totalTm, 0, ',', '.') }}</strong>
-            <small>tiang tegangan menengah</small>
+        <div class="stok-summary-card stok-summary-tm stok-summary-tm-11">
+            <span class="stok-summary-label">TOTAL STOK TM 11</span>
+            <strong id="totalStokTm11">{{ number_format($totalTm11, 0, ',', '.') }}</strong>
+            <small>tiang TM jenis 11</small>
+        </div>
+        <div class="stok-summary-card stok-summary-tm stok-summary-tm-13">
+            <span class="stok-summary-label">TOTAL STOK TM 13</span>
+            <strong id="totalStokTm13">{{ number_format($totalTm13, 0, ',', '.') }}</strong>
+            <small>tiang TM jenis 13</small>
         </div>
     </div>
 
@@ -76,7 +82,8 @@
                             <th class="stok-number">NO.</th>
                             <th>NAMA VENDOR TIANG</th>
                             <th class="stok-column stok-column-tr">STOK TIANG TR</th>
-                            <th class="stok-column stok-column-tm">STOK TIANG TM</th>
+                            <th class="stok-column stok-column-tm">STOK TIANG TM 11</th>
+                            <th class="stok-column stok-column-tm stok-column-tm-13">STOK TIANG TM 13</th>
                             <th class="stok-total-column">TOTAL</th>
                         </tr>
                     </thead>
@@ -84,7 +91,8 @@
                         @foreach ($vendors as $index => $vendor)
                             @php
                                 $stokTr = old("stok.{$vendor->id}.tr", $vendor->stokTiang?->stok_tr ?? 0);
-                                $stokTm = old("stok.{$vendor->id}.tm", $vendor->stokTiang?->stok_tm ?? 0);
+                                $stokTm11 = old("stok.{$vendor->id}.tm_11", $vendor->stokTiang?->stok_tm_11 ?? 0);
+                                $stokTm13 = old("stok.{$vendor->id}.tm_13", $vendor->stokTiang?->stok_tm_13 ?? 0);
                             @endphp
                             <tr>
                                 <td class="stok-number">{{ $index + 1 }}</td>
@@ -103,11 +111,16 @@
                                     <span>tiang</span>
                                 </td>
                                 <td class="stok-input-cell stok-input-tm">
-                                    <label class="sr-only" for="stok-{{ $vendor->id }}-tm">Stok tiang TM {{ $vendor->nama }}</label>
-                                    <input id="stok-{{ $vendor->id }}-tm" class="stok-input stok-tm-input" type="number" name="stok[{{ $vendor->id }}][tm]" min="0" step="1" value="{{ $stokTm }}" inputmode="numeric" required>
+                                    <label class="sr-only" for="stok-{{ $vendor->id }}-tm-11">Stok tiang TM jenis 11 {{ $vendor->nama }}</label>
+                                    <input id="stok-{{ $vendor->id }}-tm-11" class="stok-input stok-tm-11-input" type="number" name="stok[{{ $vendor->id }}][tm_11]" min="0" step="1" value="{{ $stokTm11 }}" inputmode="numeric" required>
                                     <span>tiang</span>
                                 </td>
-                                <td class="stok-row-total"><strong>{{ (int) $stokTr + (int) $stokTm }}</strong> tiang</td>
+                                <td class="stok-input-cell stok-input-tm stok-input-tm-13">
+                                    <label class="sr-only" for="stok-{{ $vendor->id }}-tm-13">Stok tiang TM jenis 13 {{ $vendor->nama }}</label>
+                                    <input id="stok-{{ $vendor->id }}-tm-13" class="stok-input stok-tm-13-input" type="number" name="stok[{{ $vendor->id }}][tm_13]" min="0" step="1" value="{{ $stokTm13 }}" inputmode="numeric" required>
+                                    <span>tiang</span>
+                                </td>
+                                <td class="stok-row-total"><strong>{{ (int) $stokTr + (int) $stokTm11 + (int) $stokTm13 }}</strong> tiang</td>
                             </tr>
                         @endforeach
                     </tbody>
@@ -132,12 +145,12 @@
             .stok-intro p{max-width:680px;margin:8px 0 0;color:#64748b;font-size:13px;line-height:1.6}
             .stok-intro-icon{display:grid;place-items:center;flex:0 0 64px;width:64px;height:64px;border-radius:18px;background:#e7f0ff;color:#2b73fe}
             .stok-intro-icon svg{width:32px;height:32px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
-            .stok-summary-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:16px}
+            .stok-summary-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:16px}
             .stok-summary-card{min-height:116px;padding:18px 20px;border:1px solid #e2e8f0;border-radius:12px;background:#fff;box-shadow:0 2px 8px rgba(15,23,42,.07)}
             .stok-summary-label{display:block;color:#64748b;font-size:11px;font-weight:800;letter-spacing:.08em}
             .stok-summary-card strong{display:block;margin-top:8px;color:#0d1b8c;font-size:28px;letter-spacing:-.04em;line-height:1}
             .stok-summary-card small{display:block;margin-top:8px;color:#94a3b8;font-size:12px}
-            .stok-summary-tr{border-top:3px solid #2b73fe}.stok-summary-tm{border-top:3px solid #27a9d6}
+            .stok-summary-tr{border-top:3px solid #2b73fe}.stok-summary-tm{border-top:3px solid #27a9d6}.stok-summary-tm-13{border-top-color:#0c91b9}
             .stok-summary-tr strong{color:#1d4ed8}.stok-summary-tm strong{color:#087ea4}
             .stok-alert{display:flex;align-items:flex-start;gap:9px;margin-bottom:14px;padding:12px 15px;border-radius:10px;font-size:13px;line-height:1.45}
             .stok-alert-success{border:1px solid #bce3cb;border-left:4px solid #2e9b68;background:#f1fbf5;color:#176b35;font-weight:600}
@@ -147,11 +160,12 @@
             .stok-form{padding:0;overflow:hidden}
             .stok-form-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:21px 22px 17px;border-bottom:1px solid #e2e8f0}
             .stok-form-heading h2{margin:0;color:#1e293b;font-size:17px}.stok-form-heading p{margin:5px 0 0;color:#64748b;font-size:12px}
-            .stok-table-scroll{border:0;border-radius:0}.stok-table{width:100%;min-width:690px}.stok-table th{font-size:10px;letter-spacing:.06em}.stok-table th,.stok-table td{padding:13px 16px}.stok-number{width:65px;text-align:center!important;color:#64748b}.stok-column{width:185px;text-align:center!important}.stok-total-column{width:130px;text-align:center!important}
-            .stok-column-tr{background:#1d4ed8!important}.stok-column-tm{background:#087ea4!important}
+            .stok-table-scroll{border:0;border-radius:0}.stok-table{width:100%;min-width:880px}.stok-table th{font-size:10px;letter-spacing:.06em}.stok-table th,.stok-table td{padding:13px 16px}.stok-number{width:65px;text-align:center!important;color:#64748b}.stok-column{width:175px;text-align:center!important}.stok-total-column{width:130px;text-align:center!important}
+            .stok-column-tr{background:#1d4ed8!important}.stok-column-tm{background:#087ea4!important}.stok-column-tm-13{background:#0c91b9!important}
             .stok-vendor-name{display:flex;align-items:center;gap:11px;min-width:250px}.stok-vendor-mark{display:grid;place-items:center;flex:0 0 32px;width:32px;height:32px;border-radius:9px;background:#eff6ff;color:#2b73fe;font-size:13px;font-weight:800}.stok-vendor-name strong{display:block;color:#1e3a5f;font-size:13px;white-space:normal}.stok-vendor-name small{display:block;margin-top:3px;color:#94a3b8;font-size:11px}
-            .stok-input-cell{text-align:center!important}.stok-input{width:105px;min-height:37px;padding:7px 9px;border:1px solid #cbd5e1;border-radius:7px;text-align:right;font-size:14px;font-weight:700}.stok-input-tr{background:#f8fbff}.stok-input-tm{background:#f4fbfd}.stok-input-tr .stok-input{border-color:#b9d0fc;color:#1d4ed8}.stok-input-tm .stok-input{border-color:#b6dfeb;color:#087ea4}.stok-input-cell>span{margin-left:5px;color:#94a3b8;font-size:11px}.stok-row-total{color:#64748b;text-align:center!important;font-size:12px}.stok-row-total strong{color:#1e293b;font-size:14px}
+            .stok-input-cell{text-align:center!important}.stok-input{width:105px;min-height:37px;padding:7px 9px;border:1px solid #cbd5e1;border-radius:7px;text-align:right;font-size:14px;font-weight:700}.stok-input-tr{background:#f8fbff}.stok-input-tm{background:#f4fbfd}.stok-input-tm-13{background:#f2fbfd}.stok-input-tr .stok-input{border-color:#b9d0fc;color:#1d4ed8}.stok-input-tm .stok-input{border-color:#b6dfeb;color:#087ea4}.stok-input-tm-13 .stok-input{border-color:#a8dce9;color:#087ea4}.stok-input-cell>span{margin-left:5px;color:#94a3b8;font-size:11px}.stok-row-total{color:#64748b;text-align:center!important;font-size:12px}.stok-row-total strong{color:#1e293b;font-size:14px}
             .stok-form-footer{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:16px 22px;border-top:1px solid #e2e8f0;background:#fbfdff}.stok-form-footer p{margin:0;color:#64748b;font-size:12px}.stok-info-icon{display:inline-grid;place-items:center;width:16px;height:16px;margin-right:4px;border:1px solid #94a3b8;border-radius:50%;font-size:10px;font-weight:700}.stok-save-button{display:inline-flex;align-items:center;gap:7px;padding:9px 15px}.stok-save-button svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.stok-empty{padding:28px 22px;color:#64748b;font-size:13px}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+            @media(max-width:900px){.stok-summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
             @media(max-width:700px){.stok-intro{align-items:flex-start;padding:19px}.stok-intro-icon{display:none}.stok-summary-grid{grid-template-columns:1fr}.stok-form-heading,.stok-form-footer{align-items:flex-start;flex-direction:column}.stok-save-button{width:100%;justify-content:center}.stok-form-footer p{line-height:1.5}}
         </style>
     @endpush
@@ -161,25 +175,31 @@
             const formatNumber = (value) => new Intl.NumberFormat('id-ID').format(value);
             const updateStockSummary = () => {
                 let totalTr = 0;
-                let totalTm = 0;
+                let totalTm11 = 0;
+                let totalTm13 = 0;
 
                 document.querySelectorAll('.stok-tr-input').forEach((input) => {
                     totalTr += Number(input.value) || 0;
                 });
-                document.querySelectorAll('.stok-tm-input').forEach((input) => {
-                    totalTm += Number(input.value) || 0;
+                document.querySelectorAll('.stok-tm-11-input').forEach((input) => {
+                    totalTm11 += Number(input.value) || 0;
+                });
+                document.querySelectorAll('.stok-tm-13-input').forEach((input) => {
+                    totalTm13 += Number(input.value) || 0;
                 });
 
                 document.getElementById('totalStokTr').textContent = formatNumber(totalTr);
-                document.getElementById('totalStokTm').textContent = formatNumber(totalTm);
+                document.getElementById('totalStokTm11').textContent = formatNumber(totalTm11);
+                document.getElementById('totalStokTm13').textContent = formatNumber(totalTm13);
             };
 
             document.querySelectorAll('.stok-input').forEach((input) => {
                 input.addEventListener('input', (event) => {
                     const row = event.target.closest('tr');
                     const tr = Number(row.querySelector('.stok-tr-input')?.value) || 0;
-                    const tm = Number(row.querySelector('.stok-tm-input')?.value) || 0;
-                    row.querySelector('.stok-row-total strong').textContent = formatNumber(tr + tm);
+                    const tm11 = Number(row.querySelector('.stok-tm-11-input')?.value) || 0;
+                    const tm13 = Number(row.querySelector('.stok-tm-13-input')?.value) || 0;
+                    row.querySelector('.stok-row-total strong').textContent = formatNumber(tr + tm11 + tm13);
                     updateStockSummary();
                 });
             });

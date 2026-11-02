@@ -312,9 +312,16 @@ class PbpdController extends Controller
 
         $kebutuhanTr = (int) ($pelanggan->permintaan?->jml_tiang_tr ?? 0);
         $kebutuhanTm = (int) ($pelanggan->permintaan?->jml_tiang_tm ?? $pelanggan->permintaan?->jml_tiang ?? 0);
+        $jenisTiangTm = (string) ($pelanggan->permintaan?->jenis_tiang_tm ?? $pelanggan->permintaan?->jenis_tiang ?? '11');
+        $jenisTiangTm = $jenisTiangTm === '13' ? '13' : '11';
+        $pemakaianBaru = [
+            'tr' => $kebutuhanTr,
+            'tm_11' => $jenisTiangTm === '11' ? $kebutuhanTm : 0,
+            'tm_13' => $jenisTiangTm === '13' ? $kebutuhanTm : 0,
+        ];
         $woFile = $request->file('wo_tiang');
 
-        $result = DB::transaction(function () use ($data, $pelanggan, $vendor, $kebutuhanTr, $kebutuhanTm, $woFile) {
+        $result = DB::transaction(function () use ($data, $pelanggan, $vendor, $pemakaianBaru, $jenisTiangTm, $woFile) {
             $pengiriman = PengirimanVendor::query()
                 ->where('pelanggan_id', $pelanggan->id)
                 ->lockForUpdate()
@@ -328,9 +335,21 @@ class PbpdController extends Controller
             $pengirimanLamaVendorId = $pengiriman?->vendor_id;
             $vendorBerubah = $pengiriman
                 && (int) $pengirimanLamaVendorId !== (int) $vendor->id;
+            $pemakaianLamaTr = $pengiriman?->stok_tr_dipakai;
+            $pemakaianLamaTm11 = $pengiriman?->stok_tm_11_dipakai;
+            $pemakaianLamaTm13 = $pengiriman?->stok_tm_13_dipakai;
+            $pemakaianTmLamaLegacy = $pengiriman?->stok_tm_dipakai;
+            if ($pemakaianLamaTm11 === null && $pemakaianLamaTm13 === null && $pemakaianTmLamaLegacy !== null) {
+                if ($jenisTiangTm === '13') {
+                    $pemakaianLamaTm13 = (int) $pemakaianTmLamaLegacy;
+                } else {
+                    $pemakaianLamaTm11 = (int) $pemakaianTmLamaLegacy;
+                }
+            }
             $stokTercatat = $pengiriman
-                && $pengiriman->stok_tr_dipakai !== null
-                && $pengiriman->stok_tm_dipakai !== null;
+                && $pemakaianLamaTr !== null
+                && $pemakaianLamaTm11 !== null
+                && $pemakaianLamaTm13 !== null;
             $perluPotongStokBaru = ! $pengiriman || $vendorBerubah || ! $stokTercatat;
 
             $vendorIds = array_values(array_unique(array_filter([
@@ -345,36 +364,38 @@ class PbpdController extends Controller
                 ->keyBy('vendor_id');
 
             $stokVendorBaru = $stokRows->get($vendor->id);
-            if ($perluPotongStokBaru && (! $stokVendorBaru || ((int) $stokVendorBaru->stok_tr === 0 && (int) $stokVendorBaru->stok_tm === 0))) {
+            if ($perluPotongStokBaru && (! $stokVendorBaru || ((int) $stokVendorBaru->stok_tr === 0 && (int) $stokVendorBaru->stok_tm_11 === 0 && (int) $stokVendorBaru->stok_tm_13 === 0))) {
                 return ['error' => 'Pengiriman tidak dapat dilakukan karena stok tiang vendor belum diisi atau sedang kosong.'];
             }
 
             $perubahanStok = [];
             if (! $pengiriman) {
-                $perubahanStok[$vendor->id] = ['tr' => $kebutuhanTr, 'tm' => $kebutuhanTm];
+                $perubahanStok[$vendor->id] = $pemakaianBaru;
             } elseif ($vendorBerubah) {
                 if ($stokTercatat) {
                     $perubahanStok[$pengirimanLamaVendorId] = [
-                        'tr' => -((int) $pengiriman->stok_tr_dipakai),
-                        'tm' => -((int) $pengiriman->stok_tm_dipakai),
+                        'tr' => -((int) $pemakaianLamaTr),
+                        'tm_11' => -((int) $pemakaianLamaTm11),
+                        'tm_13' => -((int) $pemakaianLamaTm13),
                     ];
                 }
-                $perubahanStok[$vendor->id] = ['tr' => $kebutuhanTr, 'tm' => $kebutuhanTm];
+                $perubahanStok[$vendor->id] = $pemakaianBaru;
             } elseif ($stokTercatat) {
                 $perubahanStok[$vendor->id] = [
-                    'tr' => $kebutuhanTr - (int) $pengiriman->stok_tr_dipakai,
-                    'tm' => $kebutuhanTm - (int) $pengiriman->stok_tm_dipakai,
+                    'tr' => $pemakaianBaru['tr'] - (int) $pemakaianLamaTr,
+                    'tm_11' => $pemakaianBaru['tm_11'] - (int) $pemakaianLamaTm11,
+                    'tm_13' => $pemakaianBaru['tm_13'] - (int) $pemakaianLamaTm13,
                 ];
             } else {
                 // Pengiriman lama belum memiliki catatan pemakaian stok.
                 // Potong sekali saat pengiriman tersebut disimpan kembali.
-                $perubahanStok[$vendor->id] = ['tr' => $kebutuhanTr, 'tm' => $kebutuhanTm];
+                $perubahanStok[$vendor->id] = $pemakaianBaru;
             }
 
             foreach ($perubahanStok as $vendorId => $perubahan) {
                 $stok = $stokRows->get($vendorId);
                 if (! $stok) {
-                    if ($perubahan['tr'] > 0 || $perubahan['tm'] > 0) {
+                    if ($perubahan['tr'] > 0 || $perubahan['tm_11'] > 0 || $perubahan['tm_13'] > 0) {
                         return ['error' => 'Stok tiang vendor belum diisi.'];
                     }
                     continue;
@@ -384,8 +405,11 @@ class PbpdController extends Controller
                 if ($perubahan['tr'] > 0 && (int) $stok->stok_tr < $perubahan['tr']) {
                     $kurang[] = 'TR membutuhkan '.($perubahan['tr']).', tersedia '.$stok->stok_tr;
                 }
-                if ($perubahan['tm'] > 0 && (int) $stok->stok_tm < $perubahan['tm']) {
-                    $kurang[] = 'TM membutuhkan '.($perubahan['tm']).', tersedia '.$stok->stok_tm;
+                if ($perubahan['tm_11'] > 0 && (int) $stok->stok_tm_11 < $perubahan['tm_11']) {
+                    $kurang[] = 'TM 11 membutuhkan '.($perubahan['tm_11']).', tersedia '.$stok->stok_tm_11;
+                }
+                if ($perubahan['tm_13'] > 0 && (int) $stok->stok_tm_13 < $perubahan['tm_13']) {
+                    $kurang[] = 'TM 13 membutuhkan '.($perubahan['tm_13']).', tersedia '.$stok->stok_tm_13;
                 }
                 if ($kurang !== []) {
                     return ['error' => 'Stok vendor tidak mencukupi: '.implode('; ', $kurang).'.'];
@@ -398,9 +422,14 @@ class PbpdController extends Controller
                     continue;
                 }
 
+                $stokTrBaru = (int) $stok->stok_tr - $perubahan['tr'];
+                $stokTm11Baru = (int) $stok->stok_tm_11 - $perubahan['tm_11'];
+                $stokTm13Baru = (int) $stok->stok_tm_13 - $perubahan['tm_13'];
                 $stok->update([
-                    'stok_tr' => (int) $stok->stok_tr - $perubahan['tr'],
-                    'stok_tm' => (int) $stok->stok_tm - $perubahan['tm'],
+                    'stok_tr' => $stokTrBaru,
+                    'stok_tm' => $stokTm11Baru + $stokTm13Baru,
+                    'stok_tm_11' => $stokTm11Baru,
+                    'stok_tm_13' => $stokTm13Baru,
                 ]);
             }
 
@@ -425,8 +454,10 @@ class PbpdController extends Controller
                 'dikirim_oleh' => Auth::id(),
                 'dikirim_at' => now(),
             ]);
-            $pengiriman->stok_tr_dipakai = $kebutuhanTr;
-            $pengiriman->stok_tm_dipakai = $kebutuhanTm;
+            $pengiriman->stok_tr_dipakai = $pemakaianBaru['tr'];
+            $pengiriman->stok_tm_dipakai = null;
+            $pengiriman->stok_tm_11_dipakai = $pemakaianBaru['tm_11'];
+            $pengiriman->stok_tm_13_dipakai = $pemakaianBaru['tm_13'];
             $pengiriman->save();
 
             $laporan = $pelanggan->laporanVendor()->first();
@@ -452,7 +483,11 @@ class PbpdController extends Controller
     {
         abort_unless($this->currentUser()->role?->role_code === '5170REN', 403);
 
-        $result = DB::transaction(function () use ($pelanggan) {
+        $pelanggan->loadMissing('permintaan');
+        $jenisTiangTm = (string) ($pelanggan->permintaan?->jenis_tiang_tm ?? $pelanggan->permintaan?->jenis_tiang ?? '11');
+        $jenisTiangTm = $jenisTiangTm === '13' ? '13' : '11';
+
+        $result = DB::transaction(function () use ($pelanggan, $jenisTiangTm) {
             $pengiriman = $pelanggan->pengirimanVendor()
                 ->lockForUpdate()
                 ->firstOrFail();
@@ -460,15 +495,31 @@ class PbpdController extends Controller
                 return ['error' => 'Pengiriman tidak dapat dihapus karena vendor tiang sudah mengirim laporan.'];
             }
 
-            if ($pengiriman->stok_tr_dipakai !== null || $pengiriman->stok_tm_dipakai !== null) {
+            $pemakaianTr = $pengiriman->stok_tr_dipakai;
+            $pemakaianTm11 = $pengiriman->stok_tm_11_dipakai;
+            $pemakaianTm13 = $pengiriman->stok_tm_13_dipakai;
+            if ($pemakaianTm11 === null && $pemakaianTm13 === null && $pengiriman->stok_tm_dipakai !== null) {
+                if ($jenisTiangTm === '13') {
+                    $pemakaianTm13 = (int) $pengiriman->stok_tm_dipakai;
+                } else {
+                    $pemakaianTm11 = (int) $pengiriman->stok_tm_dipakai;
+                }
+            }
+
+            if ($pemakaianTr !== null || $pemakaianTm11 !== null || $pemakaianTm13 !== null) {
                 $stok = StokTiang::firstOrCreate(
                     ['vendor_id' => $pengiriman->vendor_id],
-                    ['stok_tr' => 0, 'stok_tm' => 0],
+                    ['stok_tr' => 0, 'stok_tm' => 0, 'stok_tm_11' => 0, 'stok_tm_13' => 0],
                 );
                 $stok = StokTiang::whereKey($stok->id)->lockForUpdate()->first();
+                $stokTrBaru = (int) $stok->stok_tr + (int) ($pemakaianTr ?? 0);
+                $stokTm11Baru = (int) $stok->stok_tm_11 + (int) ($pemakaianTm11 ?? 0);
+                $stokTm13Baru = (int) $stok->stok_tm_13 + (int) ($pemakaianTm13 ?? 0);
                 $stok->update([
-                    'stok_tr' => (int) $stok->stok_tr + (int) ($pengiriman->stok_tr_dipakai ?? 0),
-                    'stok_tm' => (int) $stok->stok_tm + (int) ($pengiriman->stok_tm_dipakai ?? 0),
+                    'stok_tr' => $stokTrBaru,
+                    'stok_tm' => $stokTm11Baru + $stokTm13Baru,
+                    'stok_tm_11' => $stokTm11Baru,
+                    'stok_tm_13' => $stokTm13Baru,
                 ]);
             }
 

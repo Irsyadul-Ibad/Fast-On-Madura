@@ -35,12 +35,15 @@ class StokTiangController extends Controller
             'stok' => ['required', 'array'],
             'stok.*' => ['required', 'array'],
             'stok.*.tr' => ['nullable', 'integer', 'min:0'],
-            'stok.*.tm' => ['nullable', 'integer', 'min:0'],
+            'stok.*.tm_11' => ['nullable', 'integer', 'min:0'],
+            'stok.*.tm_13' => ['nullable', 'integer', 'min:0'],
         ], [
             'stok.*.tr.integer' => 'Stok tiang TR harus berupa angka bulat.',
             'stok.*.tr.min' => 'Stok tiang TR tidak boleh kurang dari 0.',
-            'stok.*.tm.integer' => 'Stok tiang TM harus berupa angka bulat.',
-            'stok.*.tm.min' => 'Stok tiang TM tidak boleh kurang dari 0.',
+            'stok.*.tm_11.integer' => 'Stok tiang TM jenis 11 harus berupa angka bulat.',
+            'stok.*.tm_11.min' => 'Stok tiang TM jenis 11 tidak boleh kurang dari 0.',
+            'stok.*.tm_13.integer' => 'Stok tiang TM jenis 13 harus berupa angka bulat.',
+            'stok.*.tm_13.min' => 'Stok tiang TM jenis 13 tidak boleh kurang dari 0.',
         ]);
 
         $vendors = Vendor::query()->where('jenis', 'TIANG')->get();
@@ -49,12 +52,16 @@ class StokTiangController extends Controller
         DB::transaction(function () use ($vendors, $stokByVendor) {
             foreach ($vendors as $vendor) {
                 $stok = $stokByVendor->get((string) $vendor->id, $stokByVendor->get($vendor->id, []));
+                $stokTm11 = (int) ($stok['tm_11'] ?? 0);
+                $stokTm13 = (int) ($stok['tm_13'] ?? 0);
 
                 StokTiang::updateOrCreate(
                     ['vendor_id' => $vendor->id],
                     [
                         'stok_tr' => (int) ($stok['tr'] ?? 0),
-                        'stok_tm' => (int) ($stok['tm'] ?? 0),
+                        'stok_tm' => $stokTm11 + $stokTm13,
+                        'stok_tm_11' => $stokTm11,
+                        'stok_tm_13' => $stokTm13,
                     ],
                 );
             }

@@ -336,8 +336,9 @@
                             @foreach ($vendors as $vendor)
                                 <option value="{{ $vendor->id }}"
                                     data-stock-tr="{{ $vendor->stokTiang?->stok_tr ?? 0 }}"
-                                    data-stock-tm="{{ $vendor->stokTiang?->stok_tm ?? 0 }}">
-                                    {{ $vendor->nama }} — TR: {{ $vendor->stokTiang?->stok_tr ?? 0 }} | TM: {{ $vendor->stokTiang?->stok_tm ?? 0 }}
+                                    data-stock-tm11="{{ $vendor->stokTiang?->stok_tm_11 ?? 0 }}"
+                                    data-stock-tm13="{{ $vendor->stokTiang?->stok_tm_13 ?? 0 }}">
+                                    {{ $vendor->nama }} — TR: {{ $vendor->stokTiang?->stok_tr ?? 0 }} | TM 11: {{ $vendor->stokTiang?->stok_tm_11 ?? 0 }} | TM 13: {{ $vendor->stokTiang?->stok_tm_13 ?? 0 }}
                                 </option>
                             @endforeach
                         </select>
@@ -347,9 +348,10 @@
                             <span>Stok vendor terpilih</span>
                             <span id="vendorStockAvailabilityPerluasan" class="vendor-stock-availability"></span>
                         </div>
-                        <div class="vendor-stock-values">
+                        <div class="vendor-stock-values vendor-stock-values-three">
                             <span><b>TR</b><strong id="vendorStockTrPerluasan">0</strong><small> tiang</small></span>
-                            <span><b>TM</b><strong id="vendorStockTmPerluasan">0</strong><small> tiang</small></span>
+                            <span><b>TM 11</b><strong id="vendorStockTm11Perluasan">0</strong><small> tiang</small></span>
+                            <span><b>TM 13</b><strong id="vendorStockTm13Perluasan">0</strong><small> tiang</small></span>
                         </div>
                     </div>
                     <div id="vendorStockWarningPerluasan" class="vendor-stock-warning" hidden></div>
@@ -544,7 +546,7 @@
         .vendor-form select, .vendor-form input[type=file] { width:100%; padding:8px; border:1px solid #b9c7d5; border-radius:5px; background:#fff; }
         .vendor-stock-info{display:grid;gap:8px;padding:10px 12px;border:1px solid #c8ddef;border-radius:8px;background:#f3f8ff;color:#536477;font-size:12px}
         .vendor-stock-heading{display:flex;align-items:center;justify-content:space-between;gap:10px}.vendor-stock-heading>span:first-child{font-weight:700;color:#123b5d}.vendor-stock-availability{font-size:11px;font-weight:700}.vendor-stock-availability.is-ready{color:#16834b}.vendor-stock-availability.is-empty{color:#c23f3a}
-        .vendor-stock-values{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.vendor-stock-values span{display:flex;align-items:baseline;gap:4px;padding:7px 9px;border-radius:6px;background:#fff;border:1px solid #d9e6f2}.vendor-stock-values b{color:#1e6fa8}.vendor-stock-values strong{margin-left:auto;color:#123b5d;font-size:15px}.vendor-stock-values small{color:#718096}
+        .vendor-stock-values{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.vendor-stock-values-three{grid-template-columns:repeat(3,minmax(0,1fr))}.vendor-stock-values span{display:flex;align-items:baseline;gap:4px;padding:7px 9px;border-radius:6px;background:#fff;border:1px solid #d9e6f2}.vendor-stock-values b{color:#1e6fa8}.vendor-stock-values strong{margin-left:auto;color:#123b5d;font-size:15px}.vendor-stock-values small{color:#718096}
         .vendor-stock-warning{padding:10px 12px;border:1px solid #f1d28a;border-radius:8px;background:#fffaf0;color:#8a6417;font-size:12px;line-height:1.45}.vendor-stock-warning[hidden],.vendor-stock-info[hidden]{display:none!important}
         .vendor-kelayakan { display:flex; gap:12px; align-items:center; flex-wrap:wrap; color:#536477; }
         .vendor-kelayakan label { display:inline-flex; align-items:center; gap:4px; }
@@ -640,7 +642,8 @@
             const vendorStockInfo = document.getElementById('vendorStockInfoPerluasan');
             const vendorStockWarning = document.getElementById('vendorStockWarningPerluasan');
             const vendorStockTr = document.getElementById('vendorStockTrPerluasan');
-            const vendorStockTm = document.getElementById('vendorStockTmPerluasan');
+            const vendorStockTm11 = document.getElementById('vendorStockTm11Perluasan');
+            const vendorStockTm13 = document.getElementById('vendorStockTm13Perluasan');
             const vendorStockAvailability = document.getElementById('vendorStockAvailabilityPerluasan');
             const vendorSubmitButton = document.getElementById('vendorSubmitButton');
             const setText = (id, value) => { document.getElementById(id).textContent = value || '-'; };
@@ -684,16 +687,21 @@
 
                 const option = vendorSelect.selectedOptions[0];
                 const stockTr = Number(option?.dataset.stockTr || 0);
-                const stockTm = Number(option?.dataset.stockTm || 0);
+                const stockTm11 = Number(option?.dataset.stockTm11 || 0);
+                const stockTm13 = Number(option?.dataset.stockTm13 || 0);
                 const requiredTr = Number(vendorForm?.dataset.requiredTr || 0);
                 const requiredTm = Number(vendorForm?.dataset.requiredTm || 0);
+                const requiredTmType = vendorForm?.dataset.requiredTmType === '13' ? '13' : '11';
+                const availableTm = requiredTmType === '13' ? stockTm13 : stockTm11;
+                const availableTmLabel = `TM ${requiredTmType}`;
                 const hasRequirement = requiredTr > 0 || requiredTm > 0;
-                const stockEmpty = stockTr === 0 && stockTm === 0;
-                const stockEnough = !stockEmpty && (!hasRequirement || (stockTr >= requiredTr && stockTm >= requiredTm));
+                const stockEmpty = stockTr === 0 && stockTm11 === 0 && stockTm13 === 0;
+                const stockEnough = !stockEmpty && (!hasRequirement || (stockTr >= requiredTr && availableTm >= requiredTm));
 
                 vendorStockInfo.hidden = !option?.value;
                 vendorStockTr.textContent = stockTr.toLocaleString('id-ID');
-                vendorStockTm.textContent = stockTm.toLocaleString('id-ID');
+                vendorStockTm11.textContent = stockTm11.toLocaleString('id-ID');
+                vendorStockTm13.textContent = stockTm13.toLocaleString('id-ID');
                 vendorStockAvailability.textContent = stockEnough ? 'Stok tersedia' : 'Stok tidak mencukupi';
                 vendorStockAvailability.className = `vendor-stock-availability ${stockEnough ? 'is-ready' : 'is-empty'}`;
                 vendorStockWarning.hidden = !option?.value || stockEnough;
@@ -702,7 +710,7 @@
                 } else if (option?.value && !stockEnough) {
                     const kurang = [];
                     if (requiredTr > stockTr) kurang.push(`TR membutuhkan ${requiredTr}, tersedia ${stockTr}`);
-                    if (requiredTm > stockTm) kurang.push(`TM membutuhkan ${requiredTm}, tersedia ${stockTm}`);
+                    if (requiredTm > availableTm) kurang.push(`${availableTmLabel} membutuhkan ${requiredTm}, tersedia ${availableTm}`);
                     vendorStockWarning.textContent = `Stok tidak cukup untuk kebutuhan ini: ${kurang.join('; ')}.`;
                 } else {
                     vendorStockWarning.textContent = '';
@@ -773,6 +781,7 @@
                         vendorForm.action = button.dataset.vendorUrl;
                         vendorForm.dataset.requiredTr = button.dataset.jmlTiangTr || '0';
                         vendorForm.dataset.requiredTm = button.dataset.jmlTiangTm || button.dataset.jmlTiang || '0';
+                        vendorForm.dataset.requiredTmType = button.dataset.jenisTiangTm || '11';
                         vendorForm.dataset.reportReceived = vendorReportReceived ? '1' : '0';
                         document.getElementById('vendorIdPerluasan').value = button.dataset.vendorId || '';
                         document.getElementById('vendorSubmitButton').textContent = vendorReportReceived ? 'Laporan sudah diterima' : (hasVendorDelivery ? 'Simpan Perubahan Pengiriman' : 'Kirim ke Vendor');
