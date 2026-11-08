@@ -16,7 +16,7 @@ class PerluasanController extends Controller
         $ulpUser = $this->currentUser()->ulpId();
         $role = $this->currentUser()->role;
         $canEditRab = (bool) $role?->ulp_id || $role?->role_code === '5170REN';
-        $canEditMaterial = (bool) $role?->ulp_id;
+        $canEditMaterial = (bool) $role?->ulp_id || $role?->role_code === '5170REN';
         $canSendVendor = $role?->role_code === '5170REN';
         $canSendKonstruksi = $role?->role_code === '5170KON';
         $canUploadTransaksi = $role?->role_code === '5170TE';

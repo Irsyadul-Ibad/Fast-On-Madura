@@ -230,7 +230,8 @@ class PbpdController extends Controller
         $role = $this->currentUser()->role;
         $isUlp = (bool) $role?->ulp_id;
         $isPerencanaan = $role?->role_code === '5170REN';
-        abort_unless($isUlp || $isPerencanaan, 403);
+        $canEditMaterial = $isUlp || $isPerencanaan;
+        abort_unless($canEditMaterial, 403);
 
         $ulpUser = $this->currentUser()->ulpId();
         abort_if($ulpUser && (int) $pelanggan->ulp_id !== (int) $ulpUser, 403);
@@ -238,7 +239,7 @@ class PbpdController extends Controller
         abort_unless(in_array($pelanggan->tujuan_perluasan, ['JTM', 'JTR'], true), 422);
 
         $rules = ['rab' => ['nullable', 'numeric', 'min:0']];
-        if ($isUlp) {
+        if ($canEditMaterial) {
             $rules += [
                 'jenis_tiang_tm' => ['nullable', 'string', 'max:30'],
                 'jml_tiang_tm' => ['nullable', 'integer', 'min:0'],
@@ -260,9 +261,9 @@ class PbpdController extends Controller
         }
         $data = $request->validate($rules);
 
-        DB::transaction(function () use ($pelanggan, $data, $isUlp) {
+        DB::transaction(function () use ($pelanggan, $data, $canEditMaterial) {
             $pelanggan->update(['rab' => $data['rab'] ?? null]);
-            if ($isUlp) {
+            if ($canEditMaterial) {
                 PermintaanMaterial::updateOrCreate(
                     ['pelanggan_id' => $pelanggan->id],
                     [
