@@ -61,6 +61,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/pbpd/{pelanggan}/detail', [PbpdController::class, 'updateDetail'])
         ->middleware('permission:perluasan.jtm.view')
         ->name('pbpd.detail.update');
+    Route::post('/pbpd/{pelanggan}/kelayakan', [PbpdController::class, 'updateKelayakan'])
+        ->middleware('permission:perencanaan.process')
+        ->name('pbpd.kelayakan.update');
     Route::post('/pbpd/{pelanggan}/kirim-vendor', [PbpdController::class, 'kirimVendor'])
         ->middleware('permission:perencanaan.process')
         ->name('pbpd.vendor.send');

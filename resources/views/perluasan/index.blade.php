@@ -130,6 +130,7 @@
                                     data-id="{{ $row->id }}"
                                     data-rab-url="{{ route('pbpd.rab.update', $row->id) }}"
                                     data-vendor-url="{{ route('pbpd.vendor.send', $row->id) }}"
+                                    data-kelayakan-url="{{ route('pbpd.kelayakan.update', $row->id) }}"
                                     data-report-file-url="{{ route('vendor.tiang.report.file', ['pelanggan' => $row->id, 'index' => 0]) }}"
                                     data-laporan-files="{{ base64_encode(json_encode($row->laporanVendor?->berkas_paths ?? [])) }}"
                                     data-laporan-names="{{ base64_encode(json_encode($row->laporanVendor?->berkas_names ?? [])) }}"
@@ -167,7 +168,7 @@
                                     data-jenis-panel-meter="{{ $m?->jenis_panel_meter }}"
                                     data-jml-panel-meter="{{ $m?->jml_panel_meter }}"
                                     data-vendor-id="{{ $pv?->vendor_id }}"
-                                    data-kelayakan="{{ $pv?->status_kelayakan }}"
+                                    data-kelayakan="{{ $row->status_kelayakan ?? $pv?->status_kelayakan }}"
                                     data-konstruksi-vendor="{{ $pk?->vendor?->nama }}"
                                     data-konstruksi-vendor-id="{{ count($pk?->berkas_paths ?? []) > 0 ? $pk?->vendor_id : '' }}"
                                     data-konstruksi-has-delivery="{{ count($pk?->berkas_paths ?? []) > 0 ? '1' : '0' }}"
@@ -355,11 +356,6 @@
                         </div>
                     </div>
                     <div id="vendorStockWarningPerluasan" class="vendor-stock-warning" hidden></div>
-                    <div class="vendor-kelayakan">
-                        <span>Status kelayakan</span>
-                        <label><input type="radio" name="status_kelayakan" value="LAYAK" required> LAYAK</label>
-                        <label><input type="radio" name="status_kelayakan" value="TIDAK LAYAK"> TIDAK LAYAK</label>
-                    </div>
                     <label>Upload berkas WO tiang
                         <input type="file" name="wo_tiang" accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png">
                     </label>
@@ -431,13 +427,24 @@
             @endif
             <div class="planning-result-box">
                 <h4>Berkas Kajian Kelayakan</h4>
+                @if ($canSendVendor)
+                    <div class="vendor-kelayakan">
+                        <span>Status kelayakan: <strong id="planningEligibilityStatus">Belum ditentukan</strong></span>
+                        <form id="planningEligibilityForm" method="POST" action="#">
+                            @csrf
+                            <button type="submit" name="status_kelayakan" value="LAYAK" class="btn">Layak</button>
+                            <button type="submit" name="status_kelayakan" value="TIDAK LAYAK" class="btn btn-abu" onclick="return confirm('Tolak data ini? Semua RAB, material, dan berkas yang sudah diunggah akan dihapus. Data dikembalikan ke PB/PD untuk diproses ulang.')">Tidak Layak</button>
+                        </form>
+                    </div>
+                @endif
                 <div id="resultFiles">-</div>
                 @if ($canSendVendor)
-                    <form id="resultUploadForm" method="POST" action="{{ request()->url() }}" enctype="multipart/form-data">
+                    <form id="resultUploadForm" method="POST" action="{{ request()->url() }}" enctype="multipart/form-data" hidden>
                         @csrf
                         <input type="hidden" name="pelanggan_id" id="resultPelangganId">
+                        <input type="hidden" name="status_kelayakan" value="LAYAK">
                         <input type="file" name="berkas_hasil[]" multiple required accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png">
-                        <button type="submit" class="btn">Upload Berkas Hasil</button>
+                        <button type="submit" class="btn">Upload Berkas Kelayakan</button>
                     </form>
                 @endif
             </div>
@@ -638,6 +645,7 @@
             const jaringanResultUploadForm = document.getElementById('jaringanResultUploadForm');
             const constructionReportBox = document.getElementById('constructionReportBox');
             const resultUploadForm = document.getElementById('resultUploadForm');
+            const planningEligibilityForm = document.getElementById('planningEligibilityForm');
             const vendorSelect = document.getElementById('vendorIdPerluasan');
             const vendorStockInfo = document.getElementById('vendorStockInfoPerluasan');
             const vendorStockWarning = document.getElementById('vendorStockWarningPerluasan');
@@ -646,7 +654,7 @@
             const vendorStockTm13 = document.getElementById('vendorStockTm13Perluasan');
             const vendorStockAvailability = document.getElementById('vendorStockAvailabilityPerluasan');
             const vendorSubmitButton = document.getElementById('vendorSubmitButton');
-            const setText = (id, value) => { document.getElementById(id).textContent = value || '-'; };
+            const setText = (id, value) => { const element = document.getElementById(id); if (element) element.textContent = value || '-'; };
             const money = (value) => value ? Number(value).toLocaleString('id-ID') : '-';
             const formatRupiah = (value) => {
                 const number = Number(value);
@@ -747,6 +755,13 @@
                     setProcess('Konstruksi', button.dataset.prosesKonstruksi, button.dataset.prosesKonstruksiDate);
                     setProcess('Transaksi', button.dataset.prosesTransaksi, button.dataset.prosesTransaksiDate);
                     setProcess('Jaringan', button.dataset.prosesJaringan, button.dataset.prosesJaringanDate);
+                    const qualificationStatus = button.dataset.kelayakan || '';
+                    setText('planningEligibilityStatus', qualificationStatus || 'Belum ditentukan');
+                    if (planningEligibilityForm) {
+                        planningEligibilityForm.hidden = !['PERENCANAAN', 'VENDOR_TIANG'].includes(button.dataset.tahap);
+                        planningEligibilityForm.action = button.dataset.kelayakanUrl;
+                    }
+                    if (resultUploadForm) resultUploadForm.hidden = qualificationStatus !== 'LAYAK';
                     modal.hidden = false;
                     if (resultUploadForm) document.getElementById('resultPelangganId').value = button.dataset.id;
                     if (form) {
@@ -777,7 +792,7 @@
                         const stageAllowsTiang = ['PERENCANAAN', 'VENDOR_TIANG'].includes(button.dataset.tahap);
                         const hasVendorDelivery = Boolean(button.dataset.vendorId);
                         const vendorReportReceived = hasVendorDelivery && Boolean(button.dataset.laporanDate);
-                        vendorForm.hidden = !stageAllowsTiang;
+                        vendorForm.hidden = !stageAllowsTiang || qualificationStatus !== 'LAYAK';
                         vendorForm.action = button.dataset.vendorUrl;
                         vendorForm.dataset.requiredTr = button.dataset.jmlTiangTr || '0';
                         vendorForm.dataset.requiredTm = button.dataset.jmlTiangTm || button.dataset.jmlTiang || '0';
@@ -787,9 +802,6 @@
                         document.getElementById('vendorSubmitButton').textContent = vendorReportReceived ? 'Laporan sudah diterima' : (hasVendorDelivery ? 'Simpan Perubahan Pengiriman' : 'Kirim ke Vendor');
                         document.getElementById('vendorLockedNotice').hidden = !vendorReportReceived;
                         vendorForm.querySelectorAll('select,input:not([type="hidden"]),button[type="submit"]').forEach((control) => { control.disabled = vendorReportReceived; });
-                        vendorForm.querySelectorAll('input[name="status_kelayakan"]').forEach((radio) => {
-                            radio.checked = radio.value === button.dataset.kelayakan;
-                        });
                         updateVendorStock();
                         if (vendorDeleteForm) {
                             document.getElementById('vendorDeleteCard').hidden = !hasVendorDelivery || vendorReportReceived;
@@ -893,7 +905,7 @@
                             }).join('')
                             : '-';
                     if (resultUploadForm) {
-                        resultUploadForm.hidden = false;
+                        resultUploadForm.hidden = qualificationStatus !== 'LAYAK';
                         resultUploadForm.action = `{{ url('/vendor/tiang') }}/${button.dataset.id}/hasil`;
                     }
                 });

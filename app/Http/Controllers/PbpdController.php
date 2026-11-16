@@ -136,6 +136,130 @@ class PbpdController extends Controller
         return back()->with('success', 'RAB berhasil disimpan.');
     }
 
+    public function updateKelayakan(Request $request, PelangganPbpd $pelanggan): RedirectResponse
+    {
+        abort_unless($this->currentUser()->role?->role_code === '5170REN', 403);
+        abort_unless(in_array($pelanggan->tahap, ['PERENCANAAN', 'VENDOR_TIANG'], true), 403);
+
+        $data = $request->validate([
+            'status_kelayakan' => ['required', 'in:LAYAK,TIDAK LAYAK'],
+        ]);
+
+        if ($data['status_kelayakan'] === 'LAYAK') {
+            $pelanggan->update(['status_kelayakan' => 'LAYAK']);
+            NotifikasiService::untukData($pelanggan, 'Data dinyatakan layak', 'Data '.$pelanggan->no_agenda.' dinyatakan layak oleh Perencanaan.', route('laporan'));
+
+            return back()->with('success', 'Status kelayakan berhasil disimpan. Berkas kajian kelayakan kini dapat diunggah.');
+        }
+
+        $pathsToDelete = DB::transaction(function () use ($pelanggan) {
+            $pelanggan = PelangganPbpd::query()->whereKey($pelanggan->id)->lockForUpdate()->firstOrFail();
+            abort_unless(in_array($pelanggan->tahap, ['PERENCANAAN', 'VENDOR_TIANG'], true), 403);
+
+            $paths = [];
+            $collectPaths = function (mixed $value) use (&$paths) {
+                foreach ($this->storedPaths($value) as $path) {
+                    if (is_string($path) && $path !== '') {
+                        $paths[] = $path;
+                    }
+                }
+            };
+
+            foreach ([
+                'berkas_pendukung_paths', 'berkas_ijin_paths', 'nps_wo_paths',
+                'nps_checklist_paths', 'hasil_konstruksi_paths', 'hasil_transaksi_paths',
+                'hasil_jaringan_paths',
+            ] as $column) {
+                $collectPaths($pelanggan->{$column});
+            }
+
+            $pengirimanVendor = $pelanggan->pengirimanVendor()->lockForUpdate()->first();
+            if ($pengirimanVendor) {
+                $collectPaths($pengirimanVendor->wo_tiang_path);
+
+                $jenisTiangTm = (string) ($pelanggan->permintaan()->value('jenis_tiang_tm')
+                    ?? $pelanggan->permintaan()->value('jenis_tiang')
+                    ?? '11');
+                $pemakaianTr = $pengirimanVendor->stok_tr_dipakai;
+                $pemakaianTm11 = $pengirimanVendor->stok_tm_11_dipakai;
+                $pemakaianTm13 = $pengirimanVendor->stok_tm_13_dipakai;
+                if ($pemakaianTm11 === null && $pemakaianTm13 === null && $pengirimanVendor->stok_tm_dipakai !== null) {
+                    if ($jenisTiangTm === '13') {
+                        $pemakaianTm13 = (int) $pengirimanVendor->stok_tm_dipakai;
+                    } else {
+                        $pemakaianTm11 = (int) $pengirimanVendor->stok_tm_dipakai;
+                    }
+                }
+
+                if ($pemakaianTr !== null || $pemakaianTm11 !== null || $pemakaianTm13 !== null) {
+                    $stok = StokTiang::firstOrCreate(
+                        ['vendor_id' => $pengirimanVendor->vendor_id],
+                        ['stok_tr' => 0, 'stok_tm' => 0, 'stok_tm_11' => 0, 'stok_tm_13' => 0],
+                    );
+                    $stok = StokTiang::query()->whereKey($stok->id)->lockForUpdate()->first();
+                    $stokTrBaru = (int) $stok->stok_tr + (int) ($pemakaianTr ?? 0);
+                    $stokTm11Baru = (int) $stok->stok_tm_11 + (int) ($pemakaianTm11 ?? 0);
+                    $stokTm13Baru = (int) $stok->stok_tm_13 + (int) ($pemakaianTm13 ?? 0);
+                    $stok->update([
+                        'stok_tr' => $stokTrBaru,
+                        'stok_tm' => $stokTm11Baru + $stokTm13Baru,
+                        'stok_tm_11' => $stokTm11Baru,
+                        'stok_tm_13' => $stokTm13Baru,
+                    ]);
+                }
+
+                $pengirimanVendor->delete();
+            }
+
+            $laporanVendor = $pelanggan->laporanVendor()->lockForUpdate()->first();
+            if ($laporanVendor) {
+                $collectPaths($laporanVendor->berkas_paths);
+                $collectPaths($laporanVendor->berkas_hasil_paths);
+                $laporanVendor->delete();
+            }
+
+            $pengirimanKonstruksi = $pelanggan->pengirimanKonstruksi()->lockForUpdate()->first();
+            if ($pengirimanKonstruksi) {
+                foreach (['berkas_paths', 'laporan_paths', 'hasil_paths', 'hasil_konstruksi_paths'] as $column) {
+                    $collectPaths($pengirimanKonstruksi->{$column});
+                }
+                $pengirimanKonstruksi->delete();
+            }
+
+            $pelanggan->permintaan()->delete();
+            $pelanggan->update([
+                'rab' => null,
+                'tujuan_perluasan' => null,
+                'tahap' => 'ULP',
+                'status_kelayakan' => null,
+                'berkas_pendukung_paths' => null,
+                'berkas_ijin_paths' => null,
+                'berkas_pendukung_names' => null,
+                'berkas_ijin_names' => null,
+                'nps_wo_paths' => null,
+                'nps_wo_at' => null,
+                'nps_checklist_paths' => null,
+                'nps_checklist_at' => null,
+                'hasil_konstruksi_paths' => null,
+                'hasil_konstruksi_at' => null,
+                'hasil_transaksi_paths' => null,
+                'hasil_transaksi_at' => null,
+                'hasil_jaringan_paths' => null,
+                'hasil_jaringan_at' => null,
+            ]);
+
+            return array_values(array_unique($paths));
+        });
+
+        foreach ($pathsToDelete as $path) {
+            Storage::disk('public')->delete($path);
+        }
+
+        NotifikasiService::untukData($pelanggan, 'Data dikembalikan ke ULP', 'Data '.$pelanggan->no_agenda.' dinyatakan tidak layak. RAB, material, dan seluruh berkas proses telah direset.', route('pbpd.index'));
+
+        return back()->with('success', 'Data dinyatakan tidak layak dan dikembalikan ke PB/PD untuk diproses ulang. RAB, material, dan berkas terkait telah direset.');
+    }
+
     public function kirim(Request $request): RedirectResponse
     {
         abort_unless((bool) $this->currentUser()->role?->ulp_id, 403);
@@ -302,9 +426,12 @@ class PbpdController extends Controller
     {
         abort_unless($this->currentUser()->role?->role_code === '5170REN', 403);
 
+        $statusKelayakan = $pelanggan->status_kelayakan
+            ?? $pelanggan->pengirimanVendor()->value('status_kelayakan');
+        abort_unless($statusKelayakan === 'LAYAK', 422, 'Data harus dinyatakan layak sebelum dikirim ke vendor.');
+
         $data = $request->validate([
             'vendor_id' => ['required', 'exists:vendors,id'],
-            'status_kelayakan' => ['required', 'in:LAYAK,TIDAK LAYAK'],
             'wo_tiang' => ['nullable', 'file', 'mimes:pdf,doc,docx,xls,xlsx,jpg,jpeg,png', 'max:10240'],
         ]);
 
@@ -322,7 +449,7 @@ class PbpdController extends Controller
         ];
         $woFile = $request->file('wo_tiang');
 
-        $result = DB::transaction(function () use ($data, $pelanggan, $vendor, $pemakaianBaru, $jenisTiangTm, $woFile) {
+        $result = DB::transaction(function () use ($data, $pelanggan, $vendor, $pemakaianBaru, $jenisTiangTm, $woFile, $statusKelayakan) {
             $pengiriman = PengirimanVendor::query()
                 ->where('pelanggan_id', $pelanggan->id)
                 ->lockForUpdate()
@@ -451,7 +578,7 @@ class PbpdController extends Controller
 
             $pengiriman->fill([
                 'vendor_id' => $vendor->id,
-                'status_kelayakan' => $data['status_kelayakan'],
+                'status_kelayakan' => $statusKelayakan,
                 'dikirim_oleh' => Auth::id(),
                 'dikirim_at' => now(),
             ]);
