@@ -127,8 +127,48 @@
                 </div>
             @endforelse
 
-            @if ($notifications->hasPages())
-                <div class="notification-pagination">{{ $notifications->links() }}</div>
+            @if ($notifications->total() > 0)
+                <div class="notification-pagination">
+                    <p class="notification-results">
+                        Menampilkan <strong>{{ $notifications->firstItem() }}–{{ $notifications->lastItem() }}</strong>
+                        dari <strong>{{ number_format($notifications->total(), 0, ',', '.') }}</strong> notifikasi
+                    </p>
+                    @if ($notifications->hasPages())
+                        @php
+                            $notificationPageStart = max(1, $notifications->currentPage() - 1);
+                            $notificationPageEnd = min($notifications->lastPage(), $notifications->currentPage() + 1);
+                        @endphp
+                        <nav class="notification-page-links" aria-label="Halaman notifikasi">
+                            @if ($notifications->onFirstPage())
+                                <span class="notification-page-arrow is-disabled" aria-disabled="true" aria-label="Halaman sebelumnya">
+                                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+                                </span>
+                            @else
+                                <a class="notification-page-arrow" href="{{ $notifications->previousPageUrl() }}" rel="prev" aria-label="Halaman sebelumnya">
+                                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>
+                                </a>
+                            @endif
+
+                            @foreach (range($notificationPageStart, $notificationPageEnd) as $page)
+                                <a href="{{ $notifications->url($page) }}"
+                                   class="notification-page-number {{ $page === $notifications->currentPage() ? 'is-current' : '' }}"
+                                   @if ($page === $notifications->currentPage()) aria-current="page" @endif>
+                                    {{ $page }}
+                                </a>
+                            @endforeach
+
+                            @if ($notifications->hasMorePages())
+                                <a class="notification-page-arrow" href="{{ $notifications->nextPageUrl() }}" rel="next" aria-label="Halaman berikutnya">
+                                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+                                </a>
+                            @else
+                                <span class="notification-page-arrow is-disabled" aria-disabled="true" aria-label="Halaman berikutnya">
+                                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+                                </span>
+                            @endif
+                        </nav>
+                    @endif
+                </div>
             @endif
         </section>
     </div>
@@ -171,8 +211,15 @@
     .notification-empty strong{color:#102cae;font-size:15px}
     .notification-empty>span:last-child{font-size:13px}
     .notification-success{padding:12px 16px;border:1px solid #bfe8d0;border-radius:14px;background:#edf9f2;color:#176b3d;font-size:13px;font-weight:650}
-    .notification-pagination{display:flex;justify-content:flex-end;margin-top:18px;padding-top:16px;border-top:1px solid #e8edf8}
-    .notification-pagination nav{margin:0}
+    .notification-pagination{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:18px;padding-top:16px;border-top:1px solid #e0e7f8}
+    .notification-results{margin:0;color:#5e719e;font-size:13px;line-height:1.4}
+    .notification-results strong{color:#344a81;font-weight:750}
+    .notification-page-links{display:flex;align-items:center;gap:8px}
+    .notification-page-number,.notification-page-arrow{display:inline-flex;align-items:center;justify-content:center;flex:0 0 40px;width:40px;height:40px;border:0;border-radius:13px;background:#f0f4ff;color:#344a81;font-size:13px;font-weight:750;text-decoration:none;transition:background-color .18s ease,color .18s ease,box-shadow .18s ease}
+    .notification-page-number:hover,.notification-page-arrow:not(.is-disabled):hover{background:#e3eaff;color:#214fe0}
+    .notification-page-number.is-current{background:linear-gradient(135deg,#214ee0,#102eaf);color:#fff;box-shadow:0 8px 18px rgba(33,78,224,.2)}
+    .notification-page-arrow.is-disabled{color:#a9b5d1;cursor:default}
+    .notification-page-arrow svg{display:block;width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
     @media(max-width:650px){
         body.notification-screen .content>header.page-topbar{align-items:flex-start;flex-wrap:wrap;gap:10px;min-height:0}
         body.notification-screen .content>header.page-topbar .header-title{flex:1 1 100%;align-items:center}
@@ -191,7 +238,8 @@
         .notification-copy>span{font-size:12px}
         .notification-time{grid-column:2;grid-row:2}
         .notification-unread-dot{grid-column:3;grid-row:1;align-self:start;margin-top:4px}
-        .notification-pagination{justify-content:flex-start}
+        .notification-pagination{align-items:flex-start;flex-direction:column}
+        .notification-page-links{align-self:flex-end}
     }
 </style>
 @endpush

@@ -17,13 +17,20 @@ class NotifikasiController extends Controller
 
         $query = AppNotification::where('user_id', Auth::id());
         $unread = (clone $query)->whereNull('read_at')->count();
+        $filteredCount = match ($filter) {
+            'unread' => $unread,
+            'read' => (clone $query)->whereNotNull('read_at')->count(),
+            default => (clone $query)->count(),
+        };
+        $lastPage = max(1, (int) ceil($filteredCount / 30));
+        $page = min(max(1, $request->integer('page', 1)), $lastPage);
 
         return view('notifikasi.index', [
             'notifications' => (clone $query)
                 ->when($filter === 'unread', fn ($notifications) => $notifications->whereNull('read_at'))
                 ->when($filter === 'read', fn ($notifications) => $notifications->whereNotNull('read_at'))
                 ->orderByDesc('id')
-                ->paginate(30)
+                ->paginate(30, ['*'], 'page', $page)
                 ->withQueryString(),
             'filter' => $filter,
             'unread' => $unread,
