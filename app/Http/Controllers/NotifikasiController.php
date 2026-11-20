@@ -3,15 +3,30 @@
 namespace App\Http\Controllers;
 
 use App\Models\AppNotification;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class NotifikasiController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        $filter = $request->query('filter', 'all');
+        if (! in_array($filter, ['all', 'unread', 'read'], true)) {
+            $filter = 'all';
+        }
+
+        $query = AppNotification::where('user_id', Auth::id());
+        $unread = (clone $query)->whereNull('read_at')->count();
+
         return view('notifikasi.index', [
-            'notifications' => AppNotification::where('user_id', Auth::id())->orderByDesc('id')->paginate(30),
-            'unread' => AppNotification::where('user_id', Auth::id())->whereNull('read_at')->count(),
+            'notifications' => (clone $query)
+                ->when($filter === 'unread', fn ($notifications) => $notifications->whereNull('read_at'))
+                ->when($filter === 'read', fn ($notifications) => $notifications->whereNotNull('read_at'))
+                ->orderByDesc('id')
+                ->paginate(30)
+                ->withQueryString(),
+            'filter' => $filter,
+            'unread' => $unread,
         ]);
     }
 

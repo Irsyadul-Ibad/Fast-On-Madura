@@ -1,6 +1,21 @@
 @extends('layouts.app')
+@php
+    $laporanRole = auth()->user()->role;
+    $laporanScope = match ($laporanRole?->type) {
+        'UP3' => 'dalam cakupan UP3 Madura',
+        'ULP' => 'di '.($laporanRole->ulp?->nama ? 'ULP '.$laporanRole->ulp->nama : 'ULP Anda'),
+        default => 'dalam cakupan Anda',
+    };
+@endphp
 @section('title', 'Laporan')
 @section('judul', 'Laporan')
+@section('deskripsi', 'Daftar PB/PD yang sudah masuk proses '.$laporanScope)
+@section('header-actions')
+    <a class="btn btn-excel" href="{{ route('laporan.export', request()->only(['no_agenda', 'ulp', 'tahap', 'jenis', 'status'])) }}">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 20h14"/></svg>
+        Export Excel
+    </a>
+@endsection
 @section('isi')
     <div class="grid statistik">
         <div class="stat-card">
@@ -14,7 +29,7 @@
             </div>
         @endforeach
     </div>
-    <div class="box">
+    <div class="box laporan-filter-box">
         <form class="filter" method="GET">
             <input type="text" name="no_agenda" value="{{ request('no_agenda') }}" placeholder="No agenda">
             @if ($showUlpFilter)
@@ -50,10 +65,10 @@
                 @endforeach
             </select>
             <button type="submit" class="btn">Filter</button>
-            <a class="btn btn-excel" href="{{ route('laporan.export', request()->only(['no_agenda', 'ulp', 'tahap', 'jenis', 'status'])) }}">
-                Export Excel
-            </a>
         </form>
+    </div>
+    <div class="box kartu">
+        <div class="main-report-table-title">Daftar transaksi</div>
         @php($showSyarat = ! in_array(auth()->user()->role?->type, ['UP3', 'ULP'], true))
         @php($processMap = $data->getCollection()->mapWithKeys(function ($row) {
             $material = $row->permintaan;

@@ -1,7 +1,23 @@
 @extends('layouts.app')
 
+@php
+    $unitCakupanPbpd = match (auth()->user()->role?->type) {
+        'ULP' => auth()->user()->role?->ulp?->nama ?? 'ULP Anda',
+        'UP3' => 'seluruh ULP',
+        default => 'Anda',
+    };
+@endphp
 @section('title', 'Data PB/PD')
 @section('judul', 'Data PB/PD')
+@section('deskripsi', 'Daftar transaksi PB/PD dalam cakupan '.$unitCakupanPbpd)
+@section('header-actions')
+    @if ($canKirim)
+        <button type="button" class="btn table-send-button" id="openSendModal" disabled>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m22 2-7 20-4-9-9-4 20-7Z"/><path d="M22 2 11 13"/></svg>
+            Kirim data terpilih (<span id="selectedPelangganCount">0</span>)
+        </button>
+    @endif
+@endsection
 
 @section('isi')
     @if (session('success'))
@@ -83,19 +99,13 @@
     </form>
 
     <div class="box kartu">
+        <div class="kartu-judul">
+            <span>Daftar transaksi<small>Record dan jumlah transaksi PB/PD</small></span>
+            <span class="pill">{{ $data->total() }} data</span>
+        </div>
         <div class="scroll">
             <table class="tabel tabel-biru">
                 <thead>
-                    <tr class="table-title-row">
-                        <th colspan="{{ ($canKirim ? 1 : 0) + 16 + ($showSyarat ? 2 : 0) }}">
-                            <div class="table-title-content">
-                                @if ($canKirim)
-                                    <button type="button" class="btn table-send-button" id="openSendModal" disabled>Kirim data terpilih</button>
-                                @endif
-                                <span>RECORD, JUMLAH TRANSAKSI PB/PD</span>
-                            </div>
-                        </th>
-                    </tr>
                     <tr>
                         @if ($canKirim)
                             <th rowspan="2"><input type="checkbox" id="checkAll" title="Pilih semua"></th>
@@ -493,7 +503,10 @@
             if (tujuanKirim) tujuanKirim.addEventListener('change', updateExpansionNeeds);
             tujuanCards.forEach((card) => card.addEventListener('click', () => { tujuanKirim.value = card.dataset.tujuan; updateExpansionNeeds(); }));
             const updateSendButton = () => {
-                if (sendButton) sendButton.disabled = !checks.some((check) => check.checked);
+                const selectedCount = checks.filter((check) => check.checked).length;
+                if (sendButton) sendButton.disabled = selectedCount === 0;
+                const selectedCountLabel = document.getElementById('selectedPelangganCount');
+                if (selectedCountLabel) selectedCountLabel.textContent = String(selectedCount);
             };
             checks.forEach((check) => check.addEventListener('change', updateSendButton));
             if (checkAll) {
@@ -528,6 +541,7 @@
         .filter .btn.btn-abu:hover{background:#e2e8f0!important;color:#123b5d!important;transform:none}
         .kartu{overflow:hidden;padding:0!important;margin-top:14px!important;border:1px solid #0d1b8c!important;border-radius:16px!important;background:#0d1b8c!important;box-shadow:0 8px 24px rgba(13,27,140,.14)!important}
         .kartu-judul{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:45px;margin:0!important;padding:12px 16px;color:#fff!important;background:#0d1b8c!important;border-radius:12px 12px 0 0!important;font-size:12px;font-weight:800;letter-spacing:.035em}
+        .kartu-judul>span:first-child small{display:block;margin-top:5px;color:#dbe6ff;font-size:11px;font-weight:500;letter-spacing:0}
         .kartu-judul>span:first-child{color:#fff!important}.kartu-judul .pill{background:#1e40af!important;color:#fff!important;border:1px solid rgba(255,255,255,.28)!important;box-shadow:none!important}
         .kartu>#openSendModal,.kartu>div:has(>#openSendModal){padding:12px 18px 12px;background:#0d1b8c!important}
         .kartu>#openSendModal{background:#2b73fe!important;color:#fff!important}

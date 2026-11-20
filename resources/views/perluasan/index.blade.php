@@ -1,7 +1,15 @@
 @extends('layouts.app')
 
+@php
+    $deskripsiPerluasan = match ($tujuan) {
+        'JTM' => 'Daftar transaksi PB/PD dengan perluasan jaringan tegangan menengah',
+        'JTR' => 'Daftar transaksi PB/PD dengan perluasan jaringan tegangan rendah',
+        default => 'Daftar transaksi PB/PD yang tidak memerlukan perluasan jaringan',
+    };
+@endphp
 @section('title', $judul)
 @section('judul', $judul)
+@section('deskripsi', $deskripsiPerluasan)
 
 @section('isi')
     @if ($showSummaryCards)

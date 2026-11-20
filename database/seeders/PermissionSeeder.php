@@ -69,11 +69,11 @@ class PermissionSeeder extends Seeder
 
         $ulp = array_merge($umum, ['pbpd.view'], $perluasan, ['berkas.upload', 'permintaan.create'], ['laporan.view']);
 
-        foreach (Role::where('type', 'ULP')
-            ->whereNotIn('role_code', ['5170T1', '5170T2', '5170T3', '5170T4', '5170T5', '5170T6', '5170T7', '5170T8', '5170T9', '5170K1', '5170K2'])
-            ->get() as $role) {
-            $role->permissions()->sync(Permission::whereIn('name', $ulp)->pluck('id'));
-        }
+        //foreach (Role::where('type', 'ULP')
+        //    ->whereNotIn('role_code', ['5170T1', '5170T2', '5170T3', '5170T4', '5170T5', '5170T6', '5170T7', '5170T8', '5170T9', '5170K1', '5170K2'])
+        //    ->get() as $role) {
+        //    $role->permissions()->sync(Permission::whereIn('name', $ulp)->pluck('id'));
+        //}
 
         foreach ($map as $code => $names) {
             Role::where('role_code', $code)->first()

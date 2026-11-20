@@ -63,53 +63,79 @@
             .filter { align-items:stretch; }
             .filter input, .filter select, .filter button, .filter a { width:100%; }
         }
-        /* Keep all sidebar styling in the document head so it is stable on first paint. */
+        /* Floating, light sidebar shared by every authenticated page. */
+        .layout{display:block!important;min-height:100vh}
         #mainSidebar{
-            position:sticky!important;top:0!important;align-self:flex-start;display:flex!important;flex-direction:column!important;
-            flex:0 0 17rem!important;width:17rem!important;height:100vh!important;overflow-y:auto!important;overflow-x:hidden!important;
-            padding:30px 0 18px!important;background:#0D1B8C!important;color:#fff!important;border-right:0!important;
-            border-radius:0 0 16px 0!important;box-shadow:4px 0 15px rgba(0,0,0,.1)!important;scrollbar-width:thin;
-            scrollbar-color:rgba(255,255,255,.3) transparent;transition:none!important;
+            position:fixed!important;inset:16px auto 16px 16px!important;z-index:100!important;display:flex!important;flex-direction:column!important;
+            width:286px!important;height:auto!important;max-height:calc(100vh - 32px)!important;overflow-y:auto!important;overflow-x:hidden!important;
+            padding:14px 12px 12px!important;border:1px solid #e6ebfa!important;border-radius:24px!important;
+            background:#fff!important;color:#16336f!important;box-shadow:0 12px 32px rgba(45,66,128,.13)!important;
+            scrollbar-width:thin;scrollbar-color:#d9e2f5 transparent;transition:transform .25s ease!important;
         }
-        #mainSidebar h2{display:flex!important;align-items:center!important;justify-content:center!important;gap:6px!important;margin:0 12px 8px!important;color:#fff!important;font-size:24px!important;font-weight:700!important;letter-spacing:0!important;text-align:center!important}
-        #mainSidebar h2 .brand-fast{color:#fff!important}
-        #mainSidebar h2 .brand-accent{color:#facc15!important}
-        #mainSidebar .role{margin:0 18px 24px!important;color:rgba(219,234,254,.75)!important;font-size:10px!important;letter-spacing:.12em!important;text-align:center!important;text-transform:uppercase}
+        #mainSidebar,#mainSidebar *{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+        #mainSidebar .sidebar-brand{display:flex;align-items:center;gap:10px;margin:0 6px 26px;padding:0 2px;text-decoration:none}
+        #mainSidebar .sidebar-brand img{display:block;width:52px;height:42px;flex:0 0 52px;object-fit:contain}
+        #mainSidebar .sidebar-brand-copy{display:flex;min-width:0;flex-direction:column;gap:2px}
+        #mainSidebar .sidebar-brand-title{color:#0d2b72;font-size:16px;font-weight:800;letter-spacing:-.035em;line-height:1.1}
+        #mainSidebar .sidebar-brand-unit{color:#45628f;font-size:9px;font-weight:700;letter-spacing:.13em;line-height:1.3;text-transform:uppercase}
+        #mainSidebar .sidebar-nav{display:flex;min-height:80px;flex:1 1 auto;flex-direction:column;gap:17px;padding:0 1px}
+        #mainSidebar .sidebar-group{display:flex;flex-direction:column;gap:4px}
+        #mainSidebar .sidebar-group-title{margin:0 8px 4px;color:#6076a1;font-size:9px;font-weight:800;letter-spacing:.16em;line-height:1.2;text-transform:uppercase}
         #mainSidebar a{
-            position:relative;display:flex!important;align-items:center;gap:0;width:90%;margin:0 auto 8px!important;padding:10px 16px!important;
-            border:1px solid transparent!important;border-radius:14px!important;color:#d1d5db!important;font-size:13.6px!important;
-            font-weight:600!important;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-            animation:none!important;transform:none!important;transition:background-color .2s ease,color .2s ease,border-color .2s ease!important;
+            position:relative;display:flex!important;align-items:center;gap:10px;width:100%;min-height:38px;margin:0!important;padding:5px 8px!important;
+            border:1px solid transparent!important;border-radius:13px!important;background:transparent!important;color:#29436f!important;
+            font-size:12px!important;font-weight:600!important;letter-spacing:0;line-height:1.25;white-space:normal;text-decoration:none;
+            transition:background-color .18s ease,color .18s ease,box-shadow .18s ease!important;
         }
         #mainSidebar a::before,#mainSidebar a::after{content:none!important;display:none!important}
-        #mainSidebar .sidebar-icon {
-            display:inline-grid!important;place-items:center;flex:0 0 1.2rem!important;width:1.2rem!important;min-width:1.2rem!important;
-            height:1.2rem!important;margin-right:12px!important;line-height:0!important;border:0!important;border-radius:0!important;
-            background:transparent!important;color:inherit!important;pointer-events:none!important;animation:none!important;transform:none!important;transition:none!important;
+        #mainSidebar .sidebar-icon{
+            display:inline-grid!important;place-items:center;flex:0 0 26px!important;width:26px!important;min-width:26px!important;height:26px!important;
+            margin:0!important;border:0!important;border-radius:8px!important;background:#eef2ff!important;color:#2853c5!important;
+            line-height:0!important;pointer-events:none!important;transition:background-color .18s ease,color .18s ease!important;
         }
-        #mainSidebar .sidebar-icon svg {
-            display:block!important;flex:0 0 1.2rem!important;width:1.2rem!important;min-width:1.2rem!important;max-width:1.2rem!important;
-            height:1.2rem!important;min-height:1.2rem!important;max-height:1.2rem!important;fill:none!important;stroke:currentColor!important;
-            stroke-width:2!important;stroke-linecap:round!important;stroke-linejoin:round!important;shape-rendering:geometricPrecision;
-            pointer-events:none!important;animation:none!important;transform:none!important;transition:none!important;will-change:auto;
+        #mainSidebar .sidebar-icon svg{
+            display:block!important;width:15px!important;min-width:15px!important;height:15px!important;min-height:15px!important;max-height:15px!important;
+            fill:none!important;stroke:currentColor!important;stroke-width:1.8!important;stroke-linecap:round!important;stroke-linejoin:round!important;
+            shape-rendering:geometricPrecision;pointer-events:none!important;
         }
-        #mainSidebar a:hover:not(.active),#mainSidebar a:focus-visible:not(.active){background:#1727a6!important;color:#fff!important;border-color:transparent!important}
-        #mainSidebar a.active{background:#fff!important;color:#0D1B8C!important;border-radius:9999px!important;font-weight:700!important;box-shadow:none!important}
-        #mainSidebar .notif-badge{margin-left:auto!important;background:#facc15!important;color:#172554!important;min-width:18px!important;border-radius:999px!important;font-size:10px!important;font-weight:800!important}
-        #mainSidebar,#mainSidebar *{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+        #mainSidebar a:hover:not(.active),#mainSidebar a:focus-visible:not(.active){background:#f3f6ff!important;color:#133b9a!important;border-color:#e8edfb!important}
+        #mainSidebar a.active{background:linear-gradient(110deg,#214ee0,#1236b6)!important;color:#fff!important;border-color:transparent!important;
+            border-radius:13px!important;font-weight:700!important;box-shadow:0 8px 16px rgba(28,64,181,.22)!important}
+        #mainSidebar a.active .sidebar-icon{background:rgba(255,255,255,.18)!important;color:#fff!important}
+        #mainSidebar .notif-badge{display:inline-grid!important;place-items:center;margin-left:auto!important;min-width:18px!important;height:18px;
+            padding:0 5px!important;border-radius:999px!important;background:#ffc400!important;color:#322800!important;font-size:10px!important;font-weight:800!important}
+        #mainSidebar .sidebar-bottom{display:flex;flex:0 0 auto;flex-direction:column;gap:12px;margin-top:20px}
+        #mainSidebar .sidebar-progress{padding:13px 12px 12px;border-radius:14px;background:linear-gradient(135deg,#214bd7 0%,#1539b8 100%);color:#fff;
+            box-shadow:0 7px 16px rgba(28,64,181,.17)}
+        #mainSidebar .sidebar-progress-title{display:block;margin-bottom:6px;color:rgba(255,255,255,.86);font-size:10px;font-weight:700;line-height:1.35}
+        #mainSidebar .sidebar-progress-count{display:flex;align-items:baseline;gap:5px;margin-bottom:9px;color:#fff;font-size:10px;font-weight:600}
+        #mainSidebar .sidebar-progress-count strong{font-size:23px;font-weight:800;letter-spacing:-.04em;line-height:1}
+        #mainSidebar .sidebar-progress-track{height:5px;overflow:hidden;border-radius:999px;background:rgba(255,255,255,.22)}
+        #mainSidebar .sidebar-progress-track span{display:block;height:100%;border-radius:inherit;background:#ffc400;transition:width .25s ease}
+        #mainSidebar .sidebar-profile{display:flex;align-items:center;gap:9px;min-width:0;padding:0 4px}
+        #mainSidebar .sidebar-avatar{display:grid;place-items:center;flex:0 0 31px;width:31px;height:31px;border-radius:50%;background:#edf2ff;color:#1642b8;
+            font-size:10px;font-weight:800}
+        #mainSidebar .sidebar-profile-copy{display:flex;min-width:0;flex:1;flex-direction:column;gap:2px}
+        #mainSidebar .sidebar-profile form{margin:0}
+        #mainSidebar .sidebar-profile-name{overflow:hidden;color:#17366f;font-size:10px;font-weight:700;line-height:1.2;text-overflow:ellipsis;white-space:nowrap}
+        #mainSidebar .sidebar-profile-status{color:#7182a3;font-size:9px;line-height:1.2}
+        #mainSidebar .sidebar-logout{display:grid;place-items:center;flex:0 0 31px;width:31px;height:31px;min-height:31px;padding:0!important;
+            border:1px solid #e5eafa!important;border-radius:9px!important;background:#f0f3ff!important;color:#294fba!important;box-shadow:none!important}
+        #mainSidebar .sidebar-logout svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+        #mainSidebar .sidebar-logout:hover{background:#e3eaff!important;color:#133b9a!important;transform:none!important}
+        .content{width:calc(100% - 318px)!important;margin-left:318px!important}
         html{scrollbar-gutter:stable}
-        @media (min-width:651px){
-            .layout{display:block!important}
-            #mainSidebar{position:fixed!important;inset:0 auto 0 0!important;z-index:100!important;height:100vh!important}
-            .content{width:calc(100% - 17rem)!important;margin-left:17rem!important}
+        @media (max-width:900px) and (min-width:651px){
+            #mainSidebar{inset:12px auto 12px 12px!important;width:254px!important;max-height:calc(100vh - 24px)!important;padding:12px 10px 10px!important}
+            .content{width:calc(100% - 278px)!important;margin-left:278px!important}
         }
         @media (max-width:650px){
-            .layout{display:block!important}
             .content{width:100%!important;margin-left:0!important}
-            #mainSidebar{position:fixed!important;inset:0 auto 0 0!important;z-index:100!important;width:17rem!important;height:100vh!important;
-                border-radius:0!important;padding:30px 0 18px!important;transform:translateX(-102%)!important;transition:transform .3s ease!important}
+            #mainSidebar{inset:12px auto 12px 12px!important;width:min(300px,calc(100vw - 24px))!important;max-height:calc(100vh - 24px)!important;
+                border-radius:22px!important;padding:12px 11px 11px!important;transform:translateX(calc(-100% - 24px))!important}
+            body.menu-open{overflow:hidden}
             body.menu-open #mainSidebar{transform:translateX(0)!important}
-            body.menu-open::after{content:"";position:fixed;inset:0;z-index:90!important;background:rgba(0,0,0,.58)}
+            body.menu-open::after{content:"";position:fixed;inset:0;z-index:90!important;background:rgba(23,37,84,.34);backdrop-filter:blur(2px)}
         }
     </style>
     @stack('page-styles')
@@ -452,29 +478,247 @@
     .menu-toggle:focus-visible{outline:3px solid rgba(43,115,254,.28);outline-offset:2px}
     @media(max-width:650px){.menu-toggle{display:inline-flex!important;flex:0 0 38px}}
 </style>
+<style>
+    :root{--app-navy:#102cae;--app-blue:#214fe0;--app-green:#35a96b;--app-waiting:#dbe5ff;--app-canvas:#eaf0fc;--app-muted:#5e719e;--app-border:#dbe4fb;--app-soft:#f0f4ff}
+    body{background:var(--app-canvas)!important;color:#1e315f!important}
+    #mainSidebar{width:280px!important;padding:20px 14px 14px!important;border-color:#edf1fb!important;border-radius:28px!important;box-shadow:0 14px 38px rgba(44,65,127,.12)!important}
+    #mainSidebar .sidebar-brand{gap:13px;margin:0 7px 30px;padding:0 2px}
+    #mainSidebar .sidebar-brand img{width:32px;height:52px;flex-basis:32px}
+    #mainSidebar .sidebar-brand-title{color:var(--app-navy);font-size:19px}
+    #mainSidebar .sidebar-brand-unit{color:var(--app-muted);font-size:11px}
+    #mainSidebar .sidebar-nav{gap:22px}
+    #mainSidebar .sidebar-group{gap:6px}
+    #mainSidebar .sidebar-group-title{margin:0 10px 7px;font-size:11px}
+    #mainSidebar a{min-height:48px;gap:12px;padding:7px 10px!important;border-radius:14px!important;font-size:14px!important}
+    #mainSidebar .sidebar-icon{flex-basis:32px!important;width:32px!important;min-width:32px!important;height:32px!important;border-radius:10px!important}
+    #mainSidebar .sidebar-icon svg{width:19px!important;min-width:19px!important;height:19px!important;min-height:19px!important;max-height:19px!important}
+    #mainSidebar .sidebar-bottom{gap:16px;margin-top:22px}
+    #mainSidebar .sidebar-progress{padding:16px 15px 14px;border-radius:18px}
+    #mainSidebar .sidebar-progress-title{font-size:12px}
+    #mainSidebar .sidebar-progress-count{font-size:12px}
+    #mainSidebar .sidebar-progress-count strong{font-size:28px}
+    #mainSidebar .sidebar-profile{gap:10px}
+    #mainSidebar .sidebar-avatar{flex-basis:38px;width:38px;height:38px;font-size:13px}
+    #mainSidebar .sidebar-profile-name{font-size:12px}
+    #mainSidebar .sidebar-profile-status{font-size:11px}
+    #mainSidebar .sidebar-logout{flex-basis:38px;width:38px;height:38px;min-height:38px}
+    .content{width:calc(100% - 312px)!important;margin-left:312px!important}
+    .content>header.page-topbar{position:static;display:flex;align-items:center;justify-content:space-between;gap:20px;min-height:96px;padding:17px 16px 14px 8px;border:0;background:transparent;box-shadow:none;backdrop-filter:none}
+    .page-heading-copy{display:flex;min-width:0;flex-direction:column;gap:5px}
+    .content>header.page-topbar .header-title{align-items:center;gap:12px;min-width:0;flex:1 1 auto}
+    .content>header.page-topbar .header-title>strong,.content>header.page-topbar .page-heading-copy>strong{color:var(--app-navy);font-size:26px;font-weight:800;letter-spacing:-.035em;line-height:1.15}
+    .page-description{color:var(--app-muted);font-size:14px;font-weight:500;line-height:1.4}
+    .page-actions{display:flex;align-items:center;justify-content:flex-end;gap:10px;flex:0 0 auto}
+    .main-content{min-width:0;padding:0 16px 24px 0!important;background:transparent!important}
+    .main-content .box,.main-content.main-dashboard .modern-panel,.main-content.main-dashboard .metric-card,.main-content .stat-card,.main-content .summary-card{box-shadow:0 12px 30px rgba(50,72,134,.07)!important}
+    .main-content .box{border:0!important;border-radius:24px!important;background:#fff!important}
+    .main-content .summary-cards{grid-template-columns:repeat(7,minmax(0,1fr));gap:12px;margin:0 0 16px}
+    .main-content .summary-card{min-width:0;min-height:80px;padding:15px 16px;border:0!important;border-radius:18px!important;background:#fff!important}
+    .main-content .summary-card-total{background:linear-gradient(135deg,#214ee0,#102eaf)!important;box-shadow:0 14px 28px rgba(33,78,224,.22)!important}
+    .main-content .summary-card-label{color:var(--app-muted);font-size:11px;letter-spacing:.045em}
+    .main-content .summary-card-total .summary-card-label{color:#d4e0ff}
+    .main-content .summary-card strong{color:var(--app-navy);font-size:28px}
+    .main-content .summary-card-total strong{color:#fff}
+    .main-content .filter{display:flex;align-items:center;gap:12px;margin:0 0 16px;padding:16px 20px!important;border:0!important;border-radius:24px!important;background:#fff!important;box-shadow:0 10px 28px rgba(50,72,134,.06)!important}
+    .main-content .filter::before,.main-content .filter::after{display:none!important;content:none!important}
+    .main-content .filter input,.main-content .filter select{min-width:0;min-height:44px;padding:9px 14px!important;border:1px solid #d5dffc!important;border-radius:13px!important;background:#f8faff!important;color:#1f315f!important;font-size:13px!important;box-shadow:none!important}
+    .main-content .filter input[type=text]{flex:1 1 220px}
+    .main-content .filter select{flex:0 1 auto}
+    .main-content .filter input::placeholder{color:#7c8493;opacity:1}
+    .main-content .filter button[type=submit],.main-content .filter .btn:not(.btn-abu),.page-actions .btn-primary,.page-actions button{min-height:44px;padding:9px 18px!important;border:0!important;border-radius:13px!important;background:linear-gradient(110deg,#214ee0,#102eaf)!important;color:#fff!important;font-size:13px!important;font-weight:750!important;box-shadow:0 10px 20px rgba(33,78,224,.2)!important}
+    .main-content .filter .btn.btn-abu{min-height:44px;padding:9px 18px!important;border:1px solid #cad7ff!important;border-radius:13px!important;background:#fff!important;color:var(--app-navy)!important;font-size:13px!important;font-weight:700!important;box-shadow:none!important}
+    .main-content .kartu{overflow:hidden;margin:0 0 16px;padding:20px!important;border:0!important;border-radius:26px!important;background:#fff!important;box-shadow:0 12px 30px rgba(50,72,134,.07)!important}
+    .main-content .kartu-judul{min-height:0;margin:0 0 14px!important;padding:0!important;border:0!important;border-radius:0!important;background:transparent!important;color:var(--app-navy)!important;font-size:16px!important;letter-spacing:0!important}
+    .main-content .kartu-judul>span:first-child{color:var(--app-navy)!important}
+    .main-content .kartu-judul>span:first-child small{display:block;margin-top:5px;color:var(--app-muted)!important;font-size:13px;font-weight:500;letter-spacing:0}
+    .main-content .kartu-judul .pill,.main-content .pill{border:0!important;border-radius:999px!important;background:#e7edff!important;color:#2147c2!important;font-size:11px!important;font-weight:750!important}
+    .main-content .scroll{width:100%;max-width:100%;overflow:auto!important;border:1px solid #e0e7f8!important;border-radius:16px!important;background:#fff!important;scrollbar-color:#aab6d5 #f4f6fc}
+    .main-content .tabel{min-width:100%;width:max-content;border:0!important;border-collapse:separate!important;border-spacing:0!important;border-radius:0!important;background:#fff!important;color:#263867!important;font-size:13px!important}
+    .main-content .tabel th,.main-content .tabel td{padding:15px 14px!important;border-right:0!important;border-bottom:1px solid #e8edf8!important;color:#263867!important;vertical-align:middle}
+    .main-content .tabel thead th,.main-content .tabel thead th.grup,.main-content .tabel thead th.sub{background:#f0f4ff!important;color:#4d5f8f!important;border-color:#e3e9f8!important;font-size:11px!important;font-weight:800!important;letter-spacing:.06em!important}
+    .main-content .tabel thead th.grup{background:#e7edff!important;color:#2147c2!important;text-align:center}
+    .main-content .tabel tbody tr:nth-child(even){background:#fff!important}
+    .main-content .tabel tbody tr:hover{background:#f7f9ff!important;box-shadow:none!important}
+    .main-content .tabel tbody td b{color:var(--app-navy)!important}
+    .main-content .tabel .ikon-dtl,.main-content .tabel .detail-link{width:34px;height:34px;min-width:34px;min-height:34px;padding:7px!important;border:0!important;border-radius:11px!important;background:#e7edff!important;color:#214fe0!important;box-shadow:none!important}
+    .main-content .tabel .ikon-syarat{min-width:34px;min-height:34px;border:0!important;border-radius:11px!important;background:#fff3d4!important;color:#b56e00!important}
+    .main-content .pagination-footer,.main-content .halaman{border:0!important;color:var(--app-muted)!important}
+    .main-content .pagination-footer{margin:14px 0 0!important;padding:0!important}
+    .main-content .pagination-footer .halaman a,.main-content .halaman a{border:0!important;border-radius:11px!important;background:#f0f4ff!important;color:#344a81!important;box-shadow:none!important}
+    .main-content .pagination-footer .halaman span[aria-current] span,.main-content .halaman span[aria-current] span{border:0!important;border-radius:11px!important;background:#214ee0!important;color:#fff!important}
+    .main-content .statistik{grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:0 0 16px}
+    .main-content .stat-card{min-height:86px;padding:16px 20px;border:0!important;border-radius:20px!important;background:#fff!important}
+    .main-content .stat-card small{color:var(--app-muted)!important;font-size:12px!important}
+    .main-content .stat-card strong{color:var(--app-navy)!important;font-size:28px!important}
+    .main-content .main-report-table-title{margin:0 0 14px;color:var(--app-navy);font-size:16px;font-weight:800}
+    .main-content .laporan-scroll+.halaman{display:flex;justify-content:space-between;gap:16px;margin-top:14px}
+    .page-actions .btn-excel{min-height:44px;padding:10px 18px!important;border:1px solid #cad7ff!important;border-radius:13px!important;background:#fff!important;color:var(--app-navy)!important;font-size:13px!important;font-weight:750!important;box-shadow:none!important}
+    .main-content.main-dashboard .modern-dashboard{max-width:none;margin:0;padding:20px 0 16px;color:#1e315f}
+    body.dashboard-page .page-topbar{display:none!important}
+    body.dashboard-page{background:var(--app-canvas)!important;color:#1e315f!important}
+    body.dashboard-page main.main-content{padding:0 16px 24px 0!important;background:transparent!important}
+    .main-content.main-dashboard .dashboard-topline{display:flex;align-items:center;justify-content:space-between;gap:16px;margin:0 0 20px;padding:5px 8px 0}
+    .main-content.main-dashboard .dashboard-topline>div{display:flex;min-width:0;flex-direction:column;gap:5px}
+    .main-content.main-dashboard .dashboard-topline h1{margin:0;color:var(--app-navy)!important;font-size:26px!important;font-weight:800;letter-spacing:-.035em}
+    .main-content.main-dashboard .dashboard-topline p{margin:0;color:var(--app-muted)!important;font-size:14px}
+    .main-content.main-dashboard .dashboard-primary{display:inline-flex;align-items:center;padding:13px 18px;border-radius:13px;background:linear-gradient(110deg,#214ee0,#102eaf)!important;color:#fff!important;font-size:14px;font-weight:700;text-decoration:none;white-space:nowrap;box-shadow:0 10px 20px rgba(33,78,224,.2);transition:transform .18s ease,box-shadow .18s ease}
+    .main-content.main-dashboard .dashboard-primary:hover{color:#fff;transform:translateY(-1px);box-shadow:0 12px 24px rgba(33,78,224,.24)}
+    .main-content.main-dashboard .dashboard-primary span{margin-left:8px;font-size:16px}
+    .main-content.main-dashboard .metric-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:16px}
+    .main-content.main-dashboard .metric-card{position:relative;min-width:0;min-height:152px;padding:18px 20px;border:0!important;border-radius:24px!important;background:#fff!important;box-shadow:0 12px 30px rgba(50,72,134,.07)!important}
+    .main-content.main-dashboard .metric-card:nth-child(1){background:#fff!important}
+    .main-content.main-dashboard .metric-label{display:flex;align-items:center;gap:8px;color:var(--app-muted)!important;font-size:12px;font-weight:750;text-transform:uppercase;letter-spacing:.035em}
+    .main-content.main-dashboard .metric-icon{display:grid;place-items:center;width:38px;height:38px;border-radius:13px;background:#e9efff!important;color:#214fe0!important}
+    .main-content.main-dashboard .metric-card:nth-child(2) .metric-icon{background:#fff1c9!important;color:#a56a00!important}
+    .main-content.main-dashboard .metric-card:nth-child(3) .metric-icon{background:#e4f7fc!important;color:#1284a8!important}
+    .main-content.main-dashboard .metric-card:nth-child(4) .metric-icon{background:#dcf4e8!important;color:#197847!important}
+    .main-content.main-dashboard .metric-card strong{display:block;margin:13px 0 3px;color:var(--app-navy)!important;font-size:34px;line-height:1}
+    .main-content.main-dashboard .metric-card small{color:var(--app-muted)!important;font-size:12px}
+    .main-content.main-dashboard .dashboard-layout{display:grid;grid-template-columns:minmax(0,1.8fr) minmax(300px,.9fr);gap:16px}
+    .main-content.main-dashboard .dashboard-main-column,.main-content.main-dashboard .dashboard-side-column{display:grid;align-content:start;gap:16px;min-width:0}
+    .main-content.main-dashboard .modern-panel{min-width:0;padding:20px;border:0!important;border-radius:24px!important;background:#fff!important;box-shadow:0 12px 30px rgba(50,72,134,.07)!important}
+    .main-content.main-dashboard .panel-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:15px}
+    .main-content.main-dashboard .panel-heading h2{margin:0 0 4px;color:var(--app-navy)!important;font-size:16px}
+    .main-content.main-dashboard .panel-heading p{margin:0;color:var(--app-muted)!important;font-size:13px}
+    .main-content.main-dashboard .panel-heading a{color:#214fe0!important;font-size:12px;font-weight:700;text-decoration:none}
+    .main-content.main-dashboard .modern-table-wrap{min-width:0;overflow:auto;border:1px solid #e0e7f8;border-radius:16px}
+    .main-content.main-dashboard .modern-table{width:100%;border-collapse:collapse;font-size:13px}
+    .main-content.main-dashboard .modern-table th{padding:14px;color:#4d5f8f!important;background:#f0f4ff;border:0;font-size:11px;text-align:left;letter-spacing:.05em}
+    .main-content.main-dashboard .modern-table td{padding:14px;color:#263867!important;border-bottom:1px solid #e8edf8!important;vertical-align:middle}
+    .main-content.main-dashboard .modern-table tbody tr{transition:background-color .15s ease}
+    .main-content.main-dashboard .modern-table tbody tr:hover{background:#f7f9ff}
+    .main-content.main-dashboard .modern-table tr:last-child td{border-bottom:0}
+    .main-content.main-dashboard .modern-table td b{color:var(--app-navy)!important}
+    .main-content.main-dashboard .modern-table .agenda{color:#214fe0!important}
+    .main-content.main-dashboard .modern-table td b,.main-content.main-dashboard .modern-table td small{display:block}
+    .main-content.main-dashboard .modern-table td small{margin-top:3px;color:var(--app-muted);font-size:11px}
+    .main-content.main-dashboard .status-tag{display:inline-block;padding:4px 8px;border-radius:999px;font-size:10px;font-weight:750;line-height:1.2}
+    .main-content.main-dashboard .status-tag.stage{background:#fff1c9!important;color:#9a6500!important}
+    .main-content.main-dashboard .status-dot{display:inline-block;width:8px;height:8px;margin-right:6px;border-radius:50%;background:#35a96b}
+    .main-content.main-dashboard .donut-wrap{display:flex;align-items:center;gap:18px;min-width:0}
+    .main-content.main-dashboard .donut{display:grid;place-items:center;flex:0 0 126px;width:126px;height:126px;border-radius:50%}
+    .main-content.main-dashboard .donut>div{display:grid;place-items:center;width:82px;height:82px;border-radius:50%;background:#fff}
+    .main-content.main-dashboard .donut b{color:var(--app-navy)!important}
+    .main-content.main-dashboard .donut small{color:var(--app-muted);font-size:11px}
+    .main-content.main-dashboard .legend,.main-content.main-dashboard .transaction-list{display:grid;flex:1;gap:12px;min-width:0}
+    .main-content.main-dashboard .legend>div,.main-content.main-dashboard .transaction-list>div{display:flex;align-items:center;gap:7px;min-width:0;color:#263867!important;font-size:12px}
+    .main-content.main-dashboard .legend b,.main-content.main-dashboard .transaction-list b{color:#1e315f!important}
+    .main-content.main-dashboard .legend b{margin-left:auto}
+    .main-content.main-dashboard .legend-dot{flex:0 0 8px;width:8px;height:8px;border-radius:50%}
+    .main-content.main-dashboard .legend-dot-waiting{background:var(--app-waiting)}
+    .main-content.main-dashboard .legend-dot-sent{background:var(--app-blue)}
+    .main-content.main-dashboard .legend-dot-complete{background:var(--app-green)}
+    .main-content.main-dashboard .transaction-list{gap:18px}
+    .main-content.main-dashboard .transaction-list>div{position:relative;flex-wrap:wrap;gap:8px}
+    .main-content.main-dashboard .transaction-list>div i{display:block;order:3;width:100%;height:7px;overflow:hidden;border-radius:999px;background:#e7edff}
+    .main-content.main-dashboard .transaction-list>div i span{display:block;height:100%;border-radius:inherit;background:var(--app-blue)}
+    .main-content .summary-card:not(.summary-card-total) .summary-card-label:before{display:inline-block;width:8px;height:8px;margin:0 7px 1px 0;border-radius:50%;background:#214fe0;content:""}
+    .main-content .summary-card:nth-child(3) .summary-card-label:before{background:#8051df}
+    .main-content .summary-card:nth-child(5) .summary-card-label:before{background:#e8a000}
+    .main-content .summary-card:nth-child(6) .summary-card-label:before{background:#16a05a}
+    .main-content .summary-card:nth-child(7) .summary-card-label:before{background:#91a0bf}
+    .main-content .laporan-filter-box{margin:0 0 16px!important;padding:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important}
+    .page-actions .table-send-button{display:inline-flex;align-items:center;gap:10px;white-space:nowrap}
+    .page-actions .btn-excel{display:inline-flex;align-items:center;gap:10px;text-decoration:none}
+    .page-actions svg{display:block;width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+    @media(max-width:1100px){.main-content .summary-cards{grid-template-columns:repeat(4,minmax(0,1fr))}.main-content.main-dashboard .dashboard-layout{grid-template-columns:1fr}.main-content.main-dashboard .dashboard-side-column{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(max-width:1000px){.main-content.main-dashboard .metric-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(max-width:900px) and (min-width:651px){#mainSidebar{inset:12px auto 12px 12px!important;width:254px!important;max-height:calc(100vh - 24px)!important;padding:14px 11px 12px!important}.content{width:calc(100% - 278px)!important;margin-left:278px!important}.content>header.page-topbar{padding-right:12px}.main-content{padding-right:12px!important;padding-left:0!important}}
+    @media(max-width:650px){.content{width:100%!important;margin-left:0!important}.content>header.page-topbar{min-height:82px;padding:12px 14px}.content>header.page-topbar .header-title{align-items:flex-start}.content>header.page-topbar .header-title>strong,.content>header.page-topbar .page-heading-copy>strong{font-size:22px}.page-description{font-size:12px}.page-actions{gap:6px}.page-actions .table-send-button{max-width:150px;white-space:normal}.main-content{padding:0 12px 18px!important}.main-content .summary-cards,.main-content .statistik{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.main-content .summary-card{min-height:74px;padding:12px}.main-content .summary-card strong{font-size:23px}.main-content .filter{align-items:stretch;gap:9px;padding:14px!important}.main-content .filter input,.main-content .filter select,.main-content .filter button,.main-content .filter a{width:100%;flex:1 1 100%}.main-content .kartu{padding:14px!important;border-radius:20px!important}.main-content .tabel th,.main-content .tabel td{padding:12px 10px!important}body.dashboard-page main.main-content{padding:0 12px 18px!important}.main-content.main-dashboard .dashboard-topline{align-items:flex-start;flex-wrap:wrap;gap:12px;padding:2px}.main-content.main-dashboard .dashboard-topline>div{flex-direction:row;align-items:flex-start;gap:10px;width:100%}.main-content.main-dashboard .dashboard-topline .dashboard-heading-copy{flex-direction:column;gap:5px}.main-content.main-dashboard .dashboard-topline .menu-toggle{display:inline-flex!important;flex:0 0 38px;margin-top:2px}.main-content.main-dashboard .dashboard-topline h1{font-size:21px!important}.main-content.main-dashboard .dashboard-primary{width:auto;margin-left:auto;padding:10px 13px;font-size:12px}.main-content.main-dashboard .metric-grid,.main-content.main-dashboard .dashboard-side-column{grid-template-columns:repeat(2,minmax(0,1fr))}.main-content.main-dashboard .metric-card{min-height:126px;padding:14px;border-radius:18px!important}.main-content.main-dashboard .metric-card strong{font-size:29px}.main-content.main-dashboard .metric-label{align-items:flex-start;font-size:10px}.main-content.main-dashboard .metric-icon{width:32px;height:32px;flex:0 0 32px}.main-content.main-dashboard .modern-panel{padding:14px;border-radius:19px!important}.main-content.main-dashboard .donut-wrap{align-items:flex-start;flex-direction:column}.main-content.main-dashboard .transaction-list{gap:14px}.main-content .pagination-footer{align-items:flex-start;flex-direction:column}.main-content .laporan-scroll+.halaman{align-items:flex-start;flex-direction:column}}
+</style>
 </head>
-<body>
+<body @class([
+    'dashboard-page' => request()->routeIs('dashboard'),
+    'notification-screen' => request()->routeIs('notifikasi'),
+])>
 <div class="layout">
     <aside id="mainSidebar">
-        <h2><span class="brand-fast">FAST</span> <span class="brand-accent">ON 360</span></h2>
-        <div class="role">{{ auth()->user()->role?->name ?? auth()->user()->user_id }}</div>
-
         @php
-            $sidebarRoleCode = (string) auth()->user()->role?->role_code;
-            $isVendorRole = auth()->user()->role?->type === 'VENDOR' || str_starts_with($sidebarRoleCode, 'VENDOR');
+            $sidebarUser = auth()->user();
+            $sidebarUser->loadMissing(['role.permissions', 'role.ulp']);
+            $sidebarRole = $sidebarUser->role;
+            $sidebarRoleCode = (string) $sidebarRole?->role_code;
+            $sidebarIsVendorRole = $sidebarRole?->type === 'VENDOR' || str_starts_with($sidebarRoleCode, 'VENDOR');
+            $sidebarPermissions = $sidebarRole?->permissions?->pluck('name')->all() ?? [];
+            $sidebarUnreadCount = \App\Models\AppNotification::where('user_id', $sidebarUser->id)->whereNull('read_at')->count();
+            $sidebarMenuByRoute = collect(config('menu'))
+                ->filter(fn ($item) => in_array($item['permission'], $sidebarPermissions, true)
+                    && ! ($sidebarIsVendorRole && $item['route'] === 'laporan'))
+                ->keyBy('route');
+            $sidebarGroups = [
+                ['title' => 'UTAMA', 'routes' => ['dashboard', 'laporan', 'pbpd.index', 'pbpd.upload']],
+                ['title' => 'PERLUASAN', 'routes' => ['perluasan.jtm', 'perluasan.jtr', 'tanpa.perluasan']],
+                ['title' => 'OPERASIONAL', 'routes' => ['vendor.tiang', 'stok.tiang', 'vendor.tiang.history', 'vendor.konstruksi', 'vendor.konstruksi.history', 'pengoperasian']],
+                ['title' => 'ALAT BANTU', 'routes' => ['pencarian', 'notifikasi']],
+            ];
+            $sidebarUlpName = $sidebarRole?->ulp?->nama;
+            $sidebarUnitLabel = $sidebarUlpName
+                ? 'ULP '.$sidebarUlpName
+                : ($sidebarIsVendorRole ? 'MITRA VENDOR' : 'UP3 MADURA');
+            $sidebarProfileName = $sidebarUlpName
+                ? 'ULP '.$sidebarUlpName
+                : ($sidebarRole?->name ?? $sidebarUser->user_id);
+            $sidebarInitials = strtoupper(substr(trim($sidebarProfileName), 0, 2));
+
+            $sidebarProgressQuery = \App\Models\PelangganPbpd::query()->statusTampil();
+            if ($sidebarRole?->ulp_id) {
+                $sidebarProgressQuery->where('ulp_id', $sidebarRole->ulp_id);
+            } elseif ($sidebarIsVendorRole) {
+                $sidebarProgressQuery->where(function ($query) use ($sidebarUser) {
+                    $query->whereHas('pengirimanVendor.vendor', fn ($vendor) => $vendor->where('user_id', $sidebarUser->id))
+                        ->orWhereHas('pengirimanKonstruksi.vendor', fn ($vendor) => $vendor->where('user_id', $sidebarUser->id));
+                });
+            } elseif (! in_array('pbpd.view', $sidebarPermissions, true)) {
+                $sidebarProgressQuery->whereRaw('1 = 0');
+            }
+            $sidebarTotal = (clone $sidebarProgressQuery)->count();
+            if ($sidebarIsVendorRole) {
+                $sidebarProgressCount = (clone $sidebarProgressQuery)->where(function ($query) {
+                    $query->whereHas('laporanVendor', fn ($report) => $report->whereNotNull('vendor_report_at'))
+                        ->orWhereHas('pengirimanKonstruksi', fn ($report) => $report->whereNotNull('laporan_at'));
+                })->count();
+                $sidebarProgressTitle = 'Agenda vendor';
+                $sidebarProgressCaption = 'dari '.$sidebarTotal.' agenda selesai';
+            } else {
+                $sidebarProgressCount = (clone $sidebarProgressQuery)->whereNotNull('tahap')->where('tahap', '!=', 'ULP')->count();
+                $sidebarProgressTitle = $sidebarRole?->ulp_id ? 'Progres pengiriman ULP' : 'Data dalam alur proses';
+                $sidebarProgressCaption = 'dari '.$sidebarTotal.' data '.($sidebarRole?->ulp_id ? 'terkirim' : 'diproses');
+            }
+            $sidebarProgressPercent = $sidebarTotal > 0
+                ? min(100, (int) round(($sidebarProgressCount / $sidebarTotal) * 100))
+                : 0;
+            $sidebarCanTrackProgress = in_array('pbpd.view', $sidebarPermissions, true) || $sidebarIsVendorRole;
         @endphp
-        @foreach (config('menu') as $m)
-            @if (!($isVendorRole && $m['route'] === 'laporan'))
-                @can($m['permission'])
-                    <a href="{{ route($m['route']) }}"
-                       class="{{ request()->routeIs($m['route']) ? 'active' : '' }}">
+
+        <div class="sidebar-brand">
+            <img src="{{ asset('images/faston-favicon.png') }}" alt="Logo FAST ON">
+            <div class="sidebar-brand-copy">
+                <span class="sidebar-brand-title">FAST ON 360</span>
+                <span class="sidebar-brand-unit">{{ $sidebarUnitLabel }}</span>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav" aria-label="Navigasi utama">
+            @foreach ($sidebarGroups as $group)
+                @php
+                    $groupItems = collect($group['routes'])
+                        ->map(fn ($routeName) => $sidebarMenuByRoute->get($routeName))
+                        ->filter();
+                @endphp
+                @if ($groupItems->isNotEmpty())
+                    <div class="sidebar-group">
+                        <div class="sidebar-group-title">{{ $group['title'] }}</div>
+                        @foreach ($groupItems as $m)
+                            <a href="{{ route($m['route']) }}"
+                               class="{{ request()->routeIs($m['route']) ? 'active' : '' }}"
+                               @if (request()->routeIs($m['route'])) aria-current="page" @endif>
                         <span class="sidebar-icon" aria-hidden="true">
                             @switch($m['route'])
                                 @case('dashboard')
                                     <svg class="sidebar-modern-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m3 10 9-7 9 7"/><path d="M5 9.5V21h14V9.5"/><path d="M9 21v-6h6v6"/></svg>
                                     @break
                                 @case('pbpd.index')
-                                    <svg class="sidebar-modern-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/></svg>
+                                    <svg class="sidebar-modern-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3.5" y="3.5" width="7" height="7" rx="1.2"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.2"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.2"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.2"/></svg>
                                     @break
                                 @case('laporan')
                                     <svg class="sidebar-modern-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h6"/></svg>
@@ -489,11 +733,15 @@
                                 @case('pbpd.upload')
                                     <svg class="sidebar-modern-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 16V4"/><path d="m7 9 5-5 5 5"/><path d="M5 14v6h14v-6"/></svg>
                                     @break
-                                @case('vendor.tiang')
-                                @case('vendor.tiang.history')
                                 @case('stok.tiang')
-                                @case('vendor.konstruksi')
+                                    <svg class="sidebar-modern-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 20V9M10 20V4M16 20v-7M22 20H2"/><path d="M3 6h2M9 2h2M15 10h2"/></svg>
+                                    @break
+                                @case('vendor.tiang.history')
                                 @case('vendor.konstruksi.history')
+                                    <svg class="sidebar-modern-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2M5 5l-2 3"/></svg>
+                                    @break
+                                @case('vendor.tiang')
+                                @case('vendor.konstruksi')
                                     <svg class="sidebar-modern-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 21h18M5 21V9l7-5 7 5v12"/><path d="M9 21v-5h6v5M8 10h.01M12 10h.01M16 10h.01"/></svg>
                                     @break
                                 @case('pengoperasian')
@@ -510,29 +758,69 @@
                             @endswitch
                         </span>
                         {{ $m['label'] }}
-                        @if ($m['route'] === 'notifikasi' && auth()->check())
-                            <span class="notif-badge">
-                                {{ \App\Models\AppNotification::where('user_id', auth()->id())->whereNull('read_at')->count() }}
-                            </span>
+                        @if ($m['route'] === 'notifikasi' && $sidebarUnreadCount > 0)
+                            <span class="notif-badge">{{ $sidebarUnreadCount > 99 ? '99+' : $sidebarUnreadCount }}</span>
                         @endif
                     </a>
-                @endcan
+                        @endforeach
+                    </div>
+                @endif
+            @endforeach
+        </nav>
+
+        <div class="sidebar-bottom">
+            @if ($sidebarCanTrackProgress)
+                <section class="sidebar-progress" aria-label="Ringkasan progres data">
+                    <span class="sidebar-progress-title">{{ $sidebarProgressTitle }}</span>
+                    <div class="sidebar-progress-count">
+                        <strong>{{ $sidebarProgressCount }}</strong>
+                        <span>{{ $sidebarProgressCaption }}</span>
+                    </div>
+                    <div class="sidebar-progress-track" role="progressbar" aria-label="Progres data" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ $sidebarProgressPercent }}">
+                        <span style="width: {{ $sidebarProgressPercent }}%"></span>
+                    </div>
+                </section>
             @endif
-        @endforeach
+
+            <div class="sidebar-profile">
+                <span class="sidebar-avatar" aria-hidden="true">{{ $sidebarInitials }}</span>
+                <div class="sidebar-profile-copy">
+                    <span class="sidebar-profile-name">{{ $sidebarProfileName }}</span>
+                    <span class="sidebar-profile-status">{{ $sidebarUser->aktif ? 'Pengguna aktif' : 'Pengguna nonaktif' }}</span>
+                </div>
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="sidebar-logout" aria-label="Keluar" title="Keluar">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 17l5-5-5-5M15 12H3"/><path d="M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6"/></svg>
+                    </button>
+                </form>
+            </div>
+        </div>
     </aside>
 
     <div class="content">
-        <header>
+        <header class="page-topbar">
             <div class="header-title">
-                <button type="button" class="menu-toggle" id="menuToggle" aria-label="Buka menu" aria-controls="mainSidebar" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
-                <strong>@yield('judul', 'FAST ON')</strong>
+                @unless (request()->routeIs('dashboard'))
+                    <button type="button" class="menu-toggle" id="menuToggle" aria-label="Buka menu" aria-controls="mainSidebar" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+                @endunless
+                <div class="page-heading-copy">
+                    <strong>@yield('judul', 'FAST ON')</strong>
+                    @hasSection('deskripsi')
+                        <span class="page-description">@yield('deskripsi')</span>
+                    @endif
+                </div>
             </div>
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <button type="submit">Keluar</button>
-            </form>
+            <div class="page-actions">@yield('header-actions')</div>
         </header>
-        <main>
+        <main @class([
+            'main-content',
+            'main-dashboard' => request()->routeIs('dashboard'),
+            'main-pbpd' => request()->routeIs('pbpd.index'),
+            'main-laporan' => request()->routeIs('laporan'),
+            'main-notification' => request()->routeIs('notifikasi'),
+            'main-expansion' => request()->routeIs('perluasan.jtm', 'perluasan.jtr', 'tanpa.perluasan'),
+        ])>
             @if (session('error'))
                 <div class="global-flash-error" role="alert">{{ session('error') }}</div>
             @endif
@@ -540,11 +828,6 @@
         </main>
     </div>
 </div>
-
-
-
-
-
 
 <script>
     const menuToggle = document.getElementById('menuToggle');
@@ -573,9 +856,9 @@
     });
 
     document.addEventListener('click', (event) => {
-        if (document.body.classList.contains('menu-open') && event.target === document.body) {
-            setSidebarOpen(false);
-        }
+        if (!mobileViewport.matches || !document.body.classList.contains('menu-open')) return;
+        if (mainSidebar?.contains(event.target) || menuToggle?.contains(event.target)) return;
+        setSidebarOpen(false);
     });
 
     document.addEventListener('keydown', (event) => {
