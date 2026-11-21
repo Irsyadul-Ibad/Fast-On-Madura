@@ -139,7 +139,7 @@ class PbpdController extends Controller
     public function updateKelayakan(Request $request, PelangganPbpd $pelanggan): RedirectResponse
     {
         abort_unless($this->currentUser()->role?->role_code === '5170REN', 403);
-        abort_unless(in_array($pelanggan->tahap, ['PERENCANAAN', 'VENDOR_TIANG'], true), 403);
+        abort_unless($pelanggan->tahap === 'VENDOR_TIANG' && $pelanggan->pengirimanVendor()->exists(), 403);
 
         $data = $request->validate([
             'status_kelayakan' => ['required', 'in:LAYAK,TIDAK LAYAK'],
@@ -154,7 +154,7 @@ class PbpdController extends Controller
 
         $pathsToDelete = DB::transaction(function () use ($pelanggan) {
             $pelanggan = PelangganPbpd::query()->whereKey($pelanggan->id)->lockForUpdate()->firstOrFail();
-            abort_unless(in_array($pelanggan->tahap, ['PERENCANAAN', 'VENDOR_TIANG'], true), 403);
+            abort_unless($pelanggan->tahap === 'VENDOR_TIANG' && $pelanggan->pengirimanVendor()->exists(), 403);
 
             $paths = [];
             $collectPaths = function (mixed $value) use (&$paths) {
@@ -426,10 +426,6 @@ class PbpdController extends Controller
     {
         abort_unless($this->currentUser()->role?->role_code === '5170REN', 403);
 
-        $statusKelayakan = $pelanggan->status_kelayakan
-            ?? $pelanggan->pengirimanVendor()->value('status_kelayakan');
-        abort_unless($statusKelayakan === 'LAYAK', 422, 'Data harus dinyatakan layak sebelum dikirim ke vendor.');
-
         $data = $request->validate([
             'vendor_id' => ['required', 'exists:vendors,id'],
             'wo_tiang' => ['nullable', 'file', 'mimes:pdf,doc,docx,xls,xlsx,jpg,jpeg,png', 'max:10240'],
@@ -449,11 +445,12 @@ class PbpdController extends Controller
         ];
         $woFile = $request->file('wo_tiang');
 
-        $result = DB::transaction(function () use ($data, $pelanggan, $vendor, $pemakaianBaru, $jenisTiangTm, $woFile, $statusKelayakan) {
+        $result = DB::transaction(function () use ($data, $pelanggan, $vendor, $pemakaianBaru, $jenisTiangTm, $woFile) {
             $pengiriman = PengirimanVendor::query()
                 ->where('pelanggan_id', $pelanggan->id)
                 ->lockForUpdate()
                 ->first();
+            $pengirimanBaru = ! $pengiriman;
             $laporanSaatIni = $pelanggan->laporanVendor()->lockForUpdate()->first();
 
             if ($pengiriman && filled($laporanSaatIni?->vendor_report_at)) {
@@ -578,7 +575,7 @@ class PbpdController extends Controller
 
             $pengiriman->fill([
                 'vendor_id' => $vendor->id,
-                'status_kelayakan' => $statusKelayakan,
+                'status_kelayakan' => 'LAYAK',
                 'dikirim_oleh' => Auth::id(),
                 'dikirim_at' => now(),
             ]);
@@ -593,7 +590,11 @@ class PbpdController extends Controller
                 $laporan->update(['vendor_id' => $vendor->id]);
             }
 
-            $pelanggan->update(['tahap' => 'VENDOR_TIANG']);
+            $pelangganUpdate = ['tahap' => 'VENDOR_TIANG'];
+            if ($pengirimanBaru) {
+                $pelangganUpdate['status_kelayakan'] = null;
+            }
+            $pelanggan->update($pelangganUpdate);
 
             return ['success' => true];
         });

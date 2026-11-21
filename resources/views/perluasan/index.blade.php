@@ -176,7 +176,7 @@
                                     data-jenis-panel-meter="{{ $m?->jenis_panel_meter }}"
                                     data-jml-panel-meter="{{ $m?->jml_panel_meter }}"
                                     data-vendor-id="{{ $pv?->vendor_id }}"
-                                    data-kelayakan="{{ $row->status_kelayakan ?? $pv?->status_kelayakan }}"
+                                    data-kelayakan="{{ $row->status_kelayakan }}"
                                     data-konstruksi-vendor="{{ $pk?->vendor?->nama }}"
                                     data-konstruksi-vendor-id="{{ count($pk?->berkas_paths ?? []) > 0 ? $pk?->vendor_id : '' }}"
                                     data-konstruksi-has-delivery="{{ count($pk?->berkas_paths ?? []) > 0 ? '1' : '0' }}"
@@ -465,7 +465,6 @@
                     <form id="resultUploadForm" method="POST" action="{{ request()->url() }}" enctype="multipart/form-data" hidden>
                         @csrf
                         <input type="hidden" name="pelanggan_id" id="resultPelangganId">
-                        <input type="hidden" name="status_kelayakan" value="LAYAK">
                         <input type="file" name="berkas_hasil[]" multiple required accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png">
                         <button type="submit" class="btn">Upload Berkas Kelayakan</button>
                     </form>
@@ -863,11 +862,12 @@
                     setProcess('Jaringan', button.dataset.prosesJaringan, button.dataset.prosesJaringanDate);
                     const qualificationStatus = button.dataset.kelayakan || '';
                     setText('planningEligibilityStatus', qualificationStatus || 'Belum ditentukan');
+                    const canDecideEligibility = button.dataset.tahap === 'VENDOR_TIANG' && Boolean(button.dataset.vendorId);
                     if (planningEligibilityForm) {
-                        planningEligibilityForm.hidden = !['PERENCANAAN', 'VENDOR_TIANG'].includes(button.dataset.tahap);
+                        planningEligibilityForm.hidden = !canDecideEligibility;
                         planningEligibilityForm.action = button.dataset.kelayakanUrl;
                     }
-                    if (resultUploadForm) resultUploadForm.hidden = qualificationStatus !== 'LAYAK';
+                    if (resultUploadForm) resultUploadForm.hidden = qualificationStatus !== 'LAYAK' || !canDecideEligibility;
                     modal.hidden = false;
                     if (resultUploadForm) document.getElementById('resultPelangganId').value = button.dataset.id;
                     if (form) {
@@ -1011,7 +1011,7 @@
                             }).join('')
                             : '<span class="result-empty">Belum ada berkas</span>';
                     if (resultUploadForm) {
-                        resultUploadForm.hidden = qualificationStatus !== 'LAYAK';
+                        resultUploadForm.hidden = qualificationStatus !== 'LAYAK' || !canDecideEligibility;
                         resultUploadForm.action = `{{ url('/vendor/tiang') }}/${button.dataset.id}/hasil`;
                     }
                     updateFileStatuses();

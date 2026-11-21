@@ -202,31 +202,19 @@ class VendorTiangController extends Controller
     public function uploadHasil(Request $request, PelangganPbpd $pelanggan)
     {
         abort_unless($this->currentUser()->role?->role_code === '5170REN', 403);
-        $data = $request->validate([
-            'status_kelayakan' => ['nullable', 'in:LAYAK'],
-        ]);
-
-        $statusKelayakan = $pelanggan->status_kelayakan
-            ?? $pelanggan->pengirimanVendor()->value('status_kelayakan');
-        if (($data['status_kelayakan'] ?? null) === 'LAYAK') {
-            $statusKelayakan = 'LAYAK';
+        if ($pelanggan->tahap !== 'VENDOR_TIANG' || ! $pelanggan->pengirimanVendor()->exists()) {
+            return back()->with('error', 'Data harus dikirim ke vendor tiang sebelum berkas kajian kelayakan diunggah.');
         }
-        if ($statusKelayakan !== 'LAYAK') {
-            return back()->with('error', 'Pilih status Layak pada kartu Berkas Kajian Kelayakan sebelum mengunggah berkas.');
+        if ($pelanggan->status_kelayakan !== 'LAYAK') {
+            return back()->with('error', 'Tentukan status Layak terlebih dahulu pada proses Perencanaan.');
         }
 
         $request->validate([
             'berkas_hasil.*' => ['required', 'file', 'mimes:pdf,doc,docx,xls,xlsx,jpg,jpeg,png', 'max:10240'],
         ]);
 
-        if ($pelanggan->status_kelayakan !== 'LAYAK') {
-            $pelanggan->update(['status_kelayakan' => 'LAYAK']);
-        }
-
-        // Upload hasil Perencanaan tidak perlu menunggu laporan vendor atau
-        // record pengiriman vendor. Jika pengiriman sudah ada, gunakan vendor
-        // tersebut; jika belum ada, laporan tetap boleh disimpan dengan
-        // vendor_id null.
+        // Berkas kajian boleh diunggah setelah Perencanaan menyatakan Layak;
+        // laporan kerja dari Vendor Tiang tidak perlu menunggu.
         $pengiriman = $pelanggan->pengirimanVendor()->first();
         $laporan = $pelanggan->laporanVendor()->firstOrNew(['pelanggan_id' => $pelanggan->id]);
         $uploadedFiles = $request->file('berkas_hasil', []);
