@@ -309,7 +309,9 @@
                         <div class="proses-row"><span class="proses-icon" aria-hidden="true">×</span><span class="proses-label">Berkas WO NPS</span><span class="proses-status proses-belum" id="prosesNpsWoStatus">Belum diunggah</span><time id="prosesNpsWoDate">-</time></div>
                         <div class="proses-row"><span class="proses-icon" aria-hidden="true">×</span><span class="proses-label">Berkas BA Checklist</span><span class="proses-status proses-belum" id="prosesKonstruksiStatus">Belum diunggah</span><time id="prosesKonstruksiDate">-</time></div>
                         <div class="proses-row"><span class="proses-icon" aria-hidden="true">×</span><span class="proses-label">Foto Cek KWH Meter</span><span class="proses-status proses-belum" id="prosesTransaksiStatus">Belum diunggah</span><time id="prosesTransaksiDate">-</time></div>
-                        <div class="proses-row"><span class="proses-icon" aria-hidden="true">×</span><span class="proses-label">Berkas BA Operasi</span><span class="proses-status proses-belum" id="prosesJaringanStatus">Belum diunggah</span><time id="prosesJaringanDate">-</time></div>
+                        @if ($tujuan !== 'TANPA_PERLUASAN')
+                            <div class="proses-row"><span class="proses-icon" aria-hidden="true">×</span><span class="proses-label">Berkas BA Operasi</span><span class="proses-status proses-belum" id="prosesJaringanStatus">Belum diunggah</span><time id="prosesJaringanDate">-</time></div>
+                        @endif
                     </div>
                 </section>
 
@@ -510,17 +512,19 @@
                     </form>
                 @endif
             </div>
-            <div class="planning-result-box jaringan-result-upload-box">
-                <h4>Berkas BA Operasi <span class="file-status" data-file-status-for="jaringanResultFiles">Belum diunggah</span></h4>
-                <div id="jaringanResultFiles">-</div>
-                @if ($canUploadJaringan && $tujuan !== 'TANPA_PERLUASAN')
-                    <form id="jaringanResultUploadForm" method="POST" action="#" enctype="multipart/form-data">
-                        @csrf
-                        <input type="file" name="berkas_hasil_jaringan[]" multiple required accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png">
-                        <button type="submit" class="btn">Upload Berkas/Foto Jaringan</button>
-                    </form>
-                @endif
-            </div>
+            @if ($tujuan !== 'TANPA_PERLUASAN')
+                <div class="planning-result-box jaringan-result-upload-box">
+                    <h4>Berkas BA Operasi <span class="file-status" data-file-status-for="jaringanResultFiles">Belum diunggah</span></h4>
+                    <div id="jaringanResultFiles">-</div>
+                    @if ($canUploadJaringan)
+                        <form id="jaringanResultUploadForm" method="POST" action="#" enctype="multipart/form-data">
+                            @csrf
+                            <input type="file" name="berkas_hasil_jaringan[]" multiple required accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png">
+                            <button type="submit" class="btn">Upload Berkas/Foto Jaringan</button>
+                        </form>
+                    @endif
+                </div>
+            @endif
                     </div>
                 </section>
             @if ($canSendKonstruksi)
