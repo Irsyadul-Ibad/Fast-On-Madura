@@ -231,33 +231,68 @@
         <div class="halaman">{{ $data->links() }}</div>
     </div>
     <div id="laporanDetailModal" class="laporan-modal" hidden>
-        <div class="laporan-modal-box" role="dialog" aria-modal="true">
-            <button type="button" class="laporan-close" aria-label="Tutup">&times;</button>
-            <h3>Detail Data Laporan</h3>
-            <div class="laporan-detail-grid">
-                <div><small>No Agenda</small><b id="ldNoAgenda"></b></div>
-                <div><small>IDPEL</small><b id="ldIdpel"></b></div>
-                <div><small>Nama Pelanggan</small><b id="ldNama"></b></div>
-                <div><small>Transaksi</small><b id="ldTransaksi"></b></div>
-                <div><small>Status</small><b id="ldStatus"></b></div>
-                <div><small>Jenis Perluasan</small><b id="ldTujuan"></b></div>
-                <div class="laporan-full"><small>Alamat</small><b id="ldAlamat"></b></div>
+        <div class="laporan-modal-box" role="dialog" aria-modal="true" aria-labelledby="laporanModalTitle">
+            <header class="laporan-modal-header">
+                <div>
+                    <h3 id="laporanModalTitle">Detail Data Laporan</h3>
+                    <p id="ldSummary"></p>
+                </div>
+                <button type="button" class="laporan-close" aria-label="Tutup detail laporan">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>
+                </button>
+            </header>
+
+            <div class="laporan-modal-content">
+                <section class="laporan-modal-section" aria-labelledby="laporanCustomerHeading">
+                    <h4 id="laporanCustomerHeading">Informasi Pelanggan</h4>
+                    <div class="laporan-detail-grid">
+                        <div><small>No Agenda</small><b id="ldNoAgenda"></b></div>
+                        <div><small>IDPEL</small><b id="ldIdpel"></b></div>
+                        <div><small>Nama Pelanggan</small><b id="ldNama"></b></div>
+                        <div><small>Transaksi</small><b id="ldTransaksi" class="laporan-value-pill"></b></div>
+                        <div><small>Status</small><b id="ldStatus" class="laporan-value-pill"></b></div>
+                        <div><small>Jenis Perluasan</small><b id="ldTujuan" class="laporan-value-pill is-neutral"></b></div>
+                        <div class="laporan-full"><small>Alamat</small><b id="ldAlamat"></b></div>
+                    </div>
+                </section>
+
+                <section class="laporan-modal-section laporan-proses-box" aria-labelledby="laporanProcessHeading">
+                    <h4 id="laporanProcessHeading">Proses</h4>
+                    <div id="ldProcessRows" class="laporan-process-list"></div>
+                </section>
+
+                <section class="laporan-modal-section" aria-labelledby="laporanMaterialHeading">
+                    <h4 id="laporanMaterialHeading">Detail Material</h4>
+                    <div class="laporan-material-grid">
+                        <div><small>RAB</small><b id="ldRab"></b></div>
+                        <div><small>Tiang TM</small><b id="ldTiangTm"></b></div>
+                        <div><small>Tiang TR</small><b id="ldTiangTr"></b></div>
+                        <div><small>Konduktor TM</small><b id="ldKonduktorTm"></b></div>
+                        <div><small>Konduktor TR</small><b id="ldKonduktorTr"></b></div>
+                        <div><small>Trafo</small><b id="ldTrafo"></b></div>
+                        <div><small>KWH Meter</small><b id="ldKwh"></b></div>
+                        <div><small>Panel Meter</small><b id="ldPanelMeter"></b></div>
+                    </div>
+                </section>
+
+                <section class="laporan-modal-section" aria-labelledby="laporanFilesHeading">
+                    <h4 id="laporanFilesHeading">Berkas</h4>
+                    <div class="laporan-file-groups">
+                        <div class="laporan-file-group">
+                            <h5>Berkas Pendukung</h5>
+                            <div id="ldPendukung" class="laporan-files">-</div>
+                        </div>
+                        <div class="laporan-file-group">
+                            <h5>Berkas Ijin</h5>
+                            <div id="ldIjin" class="laporan-files">-</div>
+                        </div>
+                    </div>
+                </section>
             </div>
-            <h4>Detail Material</h4>
-            <div class="laporan-material-grid">
-                <div><small>RAB</small><b id="ldRab"></b></div>
-                <div><small>Tiang TM</small><b id="ldTiangTm"></b></div>
-                <div><small>Tiang TR</small><b id="ldTiangTr"></b></div>
-                <div><small>Konduktor TM</small><b id="ldKonduktorTm"></b></div>
-                <div><small>Konduktor TR</small><b id="ldKonduktorTr"></b></div>
-                <div><small>Trafo</small><b id="ldTrafo"></b></div>
-                <div><small>KWH Meter</small><b id="ldKwh"></b></div>
-                <div><small>Panel Meter</small><b id="ldPanelMeter"></b></div>
-            </div>
-            <h4>Berkas Pendukung</h4>
-            <div id="ldPendukung" class="laporan-files">-</div>
-            <h4>Berkas Ijin</h4>
-            <div id="ldIjin" class="laporan-files">-</div>
+
+            <footer class="laporan-modal-footer">
+                <button type="button" class="laporan-modal-dismiss">Tutup</button>
+            </footer>
         </div>
     </div>
     @push('page-styles')
@@ -291,20 +326,21 @@
                             "'": '&#039;',
                         }[character]));
 
-                        return `<a href="${url.replace(/pendukung\/0$/, jenis + '/' + i)}" target="_blank" rel="noopener">📄 ${safeFileName}</a>`;
+                        return `<a href="${url.replace(/pendukung\/0$/, jenis + '/' + i)}" target="_blank" rel="noopener"><span class="file-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m8.5 12.5 5.8-5.8a3 3 0 0 1 4.2 4.2l-7.4 7.4a4.5 4.5 0 0 1-6.4-6.4l7.1-7.1a2 2 0 0 1 2.8 2.8l-6.6 6.6"/></svg></span><span>${safeFileName}</span></a>`;
                     }).join('')
-                    : '-';
+                    : '<span class="laporan-file-empty">Belum ada berkas.</span>';
             };
 
             document.querySelectorAll('.laporan-detail').forEach((button) => button.addEventListener('click', () => {
                 text('ldNoAgenda', button.dataset.noAgenda);
                 text('ldIdpel', button.dataset.idpel);
                 text('ldNama', button.dataset.nama);
+                document.getElementById('ldSummary').textContent = `Agenda ${button.dataset.noAgenda || '-'} · ${button.dataset.nama || '-'}`;
                 text('ldTransaksi', button.dataset.transaksi);
                 text('ldStatus', button.dataset.status);
                 text('ldTujuan', button.dataset.tujuan);
                 text('ldAlamat', button.dataset.alamat);
-                text('ldRab', button.dataset.rab ? Number(button.dataset.rab).toLocaleString('id-ID') : '-');
+                text('ldRab', button.dataset.rab ? `Rp ${Number(button.dataset.rab).toLocaleString('id-ID')}` : '-');
                 text('ldTiangTm', button.dataset.jenisTiangTm ? `${button.dataset.jenisTiangTm} (${button.dataset.jmlTiangTm || 0})` : '-');
                 text('ldTiangTr', button.dataset.jenisTiangTr ? `${button.dataset.jenisTiangTr} (${button.dataset.jmlTiangTr || 0})` : '-');
                 text('ldKonduktorTm', button.dataset.jenisKonduktorTm ? `${button.dataset.jenisKonduktorTm} (${button.dataset.jmlKonduktorTm || 0})` : '-');
@@ -319,7 +355,7 @@
             const close = () => {
                 modal.hidden = true;
             };
-            modal.querySelector('.laporan-close').addEventListener('click', close);
+            modal.querySelectorAll('.laporan-close, .laporan-modal-dismiss').forEach((button) => button.addEventListener('click', close));
             modal.addEventListener('click', (e) => {
                 if (e.target === modal) close();
             });
@@ -348,22 +384,30 @@
             if (!source) return;
             let processMap = {};
             try { processMap = JSON.parse(source.textContent || '{}'); } catch (error) { processMap = {}; }
-            const formatDate = (value) => value ? new Date(value.replace(' ', 'T')).toLocaleDateString('id-ID') : '-';
-            const statusCell = (done, label) => `<span class="${done ? 'proses-selesai' : 'proses-belum'}">${done ? '✓ ' + label : '× Belum diunggah'}</span>`;
-            const processMarkup = (item) => `<div class="proses-box laporan-proses-box"><h4>Proses</h4><table class="proses-tabel"><thead><tr><th>Proses</th><th>Status</th><th>Tanggal</th></tr></thead><tbody>
-                <tr><td>Pengiriman ULP</td><td>${statusCell(item.ulp, 'Sudah dikirim ULP')}</td><td>${formatDate(item.ulpDate)}</td></tr>
-                <tr><td>Berkas Kajian Kelayakan</td><td>${statusCell(item.planning, 'Sudah lengkap')}</td><td>${formatDate(item.planningDate)}</td></tr>
-                <tr><td>Berkas WO NPS</td><td>${statusCell(item.npsWo, 'Sudah lengkap')}</td><td>${formatDate(item.npsWoDate)}</td></tr>
-                <tr><td>Berkas BA Checklist</td><td>${statusCell(item.construction, 'Sudah lengkap')}</td><td>${formatDate(item.constructionDate)}</td></tr>
-                <tr><td>Foto Cek KWH Meter</td><td>${statusCell(item.transaction, 'Sudah lengkap')}</td><td>${formatDate(item.transactionDate)}</td></tr>
-                <tr><td>Berkas BA Operasi</td><td>${statusCell(item.network, 'Sudah lengkap')}</td><td>${formatDate(item.networkDate)}</td></tr>
-            </tbody></table></div>`;
+            const formatDate = (value) => value ? new Date(value.replace(' ', 'T')).toLocaleDateString('id-ID') : '—';
+            const processMarkup = (item) => {
+                const stages = [
+                    ['ulp', 'Pengiriman ULP', 'ulpDate', 'Sudah dikirim ULP'],
+                    ['planning', 'Berkas Kajian Kelayakan', 'planningDate', 'Sudah lengkap'],
+                    ['npsWo', 'Berkas WO NPS', 'npsWoDate', 'Sudah lengkap'],
+                    ['construction', 'Berkas BA Checklist', 'constructionDate', 'Sudah lengkap'],
+                    ['transaction', 'Foto Cek KWH Meter', 'transactionDate', 'Sudah lengkap'],
+                    ['network', 'Berkas BA Operasi', 'networkDate', 'Sudah lengkap'],
+                ];
+                return stages.map(([key, label, dateKey, doneLabel]) => {
+                    const done = Boolean(item[key]);
+                    return `<div class="laporan-process-row">
+                        <span class="laporan-process-mark ${done ? 'is-done' : 'is-pending'}" aria-hidden="true">${done ? '✓' : '×'}</span>
+                        <strong>${label}</strong>
+                        <span class="laporan-process-status ${done ? 'is-done' : 'is-pending'}">${done ? doneLabel : 'Belum diunggah'}</span>
+                        <time>${formatDate(item[dateKey])}</time>
+                    </div>`;
+                }).join('');
+            };
             const modal = document.getElementById('laporanDetailModal');
             document.querySelectorAll('.laporan-detail').forEach((button) => button.addEventListener('click', () => {
-                const item = processMap[button.dataset.noAgenda];
-                const materialHeading = [...modal.querySelectorAll('h4')].find((heading) => heading.textContent.trim() === 'Detail Material');
-                modal.querySelector('.laporan-proses-box')?.remove();
-                if (item && materialHeading) materialHeading.insertAdjacentHTML('beforebegin', processMarkup(item));
+                const item = processMap[button.dataset.noAgenda] || {};
+                document.getElementById('ldProcessRows').innerHTML = processMarkup(item);
             }));
         })();
     </script>
@@ -534,6 +578,51 @@
         .box>.filter button.btn{min-height:38px!important;border:0!important;border-radius:9px!important;background:#111c91!important;color:#fff!important;font-weight:700!important;box-shadow:0 4px 10px rgba(17,28,145,.2)!important}
         .box>.filter button.btn:hover{background:#0d166f!important;color:#fff!important}.box>.filter .btn-excel{background:#111c91!important;color:#fff!important;box-shadow:0 4px 10px rgba(17,28,145,.2)!important}.box>.filter .btn-excel:hover{background:#0d166f!important;color:#fff!important}
         @media(max-width:700px){.box>.filter{align-items:stretch;flex-wrap:wrap}.box>.filter select,.box>.filter input[type=text],.box>.filter .btn{flex:1 1 145px}}
+        #laporanDetailModal{z-index:120!important;padding:24px!important;background:rgba(2,7,55,.58)!important;backdrop-filter:blur(3px)}
+        #laporanDetailModal[hidden]{display:none!important}
+        #laporanDetailModal .laporan-modal-box{display:flex!important;flex-direction:column!important;width:min(680px,100%)!important;max-height:calc(100vh - 48px)!important;padding:0!important;border:1px solid #dfe6fb!important;border-radius:24px!important;overflow:hidden!important;background:#fff!important;color:#1d2a55!important;box-shadow:0 24px 64px rgba(15,35,104,.25)!important}
+        #laporanDetailModal .laporan-modal-header{position:relative!important;display:flex!important;align-items:center!important;justify-content:space-between!important;gap:20px!important;padding:24px 24px 20px!important;border-bottom:1px solid #e0e7f7!important;background:#fff!important}
+        #laporanDetailModal .laporan-modal-header h3{margin:0!important;padding:0 60px 0 0!important;border:0!important;border-radius:0!important;background:transparent!important;color:#1236a5!important;font-size:22px!important;font-weight:850!important;line-height:1.2!important}
+        #laporanDetailModal .laporan-modal-header p{margin:8px 0 0!important;color:#60719b!important;font-size:15px!important;font-weight:550!important;line-height:1.4!important;overflow-wrap:anywhere}
+        #laporanDetailModal .laporan-close{position:absolute!important;top:22px!important;right:24px!important;display:grid!important;place-items:center!important;width:48px!important;height:48px!important;min-width:48px!important;min-height:48px!important;padding:0!important;border:0!important;border-radius:16px!important;background:#eef2ff!important;color:#394b7e!important;box-shadow:none!important;cursor:pointer!important}
+        #laporanDetailModal .laporan-close:hover{background:#dfe7ff!important;color:#173daf!important;transform:none!important}
+        #laporanDetailModal .laporan-close svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
+        #laporanDetailModal .laporan-modal-content{display:grid!important;gap:24px!important;overflow-y:auto!important;overscroll-behavior:contain!important;padding:22px 24px!important}
+        #laporanDetailModal .laporan-modal-section{min-width:0}
+        #laporanDetailModal .laporan-modal-section>h4{margin:0 0 12px!important;padding:0!important;background:transparent!important;color:#60719b!important;font-size:15px!important;font-weight:850!important;letter-spacing:.1em!important;line-height:1.35!important;text-transform:uppercase!important}
+        #laporanDetailModal .laporan-detail-grid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important}
+        #laporanDetailModal .laporan-detail-grid>div,#laporanDetailModal .laporan-material-grid>div{min-width:0!important;padding:14px 15px!important;border:1px solid #dfe6fb!important;border-radius:16px!important;background:#fff!important}
+        #laporanDetailModal .laporan-modal-content small{display:block!important;margin:0 0 6px!important;color:#60719b!important;font-size:12px!important;font-weight:750!important;letter-spacing:.045em!important;line-height:1.35!important;text-transform:uppercase!important}
+        #laporanDetailModal .laporan-modal-content b{display:block!important;color:#202d5a!important;font-size:16px!important;font-weight:750!important;line-height:1.45!important;overflow-wrap:anywhere!important}
+        #laporanDetailModal .laporan-detail-grid .laporan-full{grid-column:1/-1!important}
+        #laporanDetailModal .laporan-value-pill{display:inline-flex!important;width:max-content!important;max-width:100%!important;align-items:center!important;padding:6px 11px!important;border-radius:999px!important;background:#e8efff!important;color:#2147bd!important;font-size:14px!important;white-space:normal!important}
+        #laporanDetailModal .laporan-value-pill.is-neutral{background:#e9eef8!important;color:#43547d!important}
+        #laporanDetailModal .laporan-process-list{overflow:hidden!important;border:1px solid #dfe6fb!important;border-radius:16px!important;background:#fff!important}
+        #laporanDetailModal .laporan-process-row{display:grid!important;grid-template-columns:32px minmax(0,1fr) auto 108px!important;align-items:center!important;gap:12px!important;min-height:58px!important;padding:9px 14px!important;border-bottom:1px solid #e8edf8!important}
+        #laporanDetailModal .laporan-process-row:last-child{border-bottom:0!important}
+        #laporanDetailModal .laporan-process-row>strong{color:#263867!important;font-size:14px!important;font-weight:650!important;line-height:1.4!important}
+        #laporanDetailModal .laporan-process-mark{display:grid!important;place-items:center!important;width:28px!important;height:28px!important;border-radius:50%!important;font-size:16px!important;font-weight:850!important}
+        #laporanDetailModal .laporan-process-mark.is-done{background:#dcf5e8!important;color:#167243!important}
+        #laporanDetailModal .laporan-process-mark.is-pending{background:#ffe5e5!important;color:#bd2f27!important}
+        #laporanDetailModal .laporan-process-status{display:inline-flex!important;align-items:center!important;justify-content:center!important;min-height:32px!important;padding:6px 11px!important;border-radius:999px!important;font-size:12px!important;font-weight:750!important;line-height:1.25!important;text-align:center!important}
+        #laporanDetailModal .laporan-process-status.is-done{background:#dcf5e8!important;color:#167243!important}
+        #laporanDetailModal .laporan-process-status.is-pending{background:#ffe5e5!important;color:#bd2f27!important}
+        #laporanDetailModal .laporan-process-row time{color:#60719b!important;font-size:14px!important;text-align:right!important;white-space:nowrap!important}
+        #laporanDetailModal .laporan-material-grid{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:10px!important}
+        #laporanDetailModal .laporan-material-grid>div{background:#f2f5ff!important}
+        #laporanDetailModal .laporan-material-grid b{color:#1236a5!important;font-size:16px!important}
+        #laporanDetailModal .laporan-file-groups{display:grid!important;gap:16px!important}
+        #laporanDetailModal .laporan-file-group h5{margin:0 0 8px!important;color:#4f608b!important;font-size:14px!important;font-weight:750!important}
+        #laporanDetailModal .laporan-files{display:grid!important;gap:8px!important;padding:0!important;border:0!important;background:transparent!important}
+        #laporanDetailModal .laporan-files a{display:flex!important;align-items:center!important;gap:12px!important;min-width:0!important;padding:10px 12px!important;border:1px solid #d5def7!important;border-radius:14px!important;background:#f8faff!important;color:#2451dc!important;font-size:14px!important;font-weight:700!important;text-decoration:underline!important;overflow-wrap:anywhere!important}
+        #laporanDetailModal .laporan-files a .file-icon{display:grid!important;place-items:center!important;flex:0 0 34px!important;width:34px!important;height:34px!important;margin:0!important;border-radius:10px!important;background:#fff!important;color:#2451dc!important}
+        #laporanDetailModal .laporan-files a:after{content:'↓';display:grid;place-items:center;flex:0 0 38px;width:38px;height:38px;margin-left:auto;border-radius:12px;background:#eef2ff;color:#394b7e;font-size:22px;text-decoration:none}
+        #laporanDetailModal .laporan-file-empty{display:block!important;padding:12px!important;border:1px dashed #ccd8f7!important;border-radius:12px!important;background:#f8faff!important;color:#60719b!important;font-size:13px!important}
+        #laporanDetailModal .laporan-modal-footer{display:flex!important;justify-content:flex-end!important;padding:14px 24px!important;border-top:1px solid #e0e7f7!important;background:#fff!important}
+        #laporanDetailModal .laporan-modal-dismiss{min-height:46px!important;padding:0 20px!important;border:1px solid #c8d5ff!important;border-radius:14px!important;background:#fff!important;color:#1236a5!important;font-size:15px!important;font-weight:750!important;box-shadow:none!important;cursor:pointer!important}
+        #laporanDetailModal .laporan-modal-dismiss:hover{background:#f2f5ff!important}
+        @media(max-width:700px){#laporanDetailModal{padding:12px!important}#laporanDetailModal .laporan-modal-box{max-height:calc(100vh - 24px)!important;border-radius:20px!important}#laporanDetailModal .laporan-modal-header{padding:19px 18px 16px!important}#laporanDetailModal .laporan-modal-header h3{font-size:22px!important}#laporanDetailModal .laporan-modal-header p{font-size:13px!important;padding-right:36px!important}#laporanDetailModal .laporan-close{top:14px!important;right:14px!important;width:40px!important;height:40px!important;min-width:40px!important;min-height:40px!important}#laporanDetailModal .laporan-modal-content{gap:18px!important;padding:18px!important}#laporanDetailModal .laporan-material-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}#laporanDetailModal .laporan-process-row{grid-template-columns:28px minmax(0,1fr) auto!important;gap:8px!important;padding:9px 10px!important}#laporanDetailModal .laporan-process-row time{grid-column:2!important;text-align:left!important}}
+        @media(max-width:420px){#laporanDetailModal .laporan-detail-grid,#laporanDetailModal .laporan-material-grid{grid-template-columns:1fr!important}#laporanDetailModal .laporan-detail-grid .laporan-full{grid-column:auto!important}#laporanDetailModal .laporan-process-row{grid-template-columns:24px minmax(0,1fr)!important}#laporanDetailModal .laporan-process-status,#laporanDetailModal .laporan-process-row time{grid-column:2!important;justify-self:start!important}#laporanDetailModal .laporan-modal-footer{padding:12px 18px!important}}
     </style>
     @endpush
 @endsection

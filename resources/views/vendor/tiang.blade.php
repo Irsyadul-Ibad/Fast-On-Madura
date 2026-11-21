@@ -1,186 +1,214 @@
 @extends('layouts.app')
 
-@section('title', 'Agenda Vendor Tiang')
-@section('judul', 'Agenda Vendor Tiang')
+@section('title', $showHistory ? 'Riwayat Pengiriman' : 'Agenda Vendor Tiang')
+@section('judul', $showHistory ? 'Riwayat Pengiriman' : 'Agenda Vendor Tiang')
+@section('deskripsi', $showHistory ? 'Laporan yang sudah dikirim ke Perencanaan' : 'Daftar agenda tiang yang ditugaskan kepada mitra vendor')
+@section('header-actions')
+    <span class="vendor-count-header">{{ $showHistory ? $riwayat->count() : $data->count() }} data</span>
+@endsection
 
 @section('isi')
-    @if (session('success'))
-        <div class="box" style="color:#176b35">{{ session('success') }}</div>
-    @endif
+    <div id="vendorTiangPage" class="vendor-page">
+        @if (session('success'))
+            <div class="vendor-flash" role="status">{{ session('success') }}</div>
+        @endif
 
-    @if (!$showHistory)
-    <div class="box kartu">
-        <div class="kartu-judul">
-            <span>AGENDA VENDOR TIANG</span>
-            <span class="pill">{{ $data->count() }} data</span>
-        </div>
+        @if (!$showHistory)
+            <section class="vendor-shell">
+                @forelse ($data as $row)
+                    @php $kirim = $row->pengirimanVendor; @endphp
+                    <article class="vendor-record">
+                        <header class="record-head">
+                            <div class="record-identity">
+                                <b>{{ $row->no_agenda }}</b>
+                                <strong>{{ $row->nama_pelanggan }}</strong>
+                                <span>ULP: {{ $row->ulp?->nama }} · {{ $row->jenis_transaksi }}</span>
+                            </div>
+                            <div class="record-badges">
+                                <span class="vendor-badge badge-transaction">{{ $row->jenis_transaksi }}</span>
+                                @if (filled($kirim?->status_kelayakan))
+                                    <span class="vendor-badge {{ $kirim->status_kelayakan === 'LAYAK' ? 'badge-success' : 'badge-danger' }}">
+                                        {{ $kirim->status_kelayakan }}
+                                    </span>
+                                @endif
+                            </div>
+                        </header>
 
-        @forelse ($data as $row)
-            @php $kirim = $row->pengirimanVendor; @endphp
-            <div class="vendor-card">
-                <div class="vendor-card-head">
-                    <div>
-                        <b>{{ $row->no_agenda }}</b>
-                        <strong>{{ $row->nama_pelanggan }}</strong>
-                        <span>ULP: {{ $row->ulp?->nama }} - {{ $row->jenis_transaksi }}</span>
+                        <div class="record-content">
+                            <section class="record-panel work-files">
+                                <h3>Berkas Pekerjaan</h3>
+                                @if ($kirim?->wo_tiang_path)
+                                    <a class="vendor-file-link" href="{{ route('vendor.tiang.wo', $row->id) }}" target="_blank" rel="noopener">
+                                        <span class="file-icon" aria-hidden="true">▤</span>
+                                        <span>{{ $kirim->wo_tiang_name ?: basename($kirim->wo_tiang_path) }}</span>
+                                        <span class="download-icon" aria-hidden="true">↓</span>
+                                    </a>
+                                @else
+                                    <p class="muted-note">Belum ada berkas WO tiang.</p>
+                                @endif
+                            </section>
+
+                            <form method="POST" action="{{ route('vendor.tiang.report', $row->id) }}" enctype="multipart/form-data" class="record-panel vendor-report-form">
+                                @csrf
+                                <h3>Kirim Laporan</h3>
+                                <div class="report-checklist">
+                                    <label><input type="checkbox" name="pekerjaan_lengkap" value="1"> <span>Foto pengiriman tiang</span></label>
+                                    <label><input type="checkbox" name="pekerjaan_sesuai_wo" value="1"> <span>Foto penanaman tiang</span></label>
+                                    <label><input type="checkbox" name="foto_terlampir" value="1"> <span>Foto tiang berdiri</span></label>
+                                    <label><input type="checkbox" name="siap_dilanjutkan" value="1"> <span>Foto pekerjaan selesai</span></label>
+                                </div>
+                                <label class="field-label" for="catatan-tiang-{{ $row->id }}">Catatan (opsional)</label>
+                                <textarea id="catatan-tiang-{{ $row->id }}" name="catatan" placeholder="Tulis catatan bila diperlukan"></textarea>
+                                <label class="file-drop">
+                                    <span class="file-picker">↑ &nbsp; Pilih file</span>
+                                    <span class="file-name">Belum ada file dipilih</span>
+                                    <input type="file" name="berkas[]" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png">
+                                </label>
+                                <button type="submit" class="vendor-primary-button">➤ &nbsp; Kirim ke Perencanaan</button>
+                            </form>
+                        </div>
+                    </article>
+                @empty
+                    <div class="vendor-empty-state">
+                        <span class="empty-icon" aria-hidden="true">⌂</span>
+                        <h3>Belum ada agenda vendor tiang</h3>
+                        <p>Agenda baru akan muncul di sini setelah ditugaskan oleh ULP.</p>
+                        <a class="vendor-outline-button" href="{{ route('vendor.tiang.history') }}">◷ &nbsp; Lihat riwayat pengiriman</a>
                     </div>
-                    <div class="vendor-card-badges">
-                        <span class="pill pill-ungu">{{ $row->jenis_transaksi }}</span>
-                        @if (filled($kirim?->status_kelayakan))
-                            <span class="pill vendor-eligibility {{ $kirim->status_kelayakan === 'LAYAK' ? 'is-eligible' : 'is-not-eligible' }}">
-                                {{ $kirim->status_kelayakan }}
-                            </span>
-                        @endif
+                @endforelse
+            </section>
+        @else
+            <section class="vendor-shell history-shell">
+                @forelse ($riwayat as $row)
+                    @php $laporan = $row->laporanVendor; @endphp
+                    <article class="history-entry">
+                        <header class="record-head history-head">
+                            <div class="record-identity">
+                                <b>{{ $row->no_agenda }}</b>
+                                <strong>{{ $row->nama_pelanggan }}</strong>
+                                <span>ULP: {{ $row->ulp?->nama }} · {{ $laporan?->dikirim_at?->format('d/m/Y H:i') }}</span>
+                            </div>
+                            <div class="record-badges">
+                                <span class="vendor-badge badge-transaction">➤ &nbsp; Terkirim ke Perencanaan</span>
+                                @if (filled($row->pengirimanVendor?->status_kelayakan))
+                                    <span class="vendor-badge {{ $row->pengirimanVendor->status_kelayakan === 'LAYAK' ? 'badge-success' : 'badge-danger' }}">
+                                        {{ $row->pengirimanVendor->status_kelayakan }}
+                                    </span>
+                                @endif
+                            </div>
+                        </header>
+
+                        <form id="edit-laporan-tiang-{{ $row->id }}" method="POST" action="{{ route('vendor.tiang.report', $row->id) }}" enctype="multipart/form-data" class="history-edit-form">
+                            @csrf
+                            <h3>Edit Laporan</h3>
+                            <div class="report-checklist">
+                                <label><input type="checkbox" name="pekerjaan_lengkap" value="1" @checked($laporan?->pekerjaan_lengkap)> <span>Dokumen pekerjaan lengkap</span></label>
+                                <label><input type="checkbox" name="pekerjaan_sesuai_wo" value="1" @checked($laporan?->pekerjaan_sesuai_wo)> <span>Pekerjaan sesuai WO</span></label>
+                                <label><input type="checkbox" name="foto_terlampir" value="1" @checked($laporan?->foto_terlampir)> <span>Foto dokumentasi terlampir</span></label>
+                                <label><input type="checkbox" name="siap_dilanjutkan" value="1" @checked($laporan?->siap_dilanjutkan)> <span>Siap ditindaklanjuti Perencanaan</span></label>
+                            </div>
+                            <label class="field-label" for="catatan-edit-tiang-{{ $row->id }}">Catatan (opsional)</label>
+                            <textarea id="catatan-edit-tiang-{{ $row->id }}" name="catatan" placeholder="Tulis catatan bila diperlukan">{{ $laporan?->catatan }}</textarea>
+                            <label class="file-drop">
+                                <span class="file-picker">↑ &nbsp; Pilih file</span>
+                                <span class="file-name">Pilih berkas baru untuk ditambahkan</span>
+                                <input type="file" name="berkas[]" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png">
+                            </label>
+                        </form>
+                        <footer class="history-actions">
+                            <form method="POST" action="{{ route('vendor.tiang.report.delete', $row->id) }}" class="history-delete-form" onsubmit="return confirm('Hapus laporan Vendor Tiang ini? Data hasil Perencanaan tidak ikut dihapus.')">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="vendor-danger-button">♲ &nbsp; Hapus laporan</button>
+                            </form>
+                            <button type="submit" form="edit-laporan-tiang-{{ $row->id }}" class="vendor-primary-button">✓ &nbsp; Simpan perubahan</button>
+                        </footer>
+                    </article>
+                @empty
+                    <div class="vendor-empty-state compact-empty">
+                        <span class="empty-icon" aria-hidden="true">◷</span>
+                        <h3>Belum ada riwayat pengiriman</h3>
+                        <p>Laporan yang dikirim ke Perencanaan akan muncul di sini.</p>
                     </div>
-                </div>
-
-                <div class="vendor-berkas">
-                    <b>Berkas Pekerjaan</b>
-                    @if ($kirim?->wo_tiang_path)
-                        <a href="{{ route('vendor.tiang.wo', $row->id) }}" target="_blank">📄 {{ $kirim->wo_tiang_name ?: basename($kirim->wo_tiang_path) }}</a>
-                    @else
-                        <span>Belum ada berkas WO tiang.</span>
-                    @endif
-                </div>
-
-                <form method="POST" action="{{ route('vendor.tiang.report', $row->id) }}" enctype="multipart/form-data" class="vendor-report">
-                    @csrf
-                    <b>Kirim Laporan</b>
-                    <label><input type="checkbox" name="pekerjaan_lengkap" value="1"> Foto Pengiriman tiang</label>
-                    <label><input type="checkbox" name="pekerjaan_sesuai_wo" value="1"> Foto penanaman tiang</label>
-                    <label><input type="checkbox" name="foto_terlampir" value="1"> Foto tiang berdiri</label>
-                    <label><input type="checkbox" name="siap_dilanjutkan" value="1"> Foto pekerjaan selesai</label>
-                    <textarea name="catatan" placeholder="Catatan (opsional)"></textarea>
-                    <input type="file" name="berkas[]" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png">
-                    <button type="submit" class="btn">Kirim ke Perencanaan</button>
-                </form>
-            </div>
-        @empty
-            <div style="text-align:center;padding:30px">Belum ada agenda vendor tiang.</div>
-        @endforelse
+                @endforelse
+            </section>
+        @endif
     </div>
-    @endif
 
-    <div id="historyPanel" class="box history-panel" @if (!$showHistory) hidden @endif>
-        <div class="kartu-judul">
-            <span>RIWAYAT PENGIRIMAN</span>
-        </div>
-        @forelse ($riwayat as $row)
-            @php $laporan = $row->laporanVendor; @endphp
-            <div class="history-item">
-                <div>
-                    <b>{{ $row->no_agenda }}</b>
-                    <strong>{{ $row->nama_pelanggan }}</strong>
-                    <span>ULP: {{ $row->ulp?->nama }} · {{ $laporan?->dikirim_at?->format('d/m/Y H:i') }}</span>
-                </div>
-                <div class="history-badges">
-                    <span class="pill pill-hijau">Terkirim ke Perencanaan</span>
-                    @if (filled($row->pengirimanVendor?->status_kelayakan))
-                        <span class="pill vendor-eligibility {{ $row->pengirimanVendor->status_kelayakan === 'LAYAK' ? 'is-eligible' : 'is-not-eligible' }}">
-                            {{ $row->pengirimanVendor->status_kelayakan }}
-                        </span>
-                    @endif
-                </div>
-            </div>
-            <form id="edit-laporan-tiang-{{ $row->id }}" method="POST" action="{{ route('vendor.tiang.report', $row->id) }}" enctype="multipart/form-data" class="history-edit-form">
-                @csrf
-                <b>Edit Laporan</b>
-                <label><input type="checkbox" name="pekerjaan_lengkap" value="1" @checked($laporan?->pekerjaan_lengkap)> Dokumen pekerjaan lengkap</label>
-                <label><input type="checkbox" name="pekerjaan_sesuai_wo" value="1" @checked($laporan?->pekerjaan_sesuai_wo)> Pekerjaan sesuai WO</label>
-                <label><input type="checkbox" name="foto_terlampir" value="1" @checked($laporan?->foto_terlampir)> Foto dokumentasi terlampir</label>
-                <label><input type="checkbox" name="siap_dilanjutkan" value="1" @checked($laporan?->siap_dilanjutkan)> Siap ditindaklanjuti Perencanaan</label>
-                <textarea name="catatan" placeholder="Catatan (opsional)">{{ $laporan?->catatan }}</textarea>
-                <input type="file" name="berkas[]" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png">
-            </form>
-            <div class="history-actions-card">
-                <button type="submit" form="edit-laporan-tiang-{{ $row->id }}" class="btn">Simpan Perubahan</button>
-                <form method="POST" action="{{ route('vendor.tiang.report.delete', $row->id) }}" class="history-delete-form" onsubmit="return confirm('Hapus laporan Vendor Tiang ini? Data hasil Perencanaan tidak ikut dihapus.')">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="btn btn-hapus">Hapus Laporan</button>
-                </form>
-            </div>
-        @empty
-            <div style="text-align:center;padding:24px">Belum ada riwayat pengiriman.</div>
-        @endforelse
-    </div>
+    <script>
+        document.querySelectorAll('#vendorTiangPage .file-drop input[type="file"]').forEach((input) => {
+            input.addEventListener('change', () => {
+                const name = input.closest('.file-drop')?.querySelector('.file-name');
+                if (name) name.textContent = Array.from(input.files || []).map((file) => file.name).join(', ') || 'Belum ada file dipilih';
+            });
+        });
+    </script>
 
     @push('page-styles')
     <style>
-        .vendor-card { margin-top:16px; padding:18px; border:1px solid #ccd8e5; border-radius:10px; background:#f8fbfe; }
-        .vendor-card-head { display:flex; justify-content:space-between; gap:16px; padding-bottom:14px; border-bottom:1px solid #dce5ee; }
-        .vendor-card-head b, .vendor-card-head strong, .vendor-card-head span { display:block; }
-        .vendor-card-head strong { margin:5px 0; color:#0b3d6b; }
-        .vendor-card-head span { color:#536477; font-size:13px; }
-        .vendor-berkas, .vendor-report { display:grid; gap:10px; margin-top:14px; padding:16px; border:1px solid #ccd8e5; border-radius:8px; background:#fff; }
-        .vendor-berkas a { padding:10px; border-radius:6px; background:#eef3f8; color:#0b3d6b; text-decoration:none; }
-        .vendor-berkas span { color:#718096; font-size:13px; }
-        .vendor-report label { color:#536477; font-size:13px; }
-        .vendor-report textarea { min-height:70px; padding:9px; border:1px solid #b9c7d5; border-radius:6px; }
-        .vendor-report input[type=file] { padding:8px; border:1px solid #b9c7d5; border-radius:6px; }
-        .history-panel { margin-top:16px; }
-        .history-panel[hidden] { display:none; }
-        .history-item { display:flex; justify-content:space-between; align-items:center; gap:16px; padding:14px 0; border-bottom:1px solid #dce5ee; }
-        .history-item:last-child { border-bottom:0; }
-        .history-item b, .history-item strong, .history-item span { display:block; }
-        .history-item strong { margin:4px 0; color:#0b3d6b; }
-        .history-item div span { color:#637487; font-size:13px; }
-        .history-edit-form { display:grid; gap:9px; margin:0 0 16px; padding:14px; border:1px solid #dce5ee; border-radius:8px; background:#fff; }
-        .history-edit-form label { color:#536477; font-size:13px; }
-        .history-edit-form textarea { min-height:60px; padding:9px; border:1px solid #b9c7d5; border-radius:6px; }
-        .history-edit-form input[type=file] { padding:8px; border:1px solid #b9c7d5; border-radius:6px; }
-        .vendor-card{margin-top:16px;padding:0;overflow:hidden;border:1px solid #d6e2ee;border-radius:14px;background:#fff;box-shadow:0 6px 18px rgba(13,27,140,.07)}
-        .vendor-card-head{align-items:flex-start;padding:16px 18px;background:#0d1b8c;border-bottom:0;color:#fff}
-        .vendor-card-head b,.vendor-card-head strong{color:#fff!important}
-        .vendor-card-head b{font-size:13px;letter-spacing:.01em}
-        .vendor-card-head strong{margin:5px 0;font-size:14px}
-        .vendor-card-head span{color:#dbeafe;font-size:12px}
-        .vendor-card-head>.pill,.vendor-card-badges>.pill-ungu{display:inline-flex!important;align-items:center;justify-content:center;min-width:118px;min-height:34px;padding:7px 12px!important;border:1px solid rgba(255,255,255,.35)!important;border-radius:999px!important;background:#eaf3ff!important;color:#0d1b8c!important;font-size:11px!important;font-weight:800;white-space:nowrap}
-        .vendor-card-badges,.history-badges{display:flex;align-items:flex-end;flex-direction:column;gap:8px}
-        .vendor-card-badges .pill,.history-badges .pill{display:inline-flex;align-items:center;justify-content:center;min-height:30px;padding:6px 11px;border-radius:999px;font-size:10px;font-weight:800;white-space:nowrap}
-        .history-badges .pill{box-sizing:border-box;width:156px}
-        .vendor-card-badges .vendor-eligibility,.history-badges .vendor-eligibility{border:1px solid transparent}
-        .vendor-eligibility.is-eligible{background:#e8f7ef!important;color:#237a53!important;border-color:#b9e4ca!important}
-        .vendor-eligibility.is-not-eligible{background:#fff0ef!important;color:#c23f3a!important;border-color:#f1c1bd!important}
-        .vendor-berkas,.vendor-report{margin:14px 16px;padding:15px;border:1px solid #d6e2ee;border-radius:10px;background:#f8fbff;box-shadow:none}
-        .vendor-berkas b,.vendor-report>b{color:#123b5d;font-size:13px}
-        .vendor-berkas a{display:flex;align-items:center;gap:7px;width:100%;min-width:0;box-sizing:border-box;padding:10px 12px;border:1px solid #c8def5;border-radius:8px;background:#eaf3ff;color:#1e6fa8;font-size:12px;font-weight:700;line-height:1.45;text-decoration:none;white-space:normal;overflow-wrap:anywhere;word-break:break-word}
-        .vendor-berkas a:hover{background:#1e6fa8;color:#fff}
-        .vendor-berkas span{color:#64748b;font-size:12px}
-        .vendor-report label{display:flex;align-items:center;gap:8px;color:#334155;font-size:12px;line-height:1.4}
-        .vendor-report label input[type=checkbox]{width:15px;height:15px;accent-color:#0d1b8c}
-        .vendor-report textarea,.history-edit-form textarea{min-height:72px;padding:10px;border:1px solid #b8c9da;border-radius:8px;background:#fff;color:#334155;font:inherit;resize:vertical}
-        .vendor-report textarea::placeholder,.history-edit-form textarea::placeholder{color:#94a3b8}
-        .vendor-report input[type=file],.history-edit-form input[type=file]{padding:8px;border:1px solid #b8c9da;border-radius:8px;background:#fff;color:#475569;font-size:12px}
-        .vendor-report textarea,.history-edit-form textarea,.vendor-report input[type=file],.history-edit-form input[type=file]{background:#fff!important;color:#334155!important;border:1px solid #b8c9da!important}
-        .vendor-report label,.history-edit-form label{color:#334155!important}
-        .vendor-report input[type=file]::file-selector-button,.history-edit-form input[type=file]::file-selector-button{margin-right:8px;padding:5px 9px;border:1px solid #b8c9da;border-radius:6px;background:#f1f5f9;color:#334155;cursor:pointer}
-        .vendor-report .btn,.history-edit-form .btn{min-height:36px;border:0;border-radius:8px;background:#0d1b8c;color:#fff;font-weight:700;box-shadow:0 4px 10px rgba(13,27,140,.18)}
-        .vendor-report .btn:hover,.history-edit-form .btn:hover{background:#091267}
-        .history-item{padding:14px 16px;background:#f8fbff;border:1px solid #d6e2ee;border-radius:10px}
-        .history-edit-form{margin:10px 16px 16px;padding:15px;border-color:#d6e2ee;border-radius:10px;background:#f8fbff}
-        .history-panel{overflow:hidden;padding:0!important;border:1px solid #d6e2ee!important;border-radius:14px!important;background:#fff!important;box-shadow:0 6px 18px rgba(13,27,140,.07)!important}
-        .history-panel>.kartu-judul{display:flex;align-items:center;justify-content:space-between;min-height:45px;margin:0!important;padding:12px 16px!important;background:#0d1b8c!important;color:#fff!important;border-radius:12px 12px 0 0!important;font-size:13px;font-weight:800;letter-spacing:.03em}
-        .history-panel>.kartu-judul span{color:#fff!important}
-        .history-item{margin:14px 16px 0;padding:14px 16px;border:1px solid #d6e2ee;border-radius:10px;background:#f8fbff}
-        .history-item b,.history-item strong{color:#123b5d!important}
-        .history-item div span{color:#64748b!important;font-size:12px}
-        .history-item>.pill{display:inline-flex;align-items:center;min-height:28px;padding:6px 10px!important;border-radius:999px!important;background:#eaf3ff!important;color:#1e6fa8!important;font-size:10px!important;font-weight:800}
-        .history-edit-form{gap:10px;margin:10px 16px 16px;padding:15px;border:1px solid #d6e2ee!important;border-radius:10px;background:#f8fbff!important}
-        .history-edit-form>b{color:#123b5d;font-size:13px}
-        .history-edit-form label{display:flex;align-items:center;gap:8px;color:#334155!important;font-size:12px}
-        .history-edit-form label input[type=checkbox]{width:15px;height:15px;accent-color:#0d1b8c}
-        .history-panel,.history-panel *{box-sizing:border-box}
-        .history-panel{width:100%;max-width:100%;min-width:0}
-        .history-item,.history-edit-form,.history-actions-card{min-width:0;max-width:100%}
-        .history-edit-form textarea,.history-edit-form input[type=file]{display:block;width:100%;min-width:0;max-width:100%;background:#fff!important;color:#334155!important;border:1px solid #b8c9da!important;border-radius:8px}
-        .history-edit-form textarea::placeholder{color:#94a3b8}
-        .history-actions-card{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:0 16px 16px;padding:12px;border:1px solid #d6e2ee;border-radius:10px;background:#f8fbff}
-        .history-actions-card>.btn,.history-delete-form .btn-hapus{box-sizing:border-box;width:100%;min-height:38px;margin:0;border:0;border-radius:8px;font-weight:700}
-        .history-actions-card>.btn{background:#0d1b8c!important;color:#fff!important}.history-actions-card>.btn:hover{background:#091267!important}
-        .history-delete-form{min-width:0;margin:0}.history-delete-form .btn-hapus{background:#c23f3a!important;color:#fff!important}.history-delete-form .btn-hapus:hover{background:#a9322e!important}
-        @media(max-width:600px){.history-item{gap:10px;padding:12px}.history-actions-card{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:0 12px 12px;padding:10px}.history-actions-card>.btn,.history-delete-form .btn-hapus{min-width:0;padding:8px 5px;font-size:11px;line-height:1.25;white-space:normal}}
-        @media (max-width:600px) { .history-item { align-items:flex-start; flex-direction:column; }.history-badges{align-items:flex-start;width:100%}.history-badges .pill{max-width:100%} }
+        #vendorTiangPage{--vendor-blue:#1739b7;--vendor-bright:#2450e6;--vendor-ink:#202b55;--vendor-muted:#60719f;--vendor-line:#dce5fb;--vendor-soft:#f5f7ff;box-sizing:border-box;width:100%;min-width:0;color:var(--vendor-ink)}
+        #vendorTiangPage *,#vendorTiangPage *:before,#vendorTiangPage *:after{box-sizing:border-box}
+        #vendorTiangPage .vendor-flash{margin:0 0 16px;padding:14px 18px;border:1px solid #b8e5c9;border-radius:14px;background:#e9f8ef;color:#176b3b;font-weight:700}
+        .page-topbar .page-actions:has(.vendor-count-header){align-self:flex-start;padding-top:4px}
+        #vendorTiangPage~*{box-sizing:border-box}
+        .vendor-count-header{display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:8px 16px;border-radius:999px;background:#e4ebff;color:#1b43c4;font-size:14px;font-weight:800;white-space:nowrap}
+        #vendorTiangPage .vendor-shell{min-width:0;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none}
+        #vendorTiangPage .vendor-section-heading{display:flex;align-items:center;justify-content:space-between;gap:18px;margin:0 0 20px}
+        #vendorTiangPage .vendor-section-heading h2{margin:0;color:var(--vendor-blue);font-size:22px;font-weight:850;line-height:1.25}
+        #vendorTiangPage .vendor-section-heading p{margin:4px 0 0;color:var(--vendor-muted);font-size:15px}
+        #vendorTiangPage .vendor-count{display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:8px 16px;border-radius:999px;background:#e7edff;color:#1b43c4;font-size:14px;font-weight:800;white-space:nowrap}
+        #vendorTiangPage .vendor-record,#vendorTiangPage .history-entry{min-width:0;margin:0 0 18px;overflow:hidden;border:1px solid var(--vendor-line);border-radius:22px;background:#fff}
+        #vendorTiangPage .vendor-record:last-child,#vendorTiangPage .history-entry:last-child{margin-bottom:0}
+        #vendorTiangPage .record-head{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;padding:20px 24px;background:#f2f5ff;border-bottom:1px solid var(--vendor-line)}
+        #vendorTiangPage .record-identity{min-width:0}
+        #vendorTiangPage .record-identity b,#vendorTiangPage .record-identity strong,#vendorTiangPage .record-identity span{display:block}
+        #vendorTiangPage .record-identity b{color:#2449c0;font-size:15px;font-weight:800;overflow-wrap:anywhere}
+        #vendorTiangPage .record-identity strong{margin:4px 0;color:var(--vendor-blue);font-size:21px;font-weight:850;line-height:1.25;overflow-wrap:anywhere}
+        #vendorTiangPage .record-identity span{color:var(--vendor-muted);font-size:14px}
+        #vendorTiangPage .record-badges{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap;flex:0 0 auto}
+        #vendorTiangPage .vendor-badge{display:inline-flex;align-items:center;justify-content:center;min-height:32px;padding:7px 13px;border:1px solid transparent;border-radius:999px;font-size:12px;font-weight:850;line-height:1.2;white-space:nowrap}
+        #vendorTiangPage .badge-transaction{background:#e6edff;color:#2148be}
+        #vendorTiangPage .badge-success{background:#dcf5e8;color:#187344}
+        #vendorTiangPage .badge-danger{background:#ffe5e5;color:#b92d25}
+        #vendorTiangPage .record-content{display:grid;grid-template-columns:minmax(230px,.85fr) minmax(0,1.8fr);gap:18px;padding:20px 24px 24px}
+        #vendorTiangPage .record-panel{min-width:0;margin:0;padding:18px;border:1px solid var(--vendor-line);border-radius:18px;background:#fff}
+        #vendorTiangPage .record-panel h3,#vendorTiangPage .history-edit-form h3{margin:0 0 14px;color:#5b6d9b;font-size:14px;font-weight:900;letter-spacing:.09em;text-transform:uppercase}
+        #vendorTiangPage .work-files{align-content:start}
+        #vendorTiangPage .vendor-file-link{display:flex;align-items:center;gap:11px;min-width:0;padding:13px;border-radius:14px;background:#eaf0ff;color:#1c45be;text-decoration:none;font-weight:750}
+        #vendorTiangPage .vendor-file-link>span:nth-child(2){min-width:0;overflow-wrap:anywhere}
+        #vendorTiangPage .file-icon,#vendorTiangPage .download-icon{display:inline-flex;align-items:center;justify-content:center;flex:0 0 42px;width:42px;height:42px;border-radius:12px;background:#fff;color:#2450d7;font-size:24px;font-weight:800}
+        #vendorTiangPage .download-icon{flex-basis:38px;width:38px;height:38px;margin-left:auto;color:#334672;font-size:23px}
+        #vendorTiangPage .muted-note{margin:0;color:var(--vendor-muted);font-size:14px}
+        #vendorTiangPage .vendor-report-form,#vendorTiangPage .history-edit-form{display:grid;gap:13px}
+        #vendorTiangPage .report-checklist{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+        #vendorTiangPage .report-checklist label{display:flex;align-items:center;gap:11px;min-width:0;min-height:52px;margin:0;padding:12px 14px;border:1px solid #d8e2fa;border-radius:14px;background:#fff;color:#2d3c69;font-size:14px;font-weight:650;line-height:1.35;cursor:pointer}
+        #vendorTiangPage .report-checklist label:has(input:checked){border-color:#2852e8;background:#edf2ff}
+        #vendorTiangPage .report-checklist input[type=checkbox]{flex:0 0 20px;width:20px;height:20px;margin:0;accent-color:#2450df}
+        #vendorTiangPage .field-label{margin:0 0 -7px;color:#53648f;font-size:13px;font-weight:750}
+        #vendorTiangPage textarea{display:block;width:100%;min-width:0;min-height:88px;padding:12px 14px;border:1px solid #d2def8!important;border-radius:14px;background:#f7f9ff!important;color:var(--vendor-ink)!important;font:inherit;resize:vertical}
+        #vendorTiangPage textarea::placeholder{color:#7180a7}
+        #vendorTiangPage .file-drop{position:relative;display:flex;align-items:center;gap:14px;min-width:0;min-height:64px;padding:10px 13px;border:1px dashed #b8caff;border-radius:15px;background:#f8faff;cursor:pointer}
+        #vendorTiangPage .file-drop input[type=file]{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
+        #vendorTiangPage .file-picker{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:8px 14px;border:1px solid #c5d3ff;border-radius:12px;background:#fff;color:#173db6;font-size:14px;font-weight:800;white-space:nowrap}
+        #vendorTiangPage .file-name{min-width:0;color:var(--vendor-muted);font-size:14px;overflow-wrap:anywhere}
+        #vendorTiangPage .vendor-primary-button,#vendorTiangPage .vendor-outline-button,#vendorTiangPage .vendor-danger-button{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:11px 18px;border:1px solid transparent;border-radius:14px;font:inherit;font-size:15px;font-weight:800;text-decoration:none;cursor:pointer}
+        #vendorTiangPage .vendor-primary-button{background:linear-gradient(120deg,#2452e5,#1234a8);color:#fff;box-shadow:0 10px 22px rgba(26,65,188,.22)}
+        #vendorTiangPage .vendor-primary-button:hover{filter:brightness(.96)}
+        #vendorTiangPage .vendor-outline-button{border-color:#c4d1ff;background:#fff;color:#183cae}
+        #vendorTiangPage .vendor-danger-button{border-color:#f2b9b6;background:#fff;color:#b92d25}
+        #vendorTiangPage .history-shell .history-entry{margin-bottom:18px}
+        #vendorTiangPage .history-shell .history-entry:last-child{margin-bottom:0}
+        #vendorTiangPage .history-edit-form{padding:20px 24px 8px;border:0;background:#fff}
+        #vendorTiangPage .history-edit-form h3{margin-bottom:0}
+        #vendorTiangPage .history-actions{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:16px 24px 22px}
+        #vendorTiangPage .history-delete-form{margin:0}
+        #vendorTiangPage .vendor-empty-state{display:flex;min-height:380px;flex-direction:column;align-items:center;justify-content:center;padding:36px 20px;border:1px dashed #cbd8fa;border-radius:22px;background:#f8faff;text-align:center}
+        #vendorTiangPage .empty-icon{display:flex;align-items:center;justify-content:center;width:80px;height:80px;margin-bottom:20px;border-radius:24px;background:#e7edff;color:#2450dc;font-size:44px;line-height:1}
+        #vendorTiangPage .vendor-empty-state h3{margin:0 0 8px;color:var(--vendor-blue);font-size:20px;font-weight:850}
+        #vendorTiangPage .vendor-empty-state p{margin:0 0 20px;color:var(--vendor-muted);font-size:15px}
+        #vendorTiangPage .compact-empty{min-height:260px}
+        @media(max-width:900px){#vendorTiangPage .record-content{grid-template-columns:minmax(0,1fr)}#vendorTiangPage .record-head{padding:18px 20px}}
+        @media(max-width:600px){#vendorTiangPage .vendor-section-heading{align-items:flex-start;flex-direction:column}#vendorTiangPage .vendor-section-heading h2{font-size:19px}#vendorTiangPage .record-head{flex-direction:column;gap:12px;padding:16px}#vendorTiangPage .record-identity strong{font-size:18px}#vendorTiangPage .record-badges{justify-content:flex-start}#vendorTiangPage .record-content{gap:12px;padding:12px}#vendorTiangPage .record-panel{padding:14px}#vendorTiangPage .report-checklist{grid-template-columns:minmax(0,1fr)}#vendorTiangPage .history-edit-form{padding:16px 14px 4px}#vendorTiangPage .history-actions{align-items:stretch;flex-direction:column-reverse;padding:14px}#vendorTiangPage .history-actions>*{width:100%}#vendorTiangPage .history-actions .vendor-primary-button,#vendorTiangPage .history-actions .vendor-danger-button{width:100%}#vendorTiangPage .vendor-empty-state{min-height:300px;padding:24px 16px}}
     </style>
     @endpush
 @endsection

@@ -364,7 +364,7 @@
 
 
     /* Shared modern dashboard language across every role and page. */
-    .content{background:#f5f8fc!important}
+    .content{background:transparent!important}
     .content>h1,.content>h2,.content>h3{color:#123b5d!important;font-weight:750;letter-spacing:-.025em}
     .box,.card,.kartu,.notif-box,.upload-card,.history-card{border:1px solid #dbe5f0!important;border-radius:16px!important;background:#fff!important;box-shadow:0 8px 24px rgba(13,27,140,.06)!important}
     .box:not(.filter),.card,.notif-box{padding:18px!important}
@@ -390,27 +390,24 @@
     .notif-item{border-radius:11px!important}.notif-item.unread{border-left:4px solid #f4c300!important;background:#fffaf0!important}
     @media(max-width:700px){.box:not(.filter),.card,.notif-box{padding:14px!important}.content>h1,.content>h2,.content>h3{font-size:20px!important}.tabel{font-size:11px!important}}
 
+    /* The PB/PD page keeps its own table action bar; other pages use the shared card style. */
+    main.main-content.main-pbpd .kartu{padding:0!important;background:#fff!important;border-color:#dbe5f0!important}
+    main.main-content.main-pbpd .kartu .kartu-judul{min-height:45px!important;margin:0!important;padding:12px 16px!important;border-radius:12px 12px 0 0!important;background:transparent!important;color:#102cae!important}
+    main.main-content.main-pbpd .kartu .kartu-judul>span:first-child{color:#102cae!important}
+    main.main-content.main-pbpd .kartu .kartu-judul>span:first-child small{color:#5e719e!important}
+    main.main-content.main-pbpd .kartu>div:has(>#openSendModal){padding:12px 18px 10px!important;background:#0d1b8c!important}
+    main.main-content.main-pbpd .kartu .scroll{margin:-12px 0 16px!important;border-top:0!important;border-radius:0 0 11px 11px!important;background:#fff!important}
+    main.main-content.main-pbpd .tabel .pill.pill-hijau{background:#dcf5e8!important;color:#167243!important}
+    main.main-content.main-pbpd .tabel .pill.pill-kuning{background:#fff1c9!important;color:#946200!important}
+    main.main-content.main-pbpd .tabel .ikon-syarat.berkas-lengkap{border:1px solid #b9e4ca!important;background:#dcf5e8!important;color:#167243!important}
+    main.main-content.main-pbpd .tabel .ikon-syarat.berkas-belum{border:1px solid #f1d58a!important;background:#fff1c9!important;color:#946200!important}
 
-    /* PB/PD table shell: keep the record bar, action area and table as one visual panel. */
-    .content .kartu{padding:0!important;background:#fff!important;border-color:#dbe5f0!important}
-    .content .kartu .kartu-judul{min-height:45px!important;padding:12px 16px!important;background:#0d1b8c!important;margin:0!important;border-radius:12px 12px 0 0!important}
-    .content .kartu>div:has(>#openSendModal){padding:12px 18px 10px!important;background:#0d1b8c!important}
-    .content .kartu .scroll{margin:-12px 0 16px!important;background:#fff!important;border-top:0!important;border-radius:0 0 11px 11px!important}
     /* Report detail modal must remain usable when its content exceeds the viewport. */
     .laporan-modal{overflow-y:auto!important;overflow-x:hidden!important;align-items:start!important}
     .laporan-modal-box{max-height:calc(100vh - 40px)!important;overflow-y:auto!important;overflow-x:hidden!important;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
     body:has(#detailModalPerluasan) .detail-modal{overflow-y:auto!important;overflow-x:hidden!important;align-items:start!important}
     body:has(#detailModalPerluasan) .detail-modal-box{max-height:calc(100vh - 40px)!important;overflow-y:auto!important;overflow-x:hidden!important;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
-    /* Consistent spacing for JTM, JTR and Tanpa Perluasan tables. */
-    body:has(#detailModalPerluasan) .content .kartu{margin-top:8px!important;padding:0!important;border-radius:16px!important;overflow:hidden!important}
-    body:has(#detailModalPerluasan) .content .kartu-judul{min-height:48px!important;margin:0!important;padding:14px 16px!important;border-radius:12px 12px 0 0!important}
-    body:has(#detailModalPerluasan) .content .kartu .scroll{margin:0!important;border-radius:0!important;overflow-x:auto!important;overflow-y:visible!important}
-    body:has(#detailModalPerluasan) .content .kartu .tabel{font-size:12px!important;line-height:1.45!important}
-    body:has(#detailModalPerluasan) .content .kartu .tabel th,
-    body:has(#detailModalPerluasan) .content .kartu .tabel td{padding:11px 12px!important;line-height:1.45!important}
-    body:has(#detailModalPerluasan) .content .kartu .tabel th{font-size:11px!important;letter-spacing:.025em!important}
-    body:has(#detailModalPerluasan) .content .kartu .kartu-kaki{margin:14px 16px 4px!important;line-height:1.5!important}
-    body:has(#detailModalPerluasan) .content .kartu .halaman{margin:0 16px 16px!important}
+    /* Keep the detail modal scrollable without letting its hidden markup restyle the page behind it. */
     /* Apply the same readable spacing to the Data PB/PD table. */
     body:has(#sendModal) .content .kartu .scroll{margin:0!important;overflow-x:auto!important;overflow-y:visible!important;border-radius:0 0 11px 11px!important}
     body:has(#sendModal) .content .kartu .tabel{font-size:12px!important;line-height:1.45!important}
@@ -423,13 +420,10 @@
     body:has(#sendModal) .content .kartu .tabel tbody tr{min-height:46px!important}
     body:has(#sendModal) .content .kartu .tabel th,
     body:has(#sendModal) .content .kartu .tabel td{padding:12px 13px!important}
-    body:has(#detailModalPerluasan) .content .perluasan-filter input,
-    body:has(#detailModalPerluasan) .content .perluasan-filter select{background:#fff!important;border-color:#9fb4ca!important;color:#243b53!important}
-    body:has(#detailModalPerluasan) .content .perluasan-filter input::placeholder{color:#627d98!important;opacity:1}
-    body:has(#detailModalPerluasan) .content .perluasan-filter button[type="submit"]{background:#0d1b8c!important;color:#fff!important;border-color:#0d1b8c!important;box-shadow:0 4px 10px rgba(13,27,140,.22)!important}
-    body:has(#detailModalPerluasan) .content .perluasan-filter button[type="submit"]:hover{background:#091267!important;border-color:#091267!important}
     /* Shared modal polish: consistent close action and spacing across the application. */
-    .detail-modal,.laporan-modal{padding:24px!important;background:rgba(2,7,55,.58)!important;backdrop-filter:blur(3px)}
+    .detail-modal,.laporan-modal{z-index:120!important;padding:24px!important;background:rgba(2,7,55,.58)!important;backdrop-filter:blur(3px)}
+    body:has(.detail-modal:not([hidden])) .content>header.page-topbar,
+    body:has(.laporan-modal:not([hidden])) .content>header.page-topbar{visibility:hidden!important}
     .detail-modal-box,.laporan-modal-box{position:relative!important;border:1px solid #d9e2ec!important;border-radius:16px!important;background:#fff!important;color:#243b53!important;box-shadow:0 18px 48px rgba(13,27,140,.22)!important;overflow:auto!important}
     .detail-modal-box h3,.laporan-modal-box h3{padding:16px 54px 16px 20px!important;margin:0 0 18px!important;border-radius:15px 15px 0 0!important;background:#0d1b8c!important;color:#fff!important;font-size:16px!important;line-height:1.35!important}
     .detail-modal-close,.laporan-close,.history-close{position:absolute!important;top:12px!important;right:12px!important;z-index:20!important;display:grid!important;place-items:center!important;width:30px!important;height:30px!important;min-width:30px!important;min-height:30px!important;padding:0!important;border:1px solid #d9e2ec!important;border-radius:50%!important;background:#fff!important;color:#0d1b8c!important;font-size:21px!important;font-family:Arial,sans-serif!important;font-weight:700!important;line-height:30px!important;text-align:center!important;box-shadow:0 2px 7px rgba(0,0,0,.16)!important;cursor:pointer!important;opacity:1!important;visibility:visible!important;transition:background .18s,transform .18s,border-color .18s!important}
@@ -503,7 +497,7 @@
     #mainSidebar .sidebar-profile-status{font-size:11px}
     #mainSidebar .sidebar-logout{flex-basis:38px;width:38px;height:38px;min-height:38px}
     .content{width:calc(100% - 312px)!important;margin-left:312px!important}
-    .content>header.page-topbar{position:static;display:flex;align-items:center;justify-content:space-between;gap:20px;min-height:96px;padding:17px 16px 14px 8px;border:0;background:transparent;box-shadow:none;backdrop-filter:none}
+    .content>header.page-topbar{position:static;display:flex;align-items:center;justify-content:space-between;gap:20px;min-height:96px;padding:17px 16px 14px 8px;border:0;background:transparent;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none}
     .page-heading-copy{display:flex;min-width:0;flex-direction:column;gap:5px}
     .content>header.page-topbar .header-title{align-items:center;gap:12px;min-width:0;flex:1 1 auto}
     .content>header.page-topbar .header-title>strong,.content>header.page-topbar .page-heading-copy>strong{color:var(--app-navy);font-size:26px;font-weight:800;letter-spacing:-.035em;line-height:1.15}

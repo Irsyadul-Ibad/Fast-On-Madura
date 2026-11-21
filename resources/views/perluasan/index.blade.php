@@ -282,38 +282,59 @@
 
     <div id="detailModalPerluasan" class="detail-modal" hidden>
         <div class="detail-modal-box" role="dialog" aria-modal="true" aria-labelledby="detailModalPerluasanTitle">
-            <button type="button" class="detail-modal-close" id="closeDetailPerluasan" aria-label="Tutup">&times;</button>
-            <h3 id="detailModalPerluasanTitle">Detail Data PB/PD</h3>
-            <div class="detail-grid">
-                <div><small>No Agenda</small><b id="perluasanNoAgenda"></b></div>
-                <div><small>IDPEL</small><b id="perluasanIdpel"></b></div>
-                <div><small>Nama Pelanggan</small><b id="perluasanNama"></b></div>
-                <div><small>Transaksi</small><b id="perluasanTransaksi"></b></div>
-                <div><small>Status</small><b id="perluasanStatus"></b></div>
-                <div><small>BP (Total Biaya)</small><b id="perluasanBp"></b></div>
-                <div><small>Total Biaya</small><b id="perluasanTotalBiaya"></b></div>
-                <div><small>Tanggal Mohon</small><b id="perluasanTglMohon"></b></div>
-                <div><small>Tanggal Bayar</small><b id="perluasanTglBayar"></b></div>
-                <div><small>RAB</small><b id="perluasanRabValue"></b></div>
-                <div class="detail-full"><small>Alamat</small><b id="perluasanAlamat"></b></div>
-            </div>
-            <div class="proses-box">
-                <h4>Proses</h4>
-                <table class="proses-tabel"><thead><tr><th>Proses</th><th>Status</th><th>Tanggal</th></tr></thead><tbody>
-                    <tr><td>Pengiriman ULP</td><td id="prosesUlpStatus"></td><td id="prosesUlpDate">-</td></tr>
-                    <tr><td>Berkas Kajian Kelayakan</td><td id="prosesPerencanaanStatus"></td><td id="prosesPerencanaanDate">-</td></tr>
-                    <tr><td>Berkas WO NPS</td><td id="prosesNpsWoStatus"></td><td id="prosesNpsWoDate">-</td></tr>
-                    <tr><td>Berkas BA Checklist</td><td id="prosesKonstruksiStatus"></td><td id="prosesKonstruksiDate">-</td></tr>
-                    <tr><td>Foto Cek KWH Meter</td><td id="prosesTransaksiStatus"></td><td id="prosesTransaksiDate">-</td></tr>
-                    <tr><td>Berkas BA Operasi</td><td id="prosesJaringanStatus"></td><td id="prosesJaringanDate">-</td></tr>
-                </tbody></table>
-            </div>
-            @if ($canViewMaterial)
+            <header class="detail-modal-header">
+                <div>
+                    <h3 id="detailModalPerluasanTitle">Detail Data PB/PD</h3>
+                    <p id="perluasanSummary" class="detail-modal-summary"></p>
+                </div>
+                <button type="button" class="detail-modal-close" id="closeDetailPerluasan" aria-label="Tutup detail">&times;</button>
+            </header>
+
+            <div class="detail-modal-body">
+                <section class="detail-section" aria-labelledby="perluasanCustomerHeading">
+                    <h4 id="perluasanCustomerHeading" class="detail-section-title">Informasi Pelanggan</h4>
+                    <div class="detail-grid detail-customer-grid">
+                        <div><small>No Agenda</small><b id="perluasanNoAgenda"></b></div>
+                        <div><small>IDPEL</small><b id="perluasanIdpel"></b></div>
+                        <div><small>Nama Pelanggan</small><b id="perluasanNama"></b></div>
+                        <div><small>Transaksi</small><b id="perluasanTransaksi" class="detail-value-pill"></b></div>
+                        <div><small>Status</small><b id="perluasanStatus" class="detail-value-pill"></b></div>
+                        <div><small>Total Biaya</small><b id="perluasanTotalBiaya"></b></div>
+                        <div class="detail-full"><small>Alamat</small><b id="perluasanAlamat"></b></div>
+                    </div>
+                </section>
+
+                <section class="detail-section" aria-labelledby="perluasanCostHeading">
+                    <h4 id="perluasanCostHeading" class="detail-section-title">Biaya dan Jadwal</h4>
+                    <div class="detail-cost-grid">
+                        <div><small>BP (Total Biaya)</small><b id="perluasanBp"></b></div>
+                        <div><small>RAB</small><b id="perluasanRabValue" class="detail-rab-status"></b></div>
+                        <div><small>Tanggal Mohon</small><b id="perluasanTglMohon"></b></div>
+                        <div><small>Tanggal Bayar</small><b id="perluasanTglBayar"></b></div>
+                    </div>
+                </section>
+
+                <section class="detail-section" aria-labelledby="perluasanProcessHeading">
+                    <h4 id="perluasanProcessHeading" class="detail-section-title">Proses</h4>
+                    <div class="proses-list">
+                        <div class="proses-row"><span class="proses-icon" aria-hidden="true">×</span><span class="proses-label">Pengiriman ULP</span><span class="proses-status proses-belum" id="prosesUlpStatus">Belum diunggah</span><time id="prosesUlpDate">-</time></div>
+                        <div class="proses-row"><span class="proses-icon" aria-hidden="true">×</span><span class="proses-label">Berkas Kajian Kelayakan</span><span class="proses-status proses-belum" id="prosesPerencanaanStatus">Belum diunggah</span><time id="prosesPerencanaanDate">-</time></div>
+                        <div class="proses-row"><span class="proses-icon" aria-hidden="true">×</span><span class="proses-label">Berkas WO NPS</span><span class="proses-status proses-belum" id="prosesNpsWoStatus">Belum diunggah</span><time id="prosesNpsWoDate">-</time></div>
+                        <div class="proses-row"><span class="proses-icon" aria-hidden="true">×</span><span class="proses-label">Berkas BA Checklist</span><span class="proses-status proses-belum" id="prosesKonstruksiStatus">Belum diunggah</span><time id="prosesKonstruksiDate">-</time></div>
+                        <div class="proses-row"><span class="proses-icon" aria-hidden="true">×</span><span class="proses-label">Foto Cek KWH Meter</span><span class="proses-status proses-belum" id="prosesTransaksiStatus">Belum diunggah</span><time id="prosesTransaksiDate">-</time></div>
+                        <div class="proses-row"><span class="proses-icon" aria-hidden="true">×</span><span class="proses-label">Berkas BA Operasi</span><span class="proses-status proses-belum" id="prosesJaringanStatus">Belum diunggah</span><time id="prosesJaringanDate">-</time></div>
+                    </div>
+                </section>
+
+                @if ($canViewMaterial || ($canEditRab && $tujuan === 'TANPA_PERLUASAN'))
+                <section class="detail-section detail-technical-section" aria-labelledby="perluasanTechnicalHeading">
+                    <h4 id="perluasanTechnicalHeading" class="detail-section-title">Data Teknis dan RAB</h4>
+                @if ($canViewMaterial)
             @if ($tujuan !== 'TANPA_PERLUASAN')
                 <form id="detailFormPerluasan" method="POST">
                     @csrf
                     <div class="detail-edit-table">
-                        <label>RAB <input id="rabInputPerluasan" name="rab_display" type="text" inputmode="numeric" autocomplete="off" placeholder="Masukkan RAB" @disabled(!$canEditRab)><input id="rabValuePerluasan" name="rab" type="hidden"></label>
+                        <label class="detail-field-rab">RAB (Rp) <input id="rabInputPerluasan" name="rab_display" type="text" inputmode="numeric" autocomplete="off" placeholder="Masukkan RAB" @disabled(!$canEditRab)><input id="rabValuePerluasan" name="rab" type="hidden"></label>
                         <label>Jenis Tiang TM<select id="jenisTiangTmPerluasan" name="jenis_tiang_tm" @disabled(!$canEditMaterial)><option value="">Pilih</option><option>11</option><option>13</option></select></label>
                         <label>Jumlah Tiang TM <input id="jmlTiangTmPerluasan" name="jml_tiang_tm" type="number" min="0" @disabled(!$canEditMaterial)></label>
                         <label>Jenis Tiang TR<select id="jenisTiangTrPerluasan" name="jenis_tiang_tr" @disabled(!$canEditMaterial)><option value="">Pilih</option><option>9</option></select></label>
@@ -424,17 +445,22 @@
             @if ($canEditRab && $tujuan === 'TANPA_PERLUASAN')
                 <form id="tanpaRabForm" method="POST" class="detail-rab-form">
                     @csrf
-                    <label for="tanpaRabInput">RAB</label>
-                    <div class="detail-rab-input">
-                        <span>Rp</span>
+                    <label for="tanpaRabInput">RAB (Rp)
                         <input id="tanpaRabInput" name="rab_display" type="text" inputmode="numeric" autocomplete="off" placeholder="Masukkan RAB">
                         <input id="tanpaRabValue" name="rab" type="hidden">
-                    </div>
-                    <button type="submit" class="btn">Simpan RAB</button>
+                    </label>
+                    <button type="submit" class="btn">✓ &nbsp;Simpan RAB</button>
                 </form>
             @endif
+
+                </section>
+                @endif
+
+                <section class="detail-section detail-files-section" aria-labelledby="perluasanFilesHeading">
+                    <h4 id="perluasanFilesHeading" class="detail-section-title">Berkas Pendukung</h4>
+                    <div class="detail-file-list">
             <div class="planning-result-box">
-                <h4>Berkas Kajian Kelayakan</h4>
+                <h4>Berkas Kajian Kelayakan <span class="file-status" data-file-status-for="resultFiles">Belum diunggah</span></h4>
                 @if ($canSendVendor)
                     <div class="vendor-kelayakan">
                         <span>Status kelayakan: <strong id="planningEligibilityStatus">Belum ditentukan</strong></span>
@@ -457,11 +483,11 @@
                 @endif
             </div>
             <div class="planning-result-box vendor-upload-result-box">
-                <h4>Berkas Laporan Vendor</h4>
+                <h4>Berkas Laporan Vendor <span class="file-status" data-file-status-for="vendorReportFiles">Belum diunggah</span></h4>
                 <div id="vendorReportFiles">-</div>
             </div>
             <div class="planning-result-box nps-result-upload-box">
-                <h4>Berkas WO <small class="upload-owner-label">NPS</small></h4>
+                <h4>Berkas WO <small class="upload-owner-label">NPS</small><span class="file-status" data-file-status-for="npsWoFiles">Belum diunggah</span></h4>
                 <div id="npsWoFiles">-</div>
                 @if ($canUploadNps)
                     <form id="npsWoUploadForm" method="POST" action="#" enctype="multipart/form-data">
@@ -472,7 +498,7 @@
                 @endif
             </div>
             <div class="planning-result-box construction-result-upload-box">
-                <h4>Berkas BA Checklist</h4>
+                <h4>Berkas BA Checklist <span class="file-status" data-file-status-for="constructionResultFiles">Belum diunggah</span></h4>
                 <div id="constructionResultFiles">-</div>
                 @if ($canSendKonstruksi)
                     <form id="constructionResultUploadForm" method="POST" action="#" enctype="multipart/form-data">
@@ -483,11 +509,11 @@
                 @endif
             </div>
             <div class="planning-result-box construction-vendor-report-box">
-                <h4>Berkas Laporan Vendor KHS</h4>
+                <h4>Berkas Laporan Vendor KHS <span class="file-status" data-file-status-for="constructionVendorReportFiles">Belum diunggah</span></h4>
                 <div id="constructionVendorReportFiles">-</div>
             </div>
             <div class="planning-result-box transaksi-result-upload-box">
-                <h4>Foto Cek KWH Meter</h4>
+                <h4>Foto Cek KWH Meter <span class="file-status" data-file-status-for="transaksiResultFiles">Belum diunggah</span></h4>
                 <div id="transaksiResultFiles">-</div>
                 @if ($canUploadTransaksi)
                     <form id="transaksiResultUploadForm" method="POST" action="#" enctype="multipart/form-data">
@@ -498,7 +524,7 @@
                 @endif
             </div>
             <div class="planning-result-box jaringan-result-upload-box">
-                <h4>Berkas BA Operasi</h4>
+                <h4>Berkas BA Operasi <span class="file-status" data-file-status-for="jaringanResultFiles">Belum diunggah</span></h4>
                 <div id="jaringanResultFiles">-</div>
                 @if ($canUploadJaringan && $tujuan !== 'TANPA_PERLUASAN')
                     <form id="jaringanResultUploadForm" method="POST" action="#" enctype="multipart/form-data">
@@ -508,6 +534,8 @@
                     </form>
                 @endif
             </div>
+                    </div>
+                </section>
             @if ($canSendKonstruksi)
             <div class="construction-report-box" id="constructionReportBox">
                 <h4>Laporan Hasil Pekerjaan Vendor Konstruksi</h4>
@@ -522,20 +550,17 @@
                 </div>
             </div>
             @endif
+            </div>
+            <footer class="detail-modal-footer">
+                <button type="button" class="detail-modal-dismiss" id="dismissDetailPerluasan">Tutup</button>
+            </footer>
         </div>
     </div>
 
     @push('page-styles')
     <style>
-        .perluasan-filter{position:relative;display:flex;align-items:center;column-gap:9px!important;row-gap:10px!important;flex-wrap:wrap;padding:70px 16px 16px!important;margin-bottom:16px!important;background:#fff!important;border:1px solid #dbe5f0!important;border-radius:14px!important;box-shadow:0 6px 18px rgba(13,27,140,.06)!important}
-        .perluasan-filter::before{content:'DAFTAR TRANSAKSI';position:absolute;inset:0 0 auto;height:50px;display:flex;align-items:flex-start;padding:9px 16px 0;border-radius:14px 14px 0 0;background:#0d1b8c;color:#fff;font-size:15px;font-weight:800;letter-spacing:.035em;line-height:1.1}
-        .perluasan-filter::after{content:'Daftar Transaksi {{ strtoupper($judul) }}';position:absolute;top:31px;left:16px;color:#dbeafe;font-size:11px;font-weight:600;line-height:1.1}
         .content .kartu .kartu-judul>span:first-child{font-size:16px!important;font-weight:800!important;letter-spacing:.015em!important}
         .content .kartu .kartu-judul .pill{font-size:12px!important}
-        .perluasan-filter input,.perluasan-filter select{min-height:36px;padding:8px 11px;border:1px solid #9fb4ca;border-radius:9px;background:#fff;color:#243b53;font-size:12px;box-shadow:0 1px 3px rgba(18,59,93,.06)}
-        .perluasan-filter input::placeholder{color:#627d98;opacity:1}.perluasan-filter select option{background:#fff;color:#243b53}
-        .perluasan-filter input{width:165px;min-width:165px;flex:0 1 165px}.perluasan-filter select{min-width:0;flex:0 0 auto}.perluasan-filter select[name="ulp"]{width:125px}.perluasan-filter select[name="jenis"]{width:155px}.perluasan-filter select[name="status"]{width:115px}.perluasan-filter select[name="tahap"]{width:155px}.perluasan-filter input:focus,.perluasan-filter select:focus{outline:0;border-color:#1e6fa8;box-shadow:0 0 0 3px rgba(30,111,168,.13);background:#fff}
-        .perluasan-filter .btn{min-height:36px;padding:8px 13px;border:0;border-radius:9px;background:#123b5d;color:#fff;font-weight:700;box-shadow:0 4px 10px rgba(18,59,93,.2)}.perluasan-filter .btn:hover{background:#0d2e49}.perluasan-filter .btn-abu{background:#eef3f8;color:#243b53;border:1px solid #b8c9da;box-shadow:none}.perluasan-filter .btn-abu:hover{background:#dfe9f2;color:#123b5d}
         .detail-modal { position:fixed; inset:0; z-index:20; display:grid; place-items:center; padding:20px; background:rgba(0,0,0,.45); }
         .detail-modal[hidden] { display:none; }
         .detail-modal-box { position:relative; width:min(620px, 100%); max-height:90vh; overflow:auto; padding:24px; border-radius:10px; background:#fff; box-shadow:0 12px 40px rgba(0,0,0,.25); }
@@ -616,25 +641,88 @@
         .proses-tabel tr:last-child td { border-bottom:0; }
         .proses-selesai { color:#159447; font-weight:600; }
         .proses-belum { color:#d33; font-weight:600; }
-        /* Tema warna baru untuk modal Tanpa Perluasan; ukuran dan susunan tetap. */
-        #detailModalPerluasan .detail-modal-box{background:#f8fafc!important;border-color:#d8e3ef!important}
-        #detailModalPerluasan .detail-modal-box h3{background:#0d1b8c!important;color:#fff!important}
-        #detailModalPerluasan .detail-modal-close{background:#fff!important;color:#0d1b8c!important}
-        #detailModalPerluasan .detail-grid div{background:#fff!important;border-color:#d8e3ef!important}
-        #detailModalPerluasan .detail-grid small{color:#6b87a4!important}
-        #detailModalPerluasan .detail-grid b{color:#243b53!important}
-        #detailModalPerluasan .proses-box{background:#fff!important;border-color:#d8e3ef!important}
-        #detailModalPerluasan .proses-box h4{color:#123b5d!important}
-        #detailModalPerluasan .proses-tabel{border-color:#d8e3ef!important;background:#fff!important}
-        #detailModalPerluasan .proses-tabel th{background:#edf4ff!important;color:#123b5d!important}
-        #detailModalPerluasan .detail-rab-form{background:#fff!important;border-color:#d8e3ef!important}
-        #detailModalPerluasan .detail-rab-form label{color:#56718d!important}
-        #detailModalPerluasan .detail-rab-input{background:#fff!important;border-color:#cbd9e8!important}
-        #detailModalPerluasan .detail-rab-input span{background:#0d1b8c!important;color:#fff!important}
-        #detailModalPerluasan .detail-rab-input input{background:#fff!important;color:#243b53!important}
-        #detailModalPerluasan .detail-rab-form .btn{background:#2b73fe!important;color:#fff!important}
-        #detailModalPerluasan .detail-rab-form .btn:hover{background:#1f5ed8!important}
-        @media (max-width:600px) { .perluasan-filter{padding:64px 12px 14px!important}.perluasan-filter::before{padding-left:12px}.perluasan-filter::after{left:12px}.perluasan-filter>*{flex:1 1 100%}.detail-grid { grid-template-columns:1fr; } .detail-full { grid-column:auto; } .detail-rab-form { align-items:stretch; flex-direction:column; } }
+        /* Detail perluasan follows the same light, scroll-safe modal system as PB/PD. */
+        #detailModalPerluasan{display:grid!important;place-items:center!important;overflow:hidden!important;padding:20px!important;background:rgba(7,20,69,.6)!important;backdrop-filter:blur(3px)}
+        #detailModalPerluasan[hidden]{display:none!important}
+        #detailModalPerluasan .detail-modal-box{display:flex!important;flex-direction:column!important;width:min(680px,100%)!important;max-height:calc(100vh - 40px)!important;min-height:0!important;padding:0!important;border:1px solid #dfe6fb!important;border-radius:24px!important;overflow:hidden!important;background:#fff!important;color:#202d5a!important;box-shadow:0 24px 64px rgba(15,35,104,.25)!important}
+        #detailModalPerluasan .detail-modal-header{position:relative!important;display:flex!important;align-items:center!important;justify-content:space-between!important;gap:20px!important;padding:22px 24px 18px!important;border-bottom:1px solid #e0e7f7!important;background:#fff!important}
+        #detailModalPerluasan .detail-modal-header h3{margin:0!important;padding:0 54px 0 0!important;border-radius:0!important;background:transparent!important;color:#1236a5!important;font-size:22px!important;font-weight:800!important;line-height:1.25!important}
+        #detailModalPerluasan .detail-modal-summary{margin:5px 0 0!important;color:#60719b!important;font-size:14px!important;font-weight:500!important;line-height:1.45!important;overflow-wrap:anywhere}
+        #detailModalPerluasan .detail-modal-close{position:absolute!important;top:18px!important;right:20px!important;z-index:2!important;display:grid!important;place-items:center!important;width:40px!important;height:40px!important;min-width:40px!important;min-height:40px!important;padding:0!important;border:0!important;border-radius:13px!important;background:#eef2ff!important;color:#394b7e!important;font-size:25px!important;font-family:Arial,sans-serif!important;font-weight:400!important;line-height:1!important;box-shadow:none!important;cursor:pointer!important}
+        #detailModalPerluasan .detail-modal-close:hover{background:#dfe7ff!important;color:#173daf!important}
+        #detailModalPerluasan .detail-modal-body{display:grid!important;gap:20px!important;min-height:0!important;overflow-y:auto!important;overscroll-behavior:contain!important;-webkit-overflow-scrolling:touch!important;padding:20px 24px!important}
+        #detailModalPerluasan .detail-section{min-width:0!important}
+        #detailModalPerluasan .detail-section-title{margin:0 0 10px!important;padding:0!important;border:0!important;background:transparent!important;color:#60719b!important;font-size:12px!important;font-weight:800!important;letter-spacing:.12em!important;line-height:1.4!important;text-transform:uppercase!important}
+        #detailModalPerluasan .detail-customer-grid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important;padding:0!important}
+        #detailModalPerluasan .detail-grid>div{min-width:0!important;padding:13px 14px!important;border:1px solid #dfe6fb!important;border-radius:15px!important;background:#fff!important}
+        #detailModalPerluasan .detail-grid small,#detailModalPerluasan .detail-cost-grid small{display:block!important;margin:0 0 5px!important;color:#60719b!important;font-size:11px!important;font-weight:700!important;letter-spacing:.045em!important;line-height:1.35!important;text-transform:uppercase!important}
+        #detailModalPerluasan .detail-grid b,#detailModalPerluasan .detail-cost-grid b{display:block!important;color:#202d5a!important;font-size:14px!important;font-weight:700!important;line-height:1.45!important;overflow-wrap:anywhere!important}
+        #detailModalPerluasan .detail-grid .detail-full{grid-column:1/-1!important}
+        #detailModalPerluasan .detail-grid .detail-value-pill{display:inline-flex!important;max-width:100%!important;align-items:center!important;padding:5px 10px!important;border-radius:999px!important;background:#e8efff!important;color:#2147bd!important;font-size:12px!important;font-weight:700!important}
+        #detailModalPerluasan .detail-cost-grid{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:10px!important}
+        #detailModalPerluasan .detail-cost-grid>div{min-width:0!important;padding:13px 14px!important;border:1px solid #dfe6fb!important;border-radius:15px!important;background:#f2f5ff!important}
+        #detailModalPerluasan .detail-cost-grid b{color:#1236a5!important;font-size:17px!important}
+        #detailModalPerluasan .detail-cost-grid .detail-rab-status{display:inline-flex!important;width:max-content!important;max-width:100%!important;align-items:center!important;padding:5px 10px!important;border-radius:999px!important;background:#fff1c9!important;color:#916000!important;font-size:12px!important;white-space:normal!important}
+        #detailModalPerluasan .detail-cost-grid .detail-rab-status.is-filled{background:#dcf5e8!important;color:#176d43!important}
+        #detailModalPerluasan .proses-list{overflow:hidden!important;border:1px solid #dfe6fb!important;border-radius:16px!important;background:#fff!important}
+        #detailModalPerluasan .proses-row{display:grid!important;grid-template-columns:28px minmax(0,1fr) auto 104px!important;align-items:center!important;gap:12px!important;min-height:52px!important;padding:9px 14px!important;border-bottom:1px solid #e7ecf8!important;color:#26365e!important}
+        #detailModalPerluasan .proses-row:last-child{border-bottom:0!important}
+        #detailModalPerluasan .proses-icon{display:grid!important;place-items:center!important;width:24px!important;height:24px!important;border-radius:50%!important;background:#ffe5e5!important;color:#c12d26!important;font-size:16px!important;font-weight:800!important}
+        #detailModalPerluasan .proses-row.is-complete .proses-icon{background:#dcf5e8!important;color:#176d43!important}
+        #detailModalPerluasan .proses-label{min-width:0!important;font-size:13px!important;font-weight:600!important;line-height:1.4!important}
+        #detailModalPerluasan .proses-status{display:inline-flex!important;justify-content:center!important;padding:5px 10px!important;border-radius:999px!important;font-size:11px!important;font-weight:700!important;line-height:1.35!important;white-space:nowrap!important}
+        #detailModalPerluasan .proses-selesai{background:#dcf5e8!important;color:#176d43!important}
+        #detailModalPerluasan .proses-belum{background:#ffe5e5!important;color:#bd2f27!important}
+        #detailModalPerluasan .proses-row time{color:#60719b!important;font-size:12px!important;text-align:right!important;white-space:nowrap!important}
+        #detailModalPerluasan .detail-technical-section{display:grid!important;gap:10px!important}
+        #detailModalPerluasan #detailFormPerluasan{display:grid!important;gap:12px!important;margin:0!important}
+        #detailModalPerluasan .detail-edit-table{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:12px 10px!important;margin:0!important}
+        #detailModalPerluasan .detail-edit-table label{display:flex!important;flex-direction:column!important;gap:6px!important;min-width:0!important;color:#4f608b!important;font-size:12px!important;font-weight:700!important;line-height:1.35!important}
+        #detailModalPerluasan .detail-edit-table .detail-field-rab{grid-column:1/-1!important}
+        #detailModalPerluasan .detail-edit-table input,#detailModalPerluasan .detail-edit-table select{width:100%!important;min-width:0!important;min-height:44px!important;margin:0!important;padding:10px 13px!important;border:1px solid #d5def7!important;border-radius:13px!important;background:#f7f9ff!important;color:#26365e!important;font-size:14px!important;box-shadow:none!important}
+        #detailModalPerluasan .detail-edit-table input:focus,#detailModalPerluasan .detail-edit-table select:focus{outline:0!important;border-color:#2451dc!important;box-shadow:0 0 0 3px rgba(36,81,220,.12)!important}
+        #detailModalPerluasan #detailFormPerluasan>button[type="submit"]{justify-self:end!important;min-height:46px!important;padding:0 20px!important;border:0!important;border-radius:12px!important;background:#1941bd!important;color:#fff!important;font-size:14px!important;font-weight:800!important;box-shadow:0 8px 18px rgba(25,65,189,.2)!important}
+        #detailModalPerluasan .detail-rab-form{display:grid!important;gap:12px!important;margin:0!important;padding:16px!important;border:1px solid #dfe6fb!important;border-radius:16px!important;background:#f7f9ff!important}
+        #detailModalPerluasan .detail-rab-form label{display:flex!important;flex-direction:column!important;gap:6px!important;margin:0!important;color:#4f608b!important;font-size:12px!important;font-weight:700!important}
+        #detailModalPerluasan .detail-rab-form input{width:100%!important;min-height:44px!important;padding:10px 13px!important;border:1px solid #d5def7!important;border-radius:13px!important;background:#f7f9ff!important;color:#26365e!important;font-size:14px!important}
+        #detailModalPerluasan .detail-rab-form .btn{justify-self:end!important;min-height:46px!important;padding:0 20px!important;border:0!important;border-radius:12px!important;background:#1941bd!important;color:#fff!important;font-size:14px!important;font-weight:800!important;box-shadow:0 8px 18px rgba(25,65,189,.2)!important}
+        #detailModalPerluasan .detail-rab-form .btn:hover,#detailModalPerluasan #detailFormPerluasan>button[type="submit"]:hover{background:#12349e!important}
+        #detailModalPerluasan .detail-file-list{display:grid!important;gap:10px!important}
+        #detailModalPerluasan .planning-result-box{display:grid!important;gap:10px!important;margin:0!important;padding:14px!important;border:1px solid #dfe6fb!important;border-radius:16px!important;background:#f7f9ff!important;box-shadow:none!important}
+        #detailModalPerluasan .planning-result-box h4{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:12px!important;margin:0!important;padding:0 0 9px!important;border-bottom:1px solid #e1e8fa!important;color:#1236a5!important;font-size:14px!important;line-height:1.4!important}
+        #detailModalPerluasan .file-status{flex:0 0 auto!important;padding:5px 10px!important;border-radius:999px!important;background:#ffe5e5!important;color:#bd2f27!important;font-size:11px!important;font-weight:700!important;white-space:nowrap!important}
+        #detailModalPerluasan .file-status.is-complete{background:#dcf5e8!important;color:#176d43!important}
+        #detailModalPerluasan .upload-owner-label{color:#60719b!important;font-size:11px!important}
+        #detailModalPerluasan .planning-result-box>div[id$="Files"]{display:block!important;min-height:42px!important;padding:10px 12px!important;border:1px dashed #ccd8f7!important;border-radius:12px!important;background:#fff!important;color:#60719b!important;font-size:13px!important;line-height:1.45!important;overflow-wrap:anywhere!important}
+        #detailModalPerluasan .result-empty{display:block!important;padding:1px 0!important;color:#60719b!important}
+        #detailModalPerluasan .planning-result-box>div[id$="Files"] a{color:#2451dc!important;font-weight:700!important;text-decoration:underline!important;overflow-wrap:anywhere!important}
+        #detailModalPerluasan .result-file-row{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:12px!important;margin:0!important;padding:4px 0!important}
+        #detailModalPerluasan .result-file-row+.result-file-row{border-top:1px solid #edf1f8!important;padding-top:10px!important;margin-top:7px!important}
+        #detailModalPerluasan .result-file-info{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:12px!important;min-width:0!important;flex:1!important}
+        #detailModalPerluasan .result-file-info a{display:inline-flex!important;align-items:center!important;gap:9px!important;min-width:0!important;overflow-wrap:anywhere!important}
+        #detailModalPerluasan .result-file-icon{display:grid!important;place-items:center!important;flex:0 0 30px!important;width:30px!important;height:30px!important;border-radius:9px!important;background:#e8efff!important;color:#2451dc!important}
+        #detailModalPerluasan .result-file-date{flex:0 0 auto!important;color:#60719b!important;font-size:11px!important;white-space:nowrap!important}
+        #detailModalPerluasan .result-delete{flex:0 0 auto!important;padding:5px 8px!important;border:0!important;border-radius:7px!important;background:#c23f3a!important;color:#fff!important;cursor:pointer!important;font-size:11px!important}
+        #detailModalPerluasan .result-waiting-message{padding:9px 10px!important;border:1px solid #f1d28a!important;border-radius:9px!important;background:#fffaf0!important;color:#8a6417!important;font-size:12px!important}
+        #detailModalPerluasan .planning-result-box form{display:flex!important;align-items:center!important;gap:9px!important;flex-wrap:wrap!important;margin:0!important}
+        #detailModalPerluasan .planning-result-box form[hidden]{display:none!important}
+        #detailModalPerluasan .planning-result-box form input[type=file]{flex:1 1 220px!important;min-width:0!important;min-height:38px!important;padding:6px 8px!important;border:1px solid #d5def7!important;border-radius:10px!important;background:#fff!important;color:#60719b!important;font-size:11px!important}
+        #detailModalPerluasan .planning-result-box form input[type=file]::file-selector-button{margin-right:8px!important;padding:6px 9px!important;border:0!important;border-radius:7px!important;background:#eef2ff!important;color:#1236a5!important;font-weight:700!important;cursor:pointer!important}
+        #detailModalPerluasan .planning-result-box form button{min-height:38px!important;padding:0 12px!important;border:1px solid #c8d5ff!important;border-radius:10px!important;background:#fff!important;color:#1236a5!important;font-size:12px!important;font-weight:700!important;white-space:nowrap!important;box-shadow:none!important}
+        #detailModalPerluasan .planning-result-box form button:hover{background:#edf2ff!important}
+        #detailModalPerluasan .detail-modal-footer{display:flex!important;justify-content:flex-end!important;padding:14px 24px!important;border-top:1px solid #e0e7f7!important;background:#fff!important}
+        #detailModalPerluasan .detail-modal-dismiss{min-height:42px!important;padding:0 18px!important;border:1px solid #c8d5ff!important;border-radius:12px!important;background:#fff!important;color:#1236a5!important;font-size:14px!important;font-weight:700!important;box-shadow:none!important;cursor:pointer!important}
+        #detailModalPerluasan .detail-modal-dismiss:hover{background:#f2f5ff!important}
+        #detailModalPerluasan .vendor-form,#detailModalPerluasan .vendor-delete-card,#detailModalPerluasan .vendor-report-result,#detailModalPerluasan .construction-report-box{border-color:#dfe6fb!important;border-radius:15px!important;background:#f7f9ff!important}
+        #detailModalPerluasan .vendor-form{display:grid!important;gap:10px!important;margin:0!important;padding:15px!important}
+        #detailModalPerluasan .vendor-form label{display:grid!important;gap:6px!important;color:#4f608b!important;font-size:12px!important;font-weight:700!important}
+        #detailModalPerluasan .vendor-form select,#detailModalPerluasan .vendor-form input[type=file]{min-height:42px!important;padding:9px 11px!important;border:1px solid #d5def7!important;border-radius:11px!important;background:#fff!important;color:#26365e!important}
+        #detailModalPerluasan .vendor-delete-card{margin:0!important;padding:14px!important}
+        #detailModalPerluasan .vendor-report-result{gap:9px!important;margin:0!important;padding:15px!important}
+        #detailModalPerluasan .construction-report-box{display:grid!important;gap:10px!important;margin:0!important;padding:15px!important}
+        #detailModalPerluasan .construction-report-box h4,#detailModalPerluasan .vendor-report-result h4,#detailModalPerluasan .vendor-form h4{margin:0!important;color:#1236a5!important}
+        @media(max-width:700px){#detailModalPerluasan{padding:12px!important}#detailModalPerluasan .detail-modal-box{max-height:calc(100vh - 24px)!important;border-radius:20px!important}#detailModalPerluasan .detail-modal-header{padding:18px 18px 15px!important}#detailModalPerluasan .detail-modal-close{top:14px!important;right:14px!important}#detailModalPerluasan .detail-modal-body{gap:17px!important;padding:17px 18px!important}#detailModalPerluasan .detail-cost-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}#detailModalPerluasan .proses-row{grid-template-columns:26px minmax(0,1fr) auto!important;gap:8px!important;padding:9px 10px!important}#detailModalPerluasan .proses-row time{grid-column:2!important;text-align:left!important}#detailModalPerluasan .detail-modal-footer{padding:12px 18px!important}}
+        @media(max-width:480px){#detailModalPerluasan .detail-modal-header h3{font-size:19px!important}#detailModalPerluasan .detail-modal-summary{max-width:calc(100% - 34px)!important;font-size:12px!important}#detailModalPerluasan .detail-customer-grid,#detailModalPerluasan .detail-edit-table{grid-template-columns:1fr!important}#detailModalPerluasan .detail-grid .detail-full,#detailModalPerluasan .detail-edit-table .detail-field-rab{grid-column:auto!important}#detailModalPerluasan .proses-row{grid-template-columns:24px minmax(0,1fr)!important}#detailModalPerluasan .proses-status,#detailModalPerluasan .proses-row time{grid-column:2!important;justify-self:start!important}#detailModalPerluasan .planning-result-box h4{align-items:flex-start!important;flex-direction:column!important;gap:6px!important}#detailModalPerluasan .result-file-row,#detailModalPerluasan .result-file-info{align-items:flex-start!important;flex-direction:column!important;gap:6px!important}#detailModalPerluasan .result-file-date{white-space:normal!important}#detailModalPerluasan .planning-result-box form{align-items:stretch!important;flex-direction:column!important}#detailModalPerluasan .planning-result-box form input[type=file],#detailModalPerluasan .planning-result-box form button{width:100%!important;flex-basis:auto!important}}
     </style>
     @endpush
 
@@ -663,7 +751,9 @@
             const vendorStockAvailability = document.getElementById('vendorStockAvailabilityPerluasan');
             const vendorSubmitButton = document.getElementById('vendorSubmitButton');
             const setText = (id, value) => { const element = document.getElementById(id); if (element) element.textContent = value || '-'; };
-            const money = (value) => value ? Number(value).toLocaleString('id-ID') : '-';
+            const money = (value) => value !== null && value !== undefined && String(value).trim() !== '' && Number.isFinite(Number(value))
+                ? `Rp ${Number(value).toLocaleString('id-ID')}`
+                : '-';
             const formatRupiah = (value) => {
                 const number = Number(value);
                 return Number.isFinite(number) && number > 0 ? Math.round(number).toLocaleString('id-ID') : '';
@@ -687,15 +777,28 @@
             const fileRow = (url, fileName, uploadDate, deleteForm = '') => {
                 const safeName = escapeHtml(fileName);
                 const safeDate = uploadDate ? `Diunggah ${escapeHtml(date(uploadDate))}` : 'Tanggal tidak tersedia';
-                return `<div class="result-file-row"><div class="result-file-info"><a href="${url}" target="_blank" rel="noopener">📄 ${safeName}</a><span class="result-file-date">${safeDate}</span></div>${deleteForm}</div>`;
+                return `<div class="result-file-row"><div class="result-file-info"><a href="${url}" target="_blank" rel="noopener"><span class="result-file-icon" aria-hidden="true">▤</span>${safeName}</a><span class="result-file-date">${safeDate}</span></div>${deleteForm}</div>`;
             };
             const setProcess = (name, done, value) => {
                 const status = document.getElementById(`proses${name}Status`);
                 const tanggal = document.getElementById(`proses${name}Date`);
                 if (!status || !tanggal) return;
-                status.textContent = done === '1' ? '✓ Sudah lengkap' : '✕ Belum diunggah';
-                status.className = done === '1' ? 'proses-selesai' : 'proses-belum';
+                const complete = done === '1';
+                const row = status.closest('.proses-row');
+                const icon = row?.querySelector('.proses-icon');
+                status.textContent = complete ? 'Sudah lengkap' : 'Belum diunggah';
+                status.className = `proses-status ${complete ? 'proses-selesai' : 'proses-belum'}`;
+                row?.classList.toggle('is-complete', complete);
+                if (icon) icon.textContent = complete ? '✓' : '×';
                 tanggal.textContent = done === '1' ? date(value) : '-';
+            };
+            const updateFileStatuses = () => {
+                document.querySelectorAll('#detailModalPerluasan [data-file-status-for]').forEach((badge) => {
+                    const fileBox = document.getElementById(badge.dataset.fileStatusFor);
+                    const complete = Boolean(fileBox?.querySelector('a[href]'));
+                    badge.textContent = complete ? 'Sudah lengkap' : 'Belum diunggah';
+                    badge.classList.toggle('is-complete', complete);
+                });
             };
 
             const updateVendorStock = () => {
@@ -749,6 +852,7 @@
                     setText('perluasanNoAgenda', button.dataset.noAgenda);
                     setText('perluasanIdpel', button.dataset.idpel);
                     setText('perluasanNama', button.dataset.nama);
+                    document.getElementById('perluasanSummary').textContent = `Agenda ${button.dataset.noAgenda || '-'} · ${button.dataset.nama || '-'}`;
                     setText('perluasanAlamat', button.dataset.alamat);
                     setText('perluasanTransaksi', button.dataset.transaksi);
                     setText('perluasanStatus', button.dataset.status);
@@ -756,7 +860,10 @@
                     setText('perluasanTotalBiaya', money(button.dataset.totalBiaya));
                     setText('perluasanTglMohon', date(button.dataset.tglMohon));
                     setText('perluasanTglBayar', date(button.dataset.tglBayar));
-                    setText('perluasanRabValue', money(button.dataset.rab));
+                    const rabDisplay = formatRupiah(button.dataset.rab || '');
+                    const rabStatus = document.getElementById('perluasanRabValue');
+                    rabStatus.textContent = rabDisplay ? `Rp ${rabDisplay}` : 'Belum diisi';
+                    rabStatus.classList.toggle('is-filled', Boolean(rabDisplay));
                     setProcess('Ulp', button.dataset.prosesUlp, button.dataset.prosesUlpDate);
                     setProcess('Perencanaan', button.dataset.prosesPerencanaan, button.dataset.prosesPerencanaanDate);
                     setProcess('NpsWo', button.dataset.prosesNpsWo, button.dataset.prosesNpsWoDate);
@@ -837,7 +944,7 @@
                     const constructionResultFilesBox = document.getElementById('constructionResultFiles');
                     if (constructionResultFilesBox) constructionResultFilesBox.innerHTML = constructionResultFiles.length
                         ? constructionResultFiles.map((path, index) => fileRow(button.dataset.konstruksiHasilFileUrl.replace(/\/0$/, '/' + index), String(path).split('/').pop() || 'Berkas hasil konstruksi ' + (index + 1), button.dataset.prosesKonstruksiDate, constructionResultUploadForm ? `<form method="POST" action="{{ url('/vendor/konstruksi') }}/${button.dataset.id}/hasil-konstruksi/${index}"><input type="hidden" name="_token" value="{{ csrf_token() }}"><input type="hidden" name="_method" value="DELETE"><button type="submit" class="result-delete" onclick="return confirm('Hapus berkas ini?')">Hapus</button></form>` : '')).join('')
-                        : '-';
+                        : '<span class="result-empty">Belum ada berkas</span>';
                     if (constructionResultUploadForm) {
                         constructionResultUploadForm.action = `{{ url('/vendor/konstruksi') }}/${button.dataset.id}/hasil-konstruksi`;
                     }
@@ -846,7 +953,7 @@
                     const npsWoFilesBox = document.getElementById('npsWoFiles');
                     if (npsWoFilesBox) npsWoFilesBox.innerHTML = npsWoFiles.length
                         ? npsWoFiles.map((path, index) => fileRow(button.dataset.npsWoFileUrl.replace(/\/0$/, '/' + index), String(path).split('/').pop() || 'Berkas WO NPS ' + (index + 1), button.dataset.prosesNpsWoDate, npsWoUploadForm ? `<form method="POST" action="{{ url('/pbpd') }}/${button.dataset.id}/nps-wo/${index}"><input type="hidden" name="_token" value="{{ csrf_token() }}"><input type="hidden" name="_method" value="DELETE"><button type="submit" class="result-delete" onclick="return confirm('Hapus berkas WO NPS ini?')">Hapus</button></form>` : '')).join('')
-                        : '-';
+                        : '<span class="result-empty">Belum ada berkas</span>';
                     if (npsWoUploadForm) {
                         npsWoUploadForm.action = `{{ url('/pbpd') }}/${button.dataset.id}/nps-wo`;
                     }
@@ -855,7 +962,7 @@
                     const transaksiResultFilesBox = document.getElementById('transaksiResultFiles');
                     if (transaksiResultFilesBox) transaksiResultFilesBox.innerHTML = transaksiResultFiles.length
                         ? transaksiResultFiles.map((path, index) => fileRow(button.dataset.transaksiHasilFileUrl.replace(/\/0$/, '/' + index), String(path).split('/').pop() || 'Berkas hasil transaksi ' + (index + 1), button.dataset.prosesTransaksiDate, transaksiResultUploadForm ? `<form method="POST" action="{{ url('/pbpd') }}/${button.dataset.id}/hasil-transaksi/${index}"><input type="hidden" name="_token" value="{{ csrf_token() }}"><input type="hidden" name="_method" value="DELETE"><button type="submit" class="result-delete" onclick="return confirm('Hapus berkas ini?')">Hapus</button></form>` : '')).join('')
-                        : '-';
+                        : '<span class="result-empty">Belum ada berkas</span>';
                     if (transaksiResultUploadForm) {
                         transaksiResultUploadForm.action = `{{ url('/pbpd') }}/${button.dataset.id}/hasil-transaksi`;
                     }
@@ -864,7 +971,7 @@
                     const jaringanResultFilesBox = document.getElementById('jaringanResultFiles');
                     if (jaringanResultFilesBox) jaringanResultFilesBox.innerHTML = jaringanResultFiles.length
                         ? jaringanResultFiles.map((path, index) => fileRow(button.dataset.jaringanHasilFileUrl.replace(/\/0$/, '/' + index), String(path).split('/').pop() || 'Berkas hasil jaringan ' + (index + 1), button.dataset.prosesJaringanDate, jaringanResultUploadForm ? `<form method="POST" action="{{ url('/pbpd') }}/${button.dataset.id}/hasil-jaringan/${index}"><input type="hidden" name="_token" value="{{ csrf_token() }}"><input type="hidden" name="_method" value="DELETE"><button type="submit" class="result-delete" onclick="return confirm('Hapus berkas ini?')">Hapus</button></form>` : '')).join('')
-                        : '-';
+                        : '<span class="result-empty">Belum ada berkas</span>';
                     if (jaringanResultUploadForm) {
                         jaringanResultUploadForm.action = `{{ url('/pbpd') }}/${button.dataset.id}/hasil-jaringan`;
                     }
@@ -884,7 +991,7 @@
                     const constructionVendorReportFilesBox = document.getElementById('constructionVendorReportFiles');
                     if (constructionVendorReportFilesBox) constructionVendorReportFilesBox.innerHTML = constructionVendorReportFiles.length
                         ? constructionVendorReportFiles.map((path, index) => fileRow(button.dataset.konstruksiLaporanFileUrl.replace(/\/0$/, '/' + index), constructionVendorReportNames[index] || String(path).split('/').pop() || `Berkas laporan konstruksi ${index + 1}`, button.dataset.konstruksiLaporanDate)).join('')
-                        : '-';
+                        : '<span class="result-empty">Belum ada berkas</span>';
                     const reportResult = document.getElementById('vendorReportResult');
                     if (reportResult) {
                         setText('laporanLengkap', button.dataset.laporanLengkap);
@@ -900,7 +1007,7 @@
                     const vendorReportFilesBox = document.getElementById('vendorReportFiles');
                     if (vendorReportFilesBox) vendorReportFilesBox.innerHTML = vendorReportFiles.length
                         ? vendorReportFiles.map((path, index) => fileRow(button.dataset.reportFileUrl.replace(/\/0$/, '/' + index), vendorReportNames[index] || String(path).split('/').pop() || `Berkas laporan vendor ${index + 1}`, button.dataset.laporanDate)).join('')
-                        : '-';
+                        : '<span class="result-empty">Belum ada berkas</span>';
                     const resultFilesBox = document.getElementById('resultFiles');
                     let resultFiles = [];
                     try { resultFiles = JSON.parse(button.dataset.resultFiles ? atob(button.dataset.resultFiles) : '[]'); } catch (error) { resultFiles = []; }
@@ -911,17 +1018,20 @@
                                 const fileName = resultNames[index] || String(path).split('/').pop() || `Berkas hasil ${index + 1}`;
                                 return fileRow(button.dataset.resultFileUrl.replace(/\/0$/, '/' + index), fileName, button.dataset.prosesPerencanaanDate, resultUploadForm ? `<form method="POST" action="${button.dataset.resultDeleteUrl.replace(/\/0$/, '/' + index)}"><input type="hidden" name="_token" value="{{ csrf_token() }}"><button type="submit" class="result-delete" onclick="return confirm('Hapus berkas ini?')">Hapus</button></form>` : '');
                             }).join('')
-                            : '-';
+                            : '<span class="result-empty">Belum ada berkas</span>';
                     if (resultUploadForm) {
                         resultUploadForm.hidden = qualificationStatus !== 'LAYAK';
                         resultUploadForm.action = `{{ url('/vendor/tiang') }}/${button.dataset.id}/hasil`;
                     }
+                    updateFileStatuses();
                 });
             });
 
-            document.getElementById('closeDetailPerluasan').addEventListener('click', () => { modal.hidden = true; });
-            modal.addEventListener('click', (event) => { if (event.target === modal) modal.hidden = true; });
-            document.addEventListener('keydown', (event) => { if (event.key === 'Escape') modal.hidden = true; });
+            const closeDetailModal = () => { modal.hidden = true; };
+            document.getElementById('closeDetailPerluasan').addEventListener('click', closeDetailModal);
+            document.getElementById('dismissDetailPerluasan').addEventListener('click', closeDetailModal);
+            modal.addEventListener('click', (event) => { if (event.target === modal) closeDetailModal(); });
+            document.addEventListener('keydown', (event) => { if (event.key === 'Escape') closeDetailModal(); });
         })();
     </script>
 @endsection

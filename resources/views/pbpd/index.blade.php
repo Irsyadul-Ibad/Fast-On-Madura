@@ -303,35 +303,61 @@
 
     <div id="detailModal" class="detail-modal" hidden>
         <div class="detail-modal-box" role="dialog" aria-modal="true" aria-labelledby="detailModalTitle">
-            <button type="button" class="detail-modal-close" aria-label="Tutup">&times;</button>
-            <h3 id="detailModalTitle">Detail Data PB/PD</h3>
+            <header class="detail-modal-header">
+                <div>
+                    <h3 id="detailModalTitle">Detail Data PB/PD</h3>
+                    <p id="detailSummary" class="detail-modal-summary"></p>
+                </div>
+                <button type="button" class="detail-modal-close" aria-label="Tutup detail">&times;</button>
+            </header>
 
-            <div class="detail-grid">
-                <div><small>No Agenda</small><b id="detailNoAgenda"></b></div>
-                <div><small>IDPEL</small><b id="detailIdpel"></b></div>
-                <div><small>Nama Pelanggan</small><b id="detailNama"></b></div>
-                <div><small>Transaksi</small><b id="detailTransaksi"></b></div>
-                <div><small>Status</small><b id="detailStatus"></b></div>
-                <div><small>BP (Total Biaya)</small><b id="detailBp"></b></div>
-                <div><small>Total Biaya</small><b id="detailTotalBiaya"></b></div>
-                <div><small>Tanggal Mohon</small><b id="detailTglMohon"></b></div>
-                <div><small>Tanggal Bayar</small><b id="detailTglBayar"></b></div>
-                <div><small>RAB</small><b id="detailRabValue"></b></div>
-                <div class="detail-full"><small>Alamat</small><b id="detailAlamat"></b></div>
+            <div class="detail-modal-content">
+                <section class="detail-section" aria-labelledby="detailCustomerHeading">
+                    <h4 id="detailCustomerHeading" class="detail-section-title">Informasi Pelanggan</h4>
+                    <div class="detail-grid detail-customer-grid">
+                        <div><small>No Agenda</small><b id="detailNoAgenda"></b></div>
+                        <div><small>IDPEL</small><b id="detailIdpel"></b></div>
+                        <div><small>Nama Pelanggan</small><b id="detailNama"></b></div>
+                        <div><small>Transaksi</small><b id="detailTransaksi" class="detail-value-pill"></b></div>
+                        <div><small>Status</small><b id="detailStatus" class="detail-value-pill"></b></div>
+                        <div><small>Total Biaya</small><b id="detailTotalBiaya"></b></div>
+                        <div class="detail-full"><small>Alamat</small><b id="detailAlamat"></b></div>
+                    </div>
+                </section>
+
+                <section class="detail-section" aria-labelledby="detailCostHeading">
+                    <h4 id="detailCostHeading" class="detail-section-title">Biaya dan Jadwal</h4>
+                    <div class="detail-cost-grid">
+                        <div><small>BP (Total Biaya)</small><b id="detailBp"></b></div>
+                        <div><small>RAB</small><b id="detailRabValue" class="detail-rab-status"></b></div>
+                        <div><small>Tanggal Mohon</small><b id="detailTglMohon"></b></div>
+                        <div><small>Tanggal Bayar</small><b id="detailTglBayar"></b></div>
+                    </div>
+                </section>
+
+                @if ($canEditRab)
+                    <form id="rabForm" method="POST" class="detail-rab-form">
+                        @csrf
+                        <div class="detail-rab-heading">
+                            <h4>Isi RAB</h4>
+                            <p id="rabFormHelp">RAB belum diisi. Masukkan nilainya lalu simpan.</p>
+                        </div>
+                        <label for="rabInput">Nilai RAB</label>
+                        <div class="detail-rab-controls">
+                            <div class="detail-rab-input">
+                                <span>Rp</span>
+                                <input id="rabInput" name="rab_display" type="text" inputmode="numeric" autocomplete="off" placeholder="Masukkan RAB">
+                                <input id="rabValue" name="rab" type="hidden">
+                            </div>
+                            <button type="submit" class="btn"><span aria-hidden="true">✓</span> Simpan RAB</button>
+                        </div>
+                    </form>
+                @endif
             </div>
 
-            @if ($canEditRab)
-                <form id="rabForm" method="POST" class="detail-rab-form">
-                    @csrf
-                    <label for="rabInput">RAB</label>
-                    <div class="detail-rab-input">
-                        <span>Rp</span>
-                        <input id="rabInput" name="rab_display" type="text" inputmode="numeric" autocomplete="off" placeholder="Masukkan RAB">
-                        <input id="rabValue" name="rab" type="hidden">
-                    </div>
-                    <button type="submit" class="btn">Simpan RAB</button>
-                </form>
-            @endif
+            <footer class="detail-modal-footer">
+                <button type="button" class="detail-modal-dismiss">Tutup</button>
+            </footer>
         </div>
     </div>
 
@@ -383,22 +409,43 @@
         .tujuan-card-icon{display:grid;place-items:center;width:32px;height:32px;border-radius:50%;background:#e9edff;color:#293bc0;font-size:20px;font-weight:800;line-height:1}.tujuan-card-icon-green{background:#d9f8e9;color:#159447}.tujuan-card strong{font-size:11px;line-height:1.2}.tujuan-card small{max-width:120px;color:#8191aa;font-size:9px;line-height:1.2}
         #sendModal #expansionNeeds{margin-top:4px;padding:12px;border:1px solid #d9e2ec;border-radius:10px;background:#fff}#sendModal .kebutuhan-tabel{margin:0!important;border-radius:8px!important;background:#fff!important}#sendModal .kebutuhan-tabel th,#sendModal .kebutuhan-tabel td{padding:9px!important}#sendModal .kebutuhan-tabel select,#sendModal .kebutuhan-tabel input{min-height:32px!important;background:#fff8ee!important;border-radius:6px!important}
         #sendModal #sendForm>button[type="submit"]{width:100%;min-height:38px;margin-top:4px;background:#0d1b8c!important;color:#fff!important;border-radius:8px!important;font-weight:700!important}
-        #detailModal .detail-modal-box{width:min(620px,100%)!important;padding:0!important;border:1px solid #d8e3ef!important;border-radius:14px!important;overflow:auto!important;background:#f8fafc!important;box-shadow:0 12px 34px rgba(13,27,140,.18)!important}
-        #detailModal .detail-modal-box h3{margin:0!important;padding:16px 20px!important;background:#0d1b8c!important;color:#fff!important;font-size:15px!important;line-height:1.3!important}
-        #detailModal .detail-modal-close{top:9px!important;right:10px!important;border:0!important;border-radius:50%!important;background:#fff!important;color:#0d1b8c!important;font-size:20px!important;font-weight:800!important;line-height:26px!important;box-shadow:0 2px 7px rgba(0,0,0,.15)!important;cursor:pointer}
-        #detailModal .detail-grid{padding:20px 20px 0!important;gap:10px!important}
-        #detailModal .detail-grid div{padding:11px!important;border:1px solid #d8e3ef!important;border-radius:9px!important;background:#fff!important}
-        #detailModal .detail-grid small{margin-bottom:5px!important;color:#6b87a4!important;font-size:11px!important}
-        #detailModal .detail-grid b{color:#243b53!important;font-size:13px!important}
-        #detailModal .detail-rab-form{display:flex!important;align-items:flex-end!important;gap:10px!important;margin:16px 20px 20px!important;padding:13px!important;border:1px solid #d8e3ef!important;border-radius:10px!important;background:#fff!important}
-        #detailModal .detail-rab-form label{flex:0 0 auto!important;margin-bottom:10px!important;color:#56718d!important;font-size:12px!important;font-weight:800!important;text-transform:uppercase!important}
-        #detailModal .detail-rab-input{display:flex!important;align-items:center!important;flex:1!important;margin-top:0!important;border:1px solid #cbd9e8!important;border-radius:8px!important;background:#fff!important;overflow:hidden!important}
-        #detailModal .detail-rab-input span{padding:9px 10px!important;background:#0d1b8c!important;color:#fff!important;font-weight:700!important}
-        #detailModal .detail-rab-input input{width:100%!important;min-height:38px!important;padding:8px 10px!important;border:0!important;background:#fff!important;color:#243b53!important;font-size:13px!important;outline:0!important}
-        #detailModal .detail-rab-input:focus-within{border-color:#2b73fe!important;box-shadow:0 0 0 3px rgba(43,115,254,.13)!important}
-        #detailModal .detail-rab-form .btn{min-height:38px!important;border:0!important;border-radius:8px!important;background:#2b73fe!important;color:#fff!important;font-weight:700!important;box-shadow:0 4px 10px rgba(43,115,254,.2)!important;white-space:nowrap!important}
-        #detailModal .detail-rab-form .btn:hover{background:#1f5ed8!important}
-        @media (max-width:600px){#detailModal .detail-rab-form{align-items:stretch!important;flex-direction:column!important}#detailModal .detail-rab-form label{margin-bottom:0!important}}
+        #detailModal .detail-modal-box{display:flex!important;flex-direction:column!important;width:min(680px,100%)!important;max-height:calc(100vh - 48px)!important;padding:0!important;border:1px solid #dfe6fb!important;border-radius:24px!important;overflow:hidden!important;background:#fff!important;color:#1d2a55!important;box-shadow:0 24px 64px rgba(15,35,104,.25)!important}
+        #detailModal .detail-modal-header{position:relative!important;display:flex!important;align-items:center!important;justify-content:space-between!important;gap:20px!important;padding:22px 24px 18px!important;border-bottom:1px solid #e0e7f7!important;background:#fff!important}
+        #detailModal .detail-modal-header h3{margin:0!important;padding:0 54px 0 0!important;background:transparent!important;color:#1236a5!important;font-size:22px!important;font-weight:800!important;line-height:1.25!important}
+        #detailModal .detail-modal-summary{margin:5px 0 0!important;color:#60719b!important;font-size:14px!important;font-weight:500!important;line-height:1.45!important;overflow-wrap:anywhere}
+        #detailModal .detail-modal-close{position:absolute!important;top:18px!important;right:20px!important;z-index:2!important;display:grid!important;place-items:center!important;width:40px!important;height:40px!important;min-width:40px!important;min-height:40px!important;padding:0!important;border:0!important;border-radius:13px!important;background:#eef2ff!important;color:#394b7e!important;font-size:25px!important;font-family:Arial,sans-serif!important;font-weight:400!important;line-height:1!important;box-shadow:none!important;cursor:pointer!important}
+        #detailModal .detail-modal-close:hover{background:#dfe7ff!important;color:#173daf!important}
+        #detailModal .detail-modal-content{display:grid!important;gap:20px!important;overflow-y:auto!important;overscroll-behavior:contain!important;padding:20px 24px!important}
+        #detailModal .detail-section{min-width:0}
+        #detailModal .detail-section-title{margin:0 0 10px!important;padding:0!important;background:transparent!important;color:#60719b!important;font-size:12px!important;font-weight:800!important;letter-spacing:.12em!important;line-height:1.4!important;text-transform:uppercase!important}
+        #detailModal .detail-customer-grid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:10px!important;padding:0!important}
+        #detailModal .detail-grid>div{min-width:0!important;padding:13px 14px!important;border:1px solid #dfe6fb!important;border-radius:15px!important;background:#fff!important}
+        #detailModal .detail-grid small,#detailModal .detail-cost-grid small{display:block!important;margin:0 0 5px!important;color:#60719b!important;font-size:11px!important;font-weight:700!important;letter-spacing:.045em!important;line-height:1.35!important;text-transform:uppercase!important}
+        #detailModal .detail-grid b,#detailModal .detail-cost-grid b{display:block!important;color:#202d5a!important;font-size:14px!important;font-weight:700!important;line-height:1.45!important;overflow-wrap:anywhere!important}
+        #detailModal .detail-grid .detail-full{grid-column:1/-1!important}
+        #detailModal .detail-grid .detail-value-pill{display:inline-flex!important;max-width:100%!important;align-items:center!important;padding:5px 10px!important;border-radius:999px!important;background:#e8efff!important;color:#2147bd!important;font-size:12px!important;font-weight:700!important}
+        #detailModal .detail-cost-grid{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr))!important;gap:10px!important}
+        #detailModal .detail-cost-grid>div{min-width:0!important;padding:13px 14px!important;border:1px solid #dfe6fb!important;border-radius:15px!important;background:#f2f5ff!important}
+        #detailModal .detail-cost-grid b{color:#1236a5!important;font-size:17px!important}
+        #detailModal .detail-cost-grid .detail-rab-status{display:inline-flex!important;width:max-content!important;max-width:100%!important;align-items:center!important;padding:5px 10px!important;border-radius:999px!important;background:#fff1c9!important;color:#916000!important;font-size:12px!important;white-space:normal!important}
+        #detailModal .detail-cost-grid .detail-rab-status.is-filled{background:#dcf5e8!important;color:#176d43!important}
+        #detailModal .detail-rab-form{display:grid!important;gap:10px!important;margin:0!important;padding:18px!important;border:1px solid #c5d2ff!important;border-radius:18px!important;background:#f2f5ff!important}
+        #detailModal .detail-rab-heading h4{margin:0 0 3px!important;padding:0!important;background:transparent!important;color:#1236a5!important;font-size:16px!important;font-weight:800!important;line-height:1.35!important}
+        #detailModal .detail-rab-heading p{margin:0!important;color:#60719b!important;font-size:13px!important;line-height:1.45!important}
+        #detailModal .detail-rab-form>label{margin:0!important;color:#4f608b!important;font-size:12px!important;font-weight:700!important;line-height:1.35!important}
+        #detailModal .detail-rab-controls{display:flex!important;align-items:stretch!important;gap:10px!important;min-width:0!important}
+        #detailModal .detail-rab-input{display:flex!important;align-items:center!important;flex:1 1 auto!important;min-width:0!important;margin:0!important;border:1px solid #d1dcfa!important;border-radius:12px!important;background:#fff!important;overflow:hidden!important}
+        #detailModal .detail-rab-input span{display:grid!important;place-items:center!important;align-self:stretch!important;min-width:48px!important;padding:0 12px!important;background:#2451dc!important;color:#fff!important;font-size:14px!important;font-weight:800!important}
+        #detailModal .detail-rab-input input#rabInput{width:100%!important;min-width:0!important;min-height:48px!important;padding:10px 14px!important;border:0!important;border-radius:0!important;background:#fff!important;color:#243b53!important;font-size:15px!important;outline:0!important}
+        #detailModal .detail-rab-input input#rabInput:focus{outline:0!important;box-shadow:none!important}
+        #detailModal .detail-rab-input:focus-within{border-color:#2451dc!important;box-shadow:0 0 0 3px rgba(36,81,220,.13)!important}
+        #detailModal .detail-rab-form .btn{display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:9px!important;min-height:48px!important;padding:0 18px!important;border:0!important;border-radius:12px!important;background:#1941bd!important;color:#fff!important;font-size:14px!important;font-weight:800!important;box-shadow:0 8px 18px rgba(25,65,189,.2)!important;white-space:nowrap!important;cursor:pointer!important}
+        #detailModal .detail-rab-form .btn:hover{background:#12349e!important}
+        #detailModal .detail-modal-footer{display:flex!important;justify-content:flex-end!important;padding:14px 24px!important;border-top:1px solid #e0e7f7!important;background:#fff!important}
+        #detailModal .detail-modal-dismiss{min-height:42px!important;padding:0 18px!important;border:1px solid #c8d5ff!important;border-radius:12px!important;background:#fff!important;color:#1236a5!important;font-size:14px!important;font-weight:700!important;box-shadow:none!important;cursor:pointer!important}
+        #detailModal .detail-modal-dismiss:hover{background:#f2f5ff!important}
+        @media (max-width:700px){#detailModal .detail-modal-box{max-height:calc(100vh - 24px)!important;border-radius:20px!important}#detailModal .detail-modal-header{padding:18px 18px 15px!important}#detailModal .detail-modal-close{top:14px!important;right:14px!important}#detailModal .detail-modal-content{gap:17px!important;padding:17px 18px!important}#detailModal .detail-cost-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}#detailModal .detail-modal-footer{padding:12px 18px!important}}
+        @media (max-width:480px){#detailModal .detail-customer-grid{grid-template-columns:1fr!important}#detailModal .detail-grid .detail-full{grid-column:auto!important}#detailModal .detail-rab-controls{align-items:stretch!important;flex-direction:column!important}#detailModal .detail-rab-form .btn{width:100%!important}#detailModal .detail-modal-header h3{font-size:19px!important}#detailModal .detail-modal-summary{max-width:calc(100% - 34px)!important;font-size:12px!important}}
         .ikon-syarat { padding:4px 8px; background:#e8eef5; color:#0b3d6b; }
         .syarat-files { display:grid; gap:8px; padding:12px; border:1px solid #d6e2ee; border-radius:6px; }
         .syarat-files a { color:#0b3d6b; overflow-wrap:anywhere; }
@@ -413,6 +460,10 @@
             const modal = document.getElementById('detailModal');
             const rabForm = document.getElementById('rabForm');
             const setText = (id, value) => { document.getElementById(id).textContent = value || '-'; };
+            const formatCurrency = (value) => {
+                const amount = Number(value);
+                return value !== '' && value !== null && Number.isFinite(amount) ? `Rp ${amount.toLocaleString('id-ID')}` : '-';
+            };
             const formatRupiah = (value) => {
                 const number = Number(value);
                 return Number.isFinite(number) && number > 0 ? Math.round(number).toLocaleString('id-ID') : '';
@@ -433,25 +484,34 @@
                     setText('detailNoAgenda', button.dataset.noAgenda);
                     setText('detailIdpel', button.dataset.idpel);
                     setText('detailNama', button.dataset.nama);
+                    document.getElementById('detailSummary').textContent = `Agenda ${button.dataset.noAgenda || '-'} · ${button.dataset.nama || '-'}`;
                     setText('detailAlamat', button.dataset.alamat);
                     setText('detailTransaksi', button.dataset.transaksi);
                     setText('detailStatus', button.dataset.status);
-                    setText('detailBp', button.dataset.bp ? Number(button.dataset.bp).toLocaleString('id-ID') : '-');
-                    setText('detailTotalBiaya', button.dataset.totalBiaya ? Number(button.dataset.totalBiaya).toLocaleString('id-ID') : '-');
+                    setText('detailBp', formatCurrency(button.dataset.bp ?? ''));
+                    setText('detailTotalBiaya', formatCurrency(button.dataset.totalBiaya ?? ''));
                     setText('detailTglMohon', button.dataset.tglMohon ? new Date(button.dataset.tglMohon).toLocaleDateString('id-ID') : '-');
                     setText('detailTglBayar', button.dataset.tglBayar ? new Date(button.dataset.tglBayar).toLocaleDateString('id-ID') : '-');
-                    setText('detailRabValue', button.dataset.rab ? Number(button.dataset.rab).toLocaleString('id-ID') : '-');
+                    const rabDisplay = formatRupiah(button.dataset.rab || '');
+                    const rabStatus = document.getElementById('detailRabValue');
+                    rabStatus.textContent = rabDisplay ? `Rp ${rabDisplay}` : 'Belum diisi';
+                    rabStatus.classList.toggle('is-filled', Boolean(rabDisplay));
                     if (rabForm) {
                         rabInput.value = formatRupiah(button.dataset.rab || '');
                         rabValue.value = button.dataset.rab || '';
                         rabForm.action = button.dataset.rabUrl;
+                        document.getElementById('rabFormHelp').textContent = rabDisplay
+                            ? 'Nilai RAB sudah tersimpan. Ubah nilainya jika ada pembaruan.'
+                            : 'RAB belum diisi. Masukkan nilainya lalu simpan.';
                     }
                     modal.hidden = false;
                 });
             });
 
             const closeModal = () => { modal.hidden = true; };
-            document.querySelector('#detailModal .detail-modal-close').addEventListener('click', closeModal);
+            document.querySelectorAll('#detailModal .detail-modal-close, #detailModal .detail-modal-dismiss').forEach((button) => {
+                button.addEventListener('click', closeModal);
+            });
             modal.addEventListener('click', (event) => { if (event.target === modal) closeModal(); });
             document.addEventListener('keydown', (event) => { if (event.key === 'Escape') closeModal(); });
 
