@@ -216,73 +216,54 @@
 
     @if ($canKirim)
         <div id="sendModal" class="detail-modal" hidden>
-            <div class="detail-modal-box" role="dialog" aria-modal="true" aria-labelledby="sendModalTitle">
-                <button type="button" class="detail-modal-close" id="closeSendModal" aria-label="Tutup">&times;</button>
-                <h3 id="sendModalTitle">Kirim data terpilih ke...</h3>
-                <form method="POST" action="{{ route('pbpd.kirim') }}" id="sendForm">
+            <div class="send-modal-box" role="dialog" aria-modal="true" aria-labelledby="sendModalTitle" aria-describedby="sendModalSummary">
+                <form method="POST" action="{{ route('pbpd.kirim') }}" id="sendForm" class="send-form">
                     @csrf
                     <div id="selectedPelanggan"></div>
-                    <label>Tujuan pengiriman</label>
-                    <select name="tujuan" id="tujuanKirim" required class="tujuan-hidden-select" aria-hidden="true" tabindex="-1">
-                        <option value="">Pilih tujuan</option><option value="JTM">Perluasan JTM</option><option value="JTR">Perluasan JTR</option><option value="TANPA_PERLUASAN">Tanpa Perluasan</option>
-                    </select>
-                    <div class="tujuan-cards" role="radiogroup" aria-label="Pilih tujuan pengiriman">
-                        <button type="button" class="tujuan-card" data-tujuan="JTM"><span class="tujuan-card-icon">ϟ</span><strong>Perluasan JTM</strong><small>Jaringan Tegangan Menengah</small></button>
-                        <button type="button" class="tujuan-card" data-tujuan="JTR"><span class="tujuan-card-icon">ϟ</span><strong>Perluasan JTR</strong><small>Jaringan Tegangan Rendah</small></button>
-                        <button type="button" class="tujuan-card" data-tujuan="TANPA_PERLUASAN"><span class="tujuan-card-icon tujuan-card-icon-green">▣</span><strong>Tanpa Perluasan</strong><small>Langsung Sampai Tujuan</small></button>
+                    <header class="send-modal-header">
+                        <div>
+                            <h3 id="sendModalTitle">Kirim data terpilih</h3>
+                            <p id="sendModalSummary">Pilih data dan tujuan pengiriman</p>
+                        </div>
+                        <button type="button" class="send-modal-close" id="closeSendModal" aria-label="Tutup">&times;</button>
+                    </header>
+                    <div class="send-modal-body">
+                        <section class="send-modal-section" aria-labelledby="sendDestinationHeading">
+                            <h4 id="sendDestinationHeading" class="send-section-title">Tujuan Pengiriman</h4>
+                            <select name="tujuan" id="tujuanKirim" required class="tujuan-hidden-select" aria-label="Pilih tujuan pengiriman">
+                                <option value="">Pilih tujuan</option><option value="JTM">Perluasan JTM</option><option value="JTR">Perluasan JTR</option><option value="TANPA_PERLUASAN">Tanpa Perluasan</option>
+                            </select>
+                            <div class="tujuan-cards" role="radiogroup" aria-label="Pilih tujuan pengiriman">
+                                <button type="button" class="tujuan-card" data-tujuan="JTM" role="radio" aria-checked="false"><span class="tujuan-card-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m13.3 2.5-8 11h5.8l-.6 8 8.2-12h-5.9l.5-7Z"/></svg></span><strong>Perluasan JTM</strong><small>Jaringan Tegangan Menengah</small><span class="tujuan-card-check" aria-hidden="true">✓</span></button>
+                                <button type="button" class="tujuan-card" data-tujuan="JTR" role="radio" aria-checked="false"><span class="tujuan-card-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m13.3 2.5-8 11h5.8l-.6 8 8.2-12h-5.9l.5-7Z"/></svg></span><strong>Perluasan JTR</strong><small>Jaringan Tegangan Rendah</small><span class="tujuan-card-check" aria-hidden="true">✓</span></button>
+                                <button type="button" class="tujuan-card" data-tujuan="TANPA_PERLUASAN" role="radio" aria-checked="false"><span class="tujuan-card-icon tujuan-card-icon-green" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14" rx="3"/><path d="M9 9h6v6H9z"/></svg></span><strong>Tanpa Perluasan</strong><small>Langsung sampai tujuan</small><span class="tujuan-card-check" aria-hidden="true">✓</span></button>
+                            </div>
+                        </section>
+                        <section id="expansionNeeds" class="send-modal-section" aria-labelledby="sendMaterialHeading" hidden>
+                            <h4 id="sendMaterialHeading" class="send-section-title">Kebutuhan Material</h4>
+                            <div class="send-material-table-wrap">
+                                <table class="kebutuhan-tabel">
+                                    <thead><tr><th>Keterangan</th><th>Jenis</th><th>Jumlah</th><th>Satuan</th></tr></thead>
+                                    <tbody>
+                                        <tr><th scope="row">Tiang TM</th><td><select name="jenis_tiang_tm"><option value="">Pilih</option><option>11</option><option>13</option></select></td><td><input name="jml_tiang_tm" type="number" min="0" placeholder="Jumlah"></td><td><span class="send-unit">Buah</span></td></tr>
+                                        <tr><th scope="row">Tiang TR</th><td><select name="jenis_tiang_tr"><option value="">Pilih</option><option>9</option></select></td><td><input name="jml_tiang_tr" type="number" min="0" placeholder="Jumlah"></td><td><span class="send-unit">Buah</span></td></tr>
+                                        <tr><th scope="row">Konduktor TM</th><td><select name="jenis_konduktor_tm"><option value="">Pilih</option><option>AAAC-S 240</option><option>AAAC-S 150</option><option>AAAC-S 70</option><option>AAAC 240</option><option>AAAC 150</option><option>AAAC 70</option></select></td><td><input name="jml_konduktor_tm" type="number" min="0" placeholder="Jumlah"></td><td><span class="send-unit">Meter</span></td></tr>
+                                        <tr><th scope="row">Konduktor TR</th><td><select name="jenis_konduktor_tr"><option value="">Pilih</option><option>LVTC 3x70+1x70</option><option>LVTC 3x70+1x50</option></select></td><td><input name="jml_konduktor_tr" type="number" min="0" placeholder="Jumlah"></td><td><span class="send-unit">Meter</span></td></tr>
+                                        <tr><th scope="row">Trafo</th><td><select name="jenis_trafo"><option value="">Pilih</option><option>0</option><option>50</option><option>100</option><option>160</option><option>200</option><option>250</option></select></td><td><input name="jml_trafo" type="number" min="0" placeholder="Jumlah"></td><td><span class="send-unit">Buah</span></td></tr>
+                                        <tr><th scope="row">KWH Meter</th><td><select name="jenis_kwh_meter"><option value="">Pilih</option><option>Prabayar</option><option>Pascabayar</option><option>Lainnya</option></select></td><td><input name="jml_kwh_meter" type="number" min="0" placeholder="Jumlah"></td><td><span class="send-unit">Meter</span></td></tr>
+                                        <tr><th scope="row">Panel Meter</th><td><select name="jenis_panel_meter"><option value="">Pilih</option><option>Umum</option><option>53 kva</option><option>66 kva</option><option>105 kva</option><option>164 kva</option><option>197 kva</option></select></td><td><input name="jml_panel_meter" type="number" min="0" placeholder="Jumlah"></td><td><span class="send-unit">Buah</span></td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </section>
                     </div>
-                    <div id="expansionNeeds" hidden>
-                        <table class="kebutuhan-tabel">
-                            <thead>
-                                <tr><th>KETERANGAN</th><th>JENIS</th><th>JUMLAH</th><th>SATUAN</th></tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <th>JUMLAH TIANG TM</th>
-                                    <td><select name="jenis_tiang_tm"><option value="">Pilih</option><option>11</option><option>13</option></select></td>
-                                    <td><input name="jml_tiang_tm" type="number" min="0" placeholder="Isi jumlah sendiri"></td>
-                                    <td>BUAH</td>
-                                </tr>
-                                <tr>
-                                    <th>JUMLAH TIANG TR</th>
-                                    <td><select name="jenis_tiang_tr"><option value="">Pilih</option><option>9</option></select></td>
-                                    <td><input name="jml_tiang_tr" type="number" min="0" placeholder="Isi jumlah sendiri"></td>
-                                    <td>BUAH</td>
-                                </tr>
-                                <tr>
-                                    <th>JUMLAH KONDUKTOR TM</th>
-                                    <td><select name="jenis_konduktor_tm"><option value="">Pilih</option><option>AAAC-S 240</option><option>AAAC-S 150</option><option>AAAC-S 70</option><option>AAAC 240</option><option>AAAC 150</option><option>AAAC 70</option></select></td>
-                                    <td><input name="jml_konduktor_tm" type="number" min="0" placeholder="Isi jumlah meter"></td>
-                                    <td>METER</td>
-                                </tr>
-                                <tr>
-                                    <th>JUMLAH KONDUKTOR TR</th>
-                                    <td><select name="jenis_konduktor_tr"><option value="">Pilih</option><option>LVTC 3x70+1x70</option><option>LVTC 3x70+1x50</option></select></td>
-                                    <td><input name="jml_konduktor_tr" type="number" min="0" placeholder="Isi jumlah meter"></td>
-                                    <td>METER</td>
-                                </tr>
-                                <tr>
-                                    <th>JUMLAH TRAFO</th>
-                                    <td><select name="jenis_trafo"><option value="">Pilih</option><option>0</option><option>50</option><option>100</option><option>160</option><option>200</option><option>250</option></select></td>
-                                    <td><input name="jml_trafo" type="number" min="0" placeholder="Isi jumlah sendiri"></td>
-                                    <td>BUAH</td>
-                                </tr>
-                                <tr>
-                                    <th>JUMLAH KWH METER</th>
-                                    <td><select name="jenis_kwh_meter"><option value="">Pilih</option><option>Prabayar</option><option>Pascabayar</option><option>Lainnya</option></select></td>
-                                    <td><input name="jml_kwh_meter" type="number" min="0" placeholder="Isi jumlah meter"></td>
-                                    <td>METER</td>
-                                </tr>
-                                <tr>
-                                    <th>JUMLAH PANEL METER</th>
-                                    <td><select name="jenis_panel_meter"><option value="">Pilih</option><option>Umum</option><option>53 kva</option><option>66 kva</option><option>105 kva</option><option>164 kva</option><option>197 kva</option></select></td>
-                                    <td><input name="jml_panel_meter" type="number" min="0" placeholder="Isi jumlah buah"></td>
-                                    <td>BUAH</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <button type="submit" class="btn">Kirim sekarang</button>
+                    <footer class="send-modal-footer">
+                        <p id="sendModalFooterSummary">Pilih data untuk dikirim</p>
+                        <div class="send-modal-actions">
+                            <button type="button" class="send-modal-cancel" id="cancelSendModal">Batal</button>
+                            <button type="submit" class="send-modal-submit" id="submitSendModal" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m22 2-7 20-4-9-9-4 20-7Z"/><path d="M22 2 11 13"/></svg>Kirim sekarang</button>
+                        </div>
+                    </footer>
                 </form>
             </div>
         </div>
@@ -543,9 +524,29 @@
             const tujuanKirim = document.getElementById('tujuanKirim');
             const expansionNeeds = document.getElementById('expansionNeeds');
             const tujuanCards = document.querySelectorAll('.tujuan-card');
+            const submitSendButton = document.getElementById('submitSendModal');
+            const sendModalSummary = document.getElementById('sendModalSummary');
+            const sendModalFooterSummary = document.getElementById('sendModalFooterSummary');
+            const tujuanLabels = { JTM: 'Perluasan JTM', JTR: 'Perluasan JTR', TANPA_PERLUASAN: 'Tanpa Perluasan' };
+            const updateSendModalSummary = () => {
+                const selectedCount = checks.filter((check) => check.checked).length;
+                const selectedDestination = tujuanLabels[tujuanKirim?.value];
+                if (sendModalSummary) sendModalSummary.textContent = `${selectedCount} data dipilih · pilih tujuan dan isi kebutuhan material`;
+                if (sendModalFooterSummary) {
+                    sendModalFooterSummary.textContent = selectedDestination
+                        ? `${selectedCount} data akan dikirim ke ${selectedDestination}`
+                        : `${selectedCount} data dipilih · pilih tujuan pengiriman`;
+                }
+                if (submitSendButton) submitSendButton.disabled = selectedCount === 0 || !tujuanKirim?.value;
+            };
             const updateExpansionNeeds = () => {
                 if (tujuanKirim && expansionNeeds) expansionNeeds.hidden = !['JTM', 'JTR'].includes(tujuanKirim.value);
-                tujuanCards.forEach((card) => card.classList.toggle('is-selected', card.dataset.tujuan === tujuanKirim?.value));
+                tujuanCards.forEach((card) => {
+                    const selected = card.dataset.tujuan === tujuanKirim?.value;
+                    card.classList.toggle('is-selected', selected);
+                    card.setAttribute('aria-checked', selected ? 'true' : 'false');
+                });
+                updateSendModalSummary();
             };
             if (tujuanKirim) tujuanKirim.addEventListener('change', updateExpansionNeeds);
             tujuanCards.forEach((card) => card.addEventListener('click', () => { tujuanKirim.value = card.dataset.tujuan; updateExpansionNeeds(); }));
@@ -554,6 +555,7 @@
                 if (sendButton) sendButton.disabled = selectedCount === 0;
                 const selectedCountLabel = document.getElementById('selectedPelangganCount');
                 if (selectedCountLabel) selectedCountLabel.textContent = String(selectedCount);
+                updateSendModalSummary();
             };
             checks.forEach((check) => check.addEventListener('change', updateSendButton));
             if (checkAll) {
@@ -566,11 +568,17 @@
                 sendButton.addEventListener('click', () => {
                     selectedPelanggan.innerHTML = checks.filter((check) => check.checked)
                         .map((check) => `<input type="hidden" name="pelanggan[]" value="${check.value}">`).join('');
+                    updateSendModalSummary();
                     sendModal.hidden = false;
                 });
-                document.getElementById('closeSendModal').addEventListener('click', () => { sendModal.hidden = true; });
+                const closeSendModal = () => { sendModal.hidden = true; };
+                document.getElementById('closeSendModal').addEventListener('click', closeSendModal);
+                document.getElementById('cancelSendModal').addEventListener('click', closeSendModal);
                 sendModal.addEventListener('click', (event) => { if (event.target === sendModal) sendModal.hidden = true; });
+                document.addEventListener('keydown', (event) => { if (event.key === 'Escape' && !sendModal.hidden) closeSendModal(); });
             }
+            updateSendButton();
+            updateExpansionNeeds();
         })();
     </script>
     @push('page-styles')
@@ -605,6 +613,56 @@
         .tabel .ikon-syarat{width:28px;height:28px;border-radius:8px!important;background:#f8fbff!important;color:#1e6fa8!important;border:1px solid #d5e5f5!important}.tabel .ikon-syarat.berkas-lengkap{background:#e8f7ef!important;color:#2e9b68!important;border-color:#b9e4ca!important}.tabel .ikon-syarat.berkas-belum{background:#fff7ed!important;color:#d97706!important;border-color:#f5d7a1!important}
         .tabel .pill{font-size:11px!important;font-weight:700;border-radius:999px!important;padding:5px 9px!important}
         @media(max-width:760px){.filter{padding:64px 12px 14px!important}.filter>*{flex:1 1 100%}.filter::before{padding-left:12px}.filter::after{left:12px}.kartu-judul{align-items:flex-start;flex-direction:column}.kartu .scroll{margin:0 10px 10px}.table-title-content{align-items:flex-start;flex-direction:column;gap:8px}.table-send-button{align-self:flex-start}}
+
+        #sendModal{z-index:1200!important;padding:20px!important;background:rgba(38,51,102,.62)!important;backdrop-filter:blur(5px)!important}
+        #sendModal .send-modal-box{display:flex!important;flex-direction:column!important;width:min(720px,100%)!important;max-height:min(92vh,1040px)!important;padding:0!important;overflow:hidden!important;border:1px solid rgba(223,230,251,.9)!important;border-radius:26px!important;background:#fff!important;color:#202d5a!important;box-shadow:0 26px 75px rgba(16,31,84,.3)!important}
+        #sendModal #sendForm{display:flex!important;flex:1 1 auto!important;flex-direction:column!important;min-height:0!important;max-height:100%!important;width:100%!important;margin:0!important;padding:0!important;background:#fff!important}
+        #sendModal #selectedPelanggan{display:none!important}
+        #sendModal .send-modal-header{position:relative!important;display:flex!important;align-items:center!important;justify-content:space-between!important;gap:20px!important;padding:25px 24px 21px!important;border-bottom:1px solid #e1e8f8!important;background:#fff!important}
+        #sendModal .send-modal-header h3{margin:0!important;padding:0 58px 0 0!important;background:transparent!important;color:#1236a5!important;font-size:23px!important;font-weight:800!important;line-height:1.25!important}
+        #sendModal .send-modal-header p{margin:5px 0 0!important;color:#60719b!important;font-size:14px!important;font-weight:500!important;line-height:1.45!important}
+        #sendModal .send-modal-close{position:absolute!important;top:21px!important;right:23px!important;display:grid!important;place-items:center!important;width:42px!important;height:42px!important;min-width:42px!important;min-height:42px!important;padding:0!important;border:0!important;border-radius:15px!important;background:#eef2ff!important;color:#394b7e!important;font-family:Arial,sans-serif!important;font-size:27px!important;font-weight:400!important;line-height:1!important;box-shadow:none!important;cursor:pointer!important}
+        #sendModal .send-modal-close:hover{background:#dfe7ff!important;color:#173daf!important}
+        #sendModal .send-modal-body{display:grid!important;flex:1 1 auto!important;gap:20px!important;min-height:0!important;overflow-y:auto!important;overscroll-behavior:contain!important;padding:21px 24px 23px!important}
+        #sendModal .send-modal-section{min-width:0!important}
+        #sendModal .send-section-title{margin:0 0 11px!important;padding:0!important;background:transparent!important;color:#60719b!important;font-size:13px!important;font-weight:800!important;letter-spacing:.12em!important;line-height:1.4!important;text-transform:uppercase!important}
+        #sendModal #expansionNeeds[hidden]{display:none!important}
+        #sendModal .tujuan-hidden-select{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+        #sendModal .tujuan-cards{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:12px!important;margin:0!important}
+        #sendModal .tujuan-card{position:relative!important;display:flex!important;align-items:center!important;flex-direction:column!important;justify-content:center!important;gap:7px!important;min-width:0!important;min-height:124px!important;padding:17px 12px!important;border:1.5px solid #d7e1fa!important;border-radius:19px!important;background:#fff!important;color:#202d5a!important;box-shadow:none!important;text-align:center!important;cursor:pointer!important;transition:border-color .18s,background .18s,box-shadow .18s,transform .18s!important}
+        #sendModal .tujuan-card:hover{transform:translateY(-1px)!important;border-color:#86a5ff!important;background:#f8faff!important}
+        #sendModal .tujuan-card.is-selected{border-color:#2451e6!important;background:#eef3ff!important;box-shadow:0 8px 22px rgba(36,81,230,.12)!important}
+        #sendModal .tujuan-card:focus-visible,#sendModal .send-modal-close:focus-visible,#sendModal .send-modal-actions button:focus-visible{outline:3px solid rgba(36,81,230,.3)!important;outline-offset:2px!important}
+        #sendModal .tujuan-card-icon{display:grid!important;place-items:center!important;width:44px!important;height:44px!important;border-radius:17px!important;background:#e7edff!important;color:#2451dc!important}
+        #sendModal .tujuan-card-icon svg{width:24px!important;height:24px!important;fill:none!important;stroke:currentColor!important;stroke-width:2.1!important;stroke-linecap:round!important;stroke-linejoin:round!important}
+        #sendModal .tujuan-card-icon-green{background:#dcf5e8!important;color:#167244!important}
+        #sendModal .tujuan-card strong{color:#202d5a!important;font-size:15px!important;font-weight:800!important;line-height:1.3!important}
+        #sendModal .tujuan-card.is-selected strong{color:#1236a5!important}
+        #sendModal .tujuan-card small{max-width:none!important;color:#60719b!important;font-size:12px!important;font-weight:500!important;line-height:1.35!important}
+        #sendModal .tujuan-card-check{position:absolute!important;top:11px!important;right:11px!important;display:grid!important;place-items:center!important;width:23px!important;height:23px!important;border-radius:50%!important;background:#2451dc!important;color:#fff!important;font-size:15px!important;font-weight:800!important;line-height:1!important;opacity:0!important;transform:scale(.8)!important;transition:opacity .15s,transform .15s!important}
+        #sendModal .tujuan-card.is-selected .tujuan-card-check{opacity:1!important;transform:scale(1)!important}
+        #sendModal .send-material-table-wrap{overflow-x:auto!important;border:1px solid #dfe6fb!important;border-radius:17px!important;background:#fff!important}
+        #sendModal .kebutuhan-tabel{width:100%!important;min-width:590px!important;margin:0!important;border:0!important;border-collapse:collapse!important;border-radius:0!important;overflow:visible!important;background:#fff!important;color:#29385f!important;font-size:13px!important}
+        #sendModal .kebutuhan-tabel th,#sendModal .kebutuhan-tabel td{height:72px!important;padding:13px 14px!important;border:0!important;border-bottom:1px solid #e5eafa!important;text-align:left!important;vertical-align:middle!important}
+        #sendModal .kebutuhan-tabel thead th{height:44px!important;background:#f0f4ff!important;color:#53658f!important;font-size:11px!important;font-weight:800!important;letter-spacing:.08em!important;text-transform:uppercase!important;white-space:nowrap!important}
+        #sendModal .kebutuhan-tabel tbody tr:last-child th,#sendModal .kebutuhan-tabel tbody tr:last-child td{border-bottom:0!important}
+        #sendModal .kebutuhan-tabel tbody th{width:21%!important;background:#fff!important;color:#1236a5!important;font-size:13px!important;font-weight:800!important;white-space:nowrap!important}
+        #sendModal .kebutuhan-tabel select,#sendModal .kebutuhan-tabel input{width:100%!important;min-width:0!important;min-height:44px!important;margin:0!important;padding:8px 12px!important;border:1px solid #d3def9!important;border-radius:13px!important;background:#f8faff!important;color:#25345e!important;font-family:inherit!important;font-size:13px!important;box-shadow:none!important}
+        #sendModal .kebutuhan-tabel select:focus,#sendModal .kebutuhan-tabel input:focus{border-color:#2451e6!important;background:#fff!important;outline:3px solid rgba(36,81,230,.12)!important}
+        #sendModal .send-unit{display:inline-flex!important;align-items:center!important;justify-content:center!important;min-height:32px!important;padding:0 12px!important;border-radius:999px!important;background:#e9eef8!important;color:#4b5d85!important;font-size:11px!important;font-weight:800!important;text-transform:uppercase!important;white-space:nowrap!important}
+        #sendModal .send-modal-footer{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:18px!important;padding:15px 24px!important;border-top:1px solid #e1e8f8!important;background:#fff!important}
+        #sendModal .send-modal-footer p{margin:0!important;color:#60719b!important;font-size:13px!important;font-weight:600!important;line-height:1.4!important}
+        #sendModal .send-modal-footer p strong{color:#1236a5!important;font-weight:800!important}
+        #sendModal .send-modal-actions{display:flex!important;align-items:center!important;justify-content:flex-end!important;gap:10px!important}
+        #sendModal .send-modal-actions button{display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:9px!important;min-height:48px!important;padding:0 18px!important;border-radius:14px!important;font-family:inherit!important;font-size:14px!important;font-weight:800!important;cursor:pointer!important;transition:background .18s,border-color .18s,transform .18s,box-shadow .18s!important}
+        #sendModal .send-modal-cancel{border:1.5px solid #cbd7ff!important;background:#fff!important;color:#1236a5!important;box-shadow:none!important}
+        #sendModal .send-modal-cancel:hover{background:#f5f7ff!important;border-color:#9eb3ff!important}
+        #sendModal .send-modal-submit{border:1px solid #1941bd!important;background:linear-gradient(135deg,#2451dc,#1236a5)!important;color:#fff!important;box-shadow:0 10px 22px rgba(29,69,190,.22)!important}
+        #sendModal .send-modal-submit:hover:not(:disabled){transform:translateY(-1px)!important;box-shadow:0 13px 27px rgba(29,69,190,.28)!important}
+        #sendModal .send-modal-submit:disabled{opacity:.48!important;box-shadow:none!important;cursor:not-allowed!important}
+        #sendModal .send-modal-submit svg{width:20px!important;height:20px!important;fill:none!important;stroke:currentColor!important;stroke-width:1.8!important;stroke-linecap:round!important;stroke-linejoin:round!important}
+        @media(max-width:640px){#sendModal{padding:12px!important}#sendModal .send-modal-box{max-height:calc(100vh - 24px)!important;border-radius:21px!important}#sendModal .send-modal-header{padding:19px 18px 16px!important}#sendModal .send-modal-header h3{font-size:20px!important}#sendModal .send-modal-header p{max-width:calc(100% - 36px)!important;font-size:12px!important}#sendModal .send-modal-close{top:15px!important;right:15px!important;width:38px!important;height:38px!important;min-width:38px!important;min-height:38px!important}#sendModal .send-modal-body{gap:17px!important;padding:17px 18px!important}#sendModal .tujuan-cards{grid-template-columns:1fr!important;gap:9px!important}#sendModal .tujuan-card{display:grid!important;grid-template-columns:44px minmax(0,1fr) 23px!important;grid-template-rows:auto auto!important;justify-items:start!important;min-height:78px!important;padding:12px 14px!important;text-align:left!important}#sendModal .tujuan-card-icon{grid-row:1/3!important}#sendModal .tujuan-card strong,#sendModal .tujuan-card small{grid-column:2!important}#sendModal .tujuan-card-check{position:static!important;grid-column:3!important;grid-row:1/3!important}#sendModal .send-modal-footer{align-items:stretch!important;flex-direction:column!important;padding:13px 18px!important}#sendModal .send-modal-actions{width:100%!important}#sendModal .send-modal-actions button{flex:1!important;min-height:44px!important;padding:0 12px!important;font-size:13px!important}}
+        @media(max-width:420px){#sendModal .send-modal-actions{gap:8px!important}#sendModal .send-modal-submit{flex:1.4!important}}
     </style>
     @endpush
 @endsection

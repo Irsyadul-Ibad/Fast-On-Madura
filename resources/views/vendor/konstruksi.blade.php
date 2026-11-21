@@ -15,14 +15,6 @@
 
         @if (!$showHistory)
             <section class="vendor-shell">
-                <header class="vendor-section-heading">
-                    <div>
-                        <h2>Agenda Vendor Konstruksi</h2>
-                        <p>Agenda konstruksi yang menunggu pengerjaan vendor</p>
-                    </div>
-                    <span class="vendor-count">{{ $data->count() }} data</span>
-                </header>
-
                 @forelse ($data as $row)
                     @php $pengiriman = $row->pengirimanKonstruksi; @endphp
                     <article class="vendor-record">
@@ -82,14 +74,6 @@
             </section>
         @else
             <section class="vendor-shell history-shell">
-                <header class="vendor-section-heading">
-                    <div>
-                        <h2>Riwayat Pengiriman</h2>
-                        <p>Laporan yang sudah dikirim ke Perencanaan</p>
-                    </div>
-                    <span class="vendor-count">{{ $riwayat->count() }} data</span>
-                </header>
-
                 @forelse ($riwayat as $row)
                     @php $pengiriman = $row->pengirimanKonstruksi; @endphp
                     <article class="history-entry">
@@ -173,11 +157,7 @@
         #vendorKonstruksiPage .vendor-flash{margin:0 0 16px;padding:14px 18px;border:1px solid #b8e5c9;border-radius:14px;background:#e9f8ef;color:#176b3b;font-weight:700}
         .page-topbar .page-actions:has(.vendor-count-header){align-self:flex-start;padding-top:4px}
         .vendor-count-header{display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:8px 16px;border-radius:999px;background:#e4ebff;color:#1b43c4;font-size:14px;font-weight:800;white-space:nowrap}
-        #vendorKonstruksiPage .vendor-shell{min-width:0;padding:24px;border:1px solid #e2e9fb;border-radius:28px;background:#fff;box-shadow:0 16px 40px rgba(28,55,132,.07)}
-        #vendorKonstruksiPage .vendor-section-heading{display:flex;align-items:center;justify-content:space-between;gap:18px;margin:0 0 20px}
-        #vendorKonstruksiPage .vendor-section-heading h2{margin:0;color:var(--vendor-blue);font-size:22px;font-weight:850;line-height:1.25}
-        #vendorKonstruksiPage .vendor-section-heading p{margin:4px 0 0;color:var(--vendor-muted);font-size:15px}
-        #vendorKonstruksiPage .vendor-count{display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:8px 16px;border-radius:999px;background:#e7edff;color:#1b43c4;font-size:14px;font-weight:800;white-space:nowrap}
+        #vendorKonstruksiPage .vendor-shell{min-width:0;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none}
         #vendorKonstruksiPage .vendor-record,#vendorKonstruksiPage .history-entry{min-width:0;margin:0 0 18px;overflow:hidden;border:1px solid var(--vendor-line);border-radius:22px;background:#fff}
         #vendorKonstruksiPage .vendor-record:last-child,#vendorKonstruksiPage .history-entry:last-child{margin-bottom:0}
         #vendorKonstruksiPage .record-head{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;padding:20px 24px;background:#f2f5ff;border-bottom:1px solid var(--vendor-line)}
@@ -230,7 +210,7 @@
         #vendorKonstruksiPage .vendor-empty-state p{margin:0 0 20px;color:var(--vendor-muted);font-size:15px}
         #vendorKonstruksiPage .compact-empty{min-height:260px}
         @media(max-width:900px){#vendorKonstruksiPage .record-content{grid-template-columns:minmax(0,1fr)}#vendorKonstruksiPage .record-head{padding:18px 20px}}
-        @media(max-width:600px){#vendorKonstruksiPage .vendor-shell{padding:14px;border-radius:20px}#vendorKonstruksiPage .vendor-section-heading{align-items:flex-start;flex-direction:column}#vendorKonstruksiPage .vendor-section-heading h2{font-size:19px}#vendorKonstruksiPage .record-head{flex-direction:column;gap:12px;padding:16px}#vendorKonstruksiPage .record-identity strong{font-size:18px}#vendorKonstruksiPage .record-badges{justify-content:flex-start}#vendorKonstruksiPage .record-content{gap:12px;padding:12px}#vendorKonstruksiPage .record-panel{padding:14px}#vendorKonstruksiPage .report-checklist{grid-template-columns:minmax(0,1fr)}#vendorKonstruksiPage .history-files{margin:12px 12px 0;padding:13px}#vendorKonstruksiPage .history-edit-form{padding:16px 14px 4px}#vendorKonstruksiPage .history-actions{align-items:stretch;flex-direction:column-reverse;padding:14px}#vendorKonstruksiPage .history-actions>*{width:100%}#vendorKonstruksiPage .history-actions .vendor-primary-button,#vendorKonstruksiPage .history-actions .vendor-danger-button{width:100%}#vendorKonstruksiPage .vendor-empty-state{min-height:300px;padding:24px 16px}}
+        @media(max-width:600px){#vendorKonstruksiPage .record-head{flex-direction:column;gap:12px;padding:16px}#vendorKonstruksiPage .record-identity strong{font-size:18px}#vendorKonstruksiPage .record-badges{justify-content:flex-start}#vendorKonstruksiPage .record-content{gap:12px;padding:12px}#vendorKonstruksiPage .record-panel{padding:14px}#vendorKonstruksiPage .report-checklist{grid-template-columns:minmax(0,1fr)}#vendorKonstruksiPage .history-files{margin:12px 12px 0;padding:13px}#vendorKonstruksiPage .history-edit-form{padding:16px 14px 4px}#vendorKonstruksiPage .history-actions{align-items:stretch;flex-direction:column-reverse;padding:14px}#vendorKonstruksiPage .history-actions>*{width:100%}#vendorKonstruksiPage .history-actions .vendor-primary-button,#vendorKonstruksiPage .history-actions .vendor-danger-button{width:100%}#vendorKonstruksiPage .vendor-empty-state{min-height:300px;padding:24px 16px}}
     </style>
     @endpush
 @endsection

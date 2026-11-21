@@ -644,7 +644,7 @@
             $sidebarRole = $sidebarUser->role;
             $sidebarRoleCode = (string) $sidebarRole?->role_code;
             $sidebarIsVendorRole = $sidebarRole?->type === 'VENDOR' || str_starts_with($sidebarRoleCode, 'VENDOR');
-            $sidebarPermissions = $sidebarRole?->permissions?->pluck('name')->all() ?? [];
+            $sidebarPermissions = $sidebarUser->effectivePermissions();
             $sidebarUnreadCount = \App\Models\AppNotification::where('user_id', $sidebarUser->id)->whereNull('read_at')->count();
             $sidebarMenuByRoute = collect(config('menu'))
                 ->filter(fn ($item) => in_array($item['permission'], $sidebarPermissions, true)

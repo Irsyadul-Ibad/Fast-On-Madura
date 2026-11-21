@@ -52,9 +52,14 @@ class User extends Authenticatable
         return $this->belongsTo(Role::class, 'role_id', 'id');
     }
 
-    public function haspermission($permission)
+    public function effectivePermissions(): array
     {
-        return $this->role && $this->role->permissions()->where('name', $permission)->exists();
+        return $this->role?->effectivePermissions() ?? [];
+    }
+
+    public function hasPermission($permission): bool
+    {
+        return in_array($permission, $this->effectivePermissions(), true);
     }
 
     public function ulpid()
