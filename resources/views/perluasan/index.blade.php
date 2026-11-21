@@ -264,20 +264,7 @@
             </table>
         </div>
 
-        <div class="pagination-footer">
-            <div class="kartu-kaki">
-                Records {{ $data->firstItem() ?? 0 }} to {{ $data->lastItem() ?? 0 }} of {{ $data->total() }}
-            </div>
-            <div class="halaman">
-            @if ($data->previousPageUrl())
-                <a class="btn btn-abu" href="{{ $data->previousPageUrl() }}">« Sebelumnya</a>
-            @endif
-            <span>Halaman {{ $data->currentPage() }} dari {{ $data->lastPage() }}</span>
-            @if ($data->nextPageUrl())
-                <a class="btn btn-abu" href="{{ $data->nextPageUrl() }}">Berikutnya »</a>
-            @endif
-            </div>
-        </div>
+        {{ $data->links('pagination.faston') }}
     </div>
 
     <div id="detailModalPerluasan" class="detail-modal" hidden>

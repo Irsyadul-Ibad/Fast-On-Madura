@@ -228,7 +228,7 @@
                 </tbody>
             </table>
         </div>
-        <div class="halaman">{{ $data->links() }}</div>
+        {{ $data->links('pagination.faston') }}
     </div>
     <div id="laporanDetailModal" class="laporan-modal" hidden>
         <div class="laporan-modal-box" role="dialog" aria-modal="true" aria-labelledby="laporanModalTitle">
