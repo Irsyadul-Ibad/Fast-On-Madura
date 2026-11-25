@@ -87,8 +87,11 @@ class LaporanController extends Controller
             ->when($tahap === 'TRANSAKSI', fn ($q) => $q->whereRaw("jsonb_array_length(COALESCE(hasil_transaksi_paths::jsonb, '[]'::jsonb)) > 0"))
             ->when($tahap === 'JARINGAN', fn ($q) => $q->whereRaw("jsonb_array_length(COALESCE(hasil_jaringan_paths::jsonb, '[]'::jsonb)) > 0"))
             ->when($request->filled('no_agenda'), function ($q) use ($request) {
-                $noAgenda = trim((string) $request->input('no_agenda'));
-                $q->whereRaw('CAST(no_agenda AS TEXT) LIKE ?', ['%'.$noAgenda.'%']);
+                $kata = '%'.trim((string) $request->input('no_agenda')).'%';
+                $q->where(fn ($search) => $search
+                    ->whereRaw('CAST(no_agenda AS TEXT) LIKE ?', [$kata])
+                    ->orWhere('nama_pelanggan', 'like', $kata)
+                    ->orWhere('alamat', 'like', $kata));
             })
             ->when($request->filled('jenis'), fn ($q) => $q->where('jenis_transaksi', $request->jenis))
             ->when($request->filled('status'), fn ($q) => $q->whereRaw('UPPER(TRIM(status)) = ?', [strtoupper(trim((string) $request->status))]));
