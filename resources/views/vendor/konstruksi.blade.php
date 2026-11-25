@@ -141,14 +141,7 @@
         @endif
     </div>
 
-    <script>
-        document.querySelectorAll('#vendorKonstruksiPage .file-drop input[type="file"]').forEach((input) => {
-            input.addEventListener('change', () => {
-                const name = input.closest('.file-drop')?.querySelector('.file-name');
-                if (name) name.textContent = Array.from(input.files || []).map((file) => file.name).join(', ') || 'Belum ada file dipilih';
-            });
-        });
-    </script>
+    @include('vendor.partials._file-picker-script')
 
     @push('page-styles')
     <style>

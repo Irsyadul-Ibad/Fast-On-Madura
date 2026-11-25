@@ -16,7 +16,7 @@
 <div class="modern-dashboard">
     <div class="dashboard-topline">
         <div>
-            <button type="button" class="menu-toggle" id="menuToggle" aria-label="Buka menu" aria-controls="mainSidebar" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+            <button type="button" class="menu-toggle hidden h-[38px] w-[38px] shrink-0 items-center justify-center rounded-[10px] border border-[#0d1b8c] bg-[#0d1b8c] p-0 text-white shadow-[0_3px_8px_rgba(13,27,140,0.18)] hover:transform-none hover:border-[#091267] hover:bg-[#091267] hover:shadow-[0_4px_10px_rgba(13,27,140,0.24)] focus-visible:outline focus-visible:outline-3 focus-visible:outline-[#2b73fe]/30 focus-visible:outline-offset-2 max-[650px]:inline-flex" id="menuToggle" aria-label="Buka menu" aria-controls="mainSidebar" aria-expanded="false"><svg class="size-[18px] fill-none stroke-current [stroke-linecap:round] [stroke-linejoin:round] [stroke-width:2]" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
             <div class="dashboard-heading-copy">
                 <h1>Selamat datang, {{ $namaScope }}</h1>
                 <p>Ringkasan proses PB/PD yang sedang berjalan</p>
