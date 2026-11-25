@@ -12,7 +12,7 @@
     @include('layouts.partials._styles')
 </head>
 <body @class([
-    'min-h-screen bg-[#eaf0fc] font-[Inter] text-[#1e315f]',
+    'min-h-screen !bg-[#eaf0fc] font-[Inter] text-[#1e315f]',
     'dashboard-page' => request()->routeIs('dashboard'),
     'notification-screen' => request()->routeIs('notifikasi'),
 ])>
