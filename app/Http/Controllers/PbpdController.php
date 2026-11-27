@@ -985,4 +985,28 @@ class PbpdController extends Controller
 
         return $this->publicFileResponse($path, basename($name));
     }
+
+    public function hapusSyarat(PelangganPbpd $pelanggan, string $jenis, int $index): RedirectResponse
+    {
+        $role = $this->currentUser()->role;
+        abort_unless($role?->ulp_id, 403);
+        abort_unless(in_array($jenis, ['pendukung', 'ijin'], true), 404);
+        abort_unless((int) $pelanggan->ulp_id === (int) $role->ulp_id, 403);
+
+        $column = $jenis === 'pendukung' ? 'berkas_pendukung_paths' : 'berkas_ijin_paths';
+        $namesColumn = $jenis === 'pendukung' ? 'berkas_pendukung_names' : 'berkas_ijin_names';
+        $paths = $this->arrayPaths($pelanggan->{$column});
+        abort_unless(isset($paths[$index]), 404);
+
+        Storage::disk('public')->delete($paths[$index]);
+        array_splice($paths, $index, 1);
+        $names = $this->arrayPaths($pelanggan->{$namesColumn});
+        array_splice($names, $index, 1);
+        $pelanggan->update([
+            $column => $paths ?: null,
+            $namesColumn => $names ?: null,
+        ]);
+
+        return back()->with('success', 'Berkas syarat berhasil dihapus.');
+    }
 }

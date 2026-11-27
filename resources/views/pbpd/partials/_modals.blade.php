@@ -113,17 +113,46 @@
         </div>
     </div>
 
-    <div id="syaratModal" class="detail-modal" hidden>
-        <div class="detail-modal-box" role="dialog" aria-modal="true" aria-labelledby="syaratModalTitle">
-            <button type="button" class="detail-modal-close" id="closeSyaratModal" aria-label="Tutup">&times;</button>
-            <h3 id="syaratModalTitle">Berkas Syarat</h3>
-            <div id="syaratFiles" class="syarat-files">-</div>
-            @if ($canUploadSyarat)
-                <form id="syaratUploadForm" method="POST" action="#" enctype="multipart/form-data" class="syarat-upload-form">
-                    @csrf
-                    <input type="file" name="berkas[]" multiple required accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png">
-                    <button type="submit" class="btn">Upload Berkas/Foto</button>
-                </form>
-            @endif
-        </div>
+    <div id="syaratModal" hidden class="fixed inset-0 z-[130] flex items-center justify-center overflow-hidden bg-[#020737]/60 p-2 backdrop-blur-sm [hidden]:!hidden sm:p-6">
+        <section class="flex min-h-0 max-h-[calc(100dvh-16px)] w-[calc(100vw-16px)] max-w-[700px] min-w-0 flex-col overflow-hidden rounded-[24px] bg-white text-[#1d2a55] shadow-2xl sm:max-h-[calc(100dvh-48px)] sm:w-full sm:rounded-[28px]" role="dialog" aria-modal="true" aria-labelledby="syaratModalTitle" aria-describedby="syaratModalDescription">
+            <div class="relative border-b border-[#e0e7f7] px-4 py-4 sm:flex sm:items-start sm:justify-between sm:gap-5 sm:px-7 sm:py-5">
+                <div class="min-w-0 pr-12 sm:pr-0">
+                    <h3 id="syaratModalTitle" class="!m-0 !bg-transparent !p-0 !text-xl !font-extrabold !leading-tight !text-[#1236a5] sm:!text-2xl">Berkas Pendukung</h3>
+                    <p id="syaratModalDescription" class="mt-2 text-sm leading-5 text-[#5e719e] sm:text-base">Unggah dokumen atau foto pendukung untuk data ini</p>
+                </div>
+                <button type="button" class="absolute right-4 top-4 flex h-10 w-10 shrink-0 items-center justify-center !rounded-2xl !border-0 !bg-[#eef2ff] !p-0 text-2xl !text-[#344a81] !shadow-none hover:!bg-[#e0e7ff] hover:!shadow-none sm:static sm:h-12 sm:w-12" id="closeSyaratModal" aria-label="Tutup">&times;</button>
+            </div>
+            <div class="min-h-0 min-w-0 space-y-5 overflow-y-auto overflow-x-hidden p-4 sm:space-y-6 sm:p-7">
+                <section>
+                    <h4 class="mb-3 text-xs font-extrabold tracking-[.12em] text-[#5e719e]" id="syaratFilesHeading">BERKAS TERUNGGAH</h4>
+                    <div id="syaratFiles" class="flex min-w-0 flex-col gap-3" aria-labelledby="syaratFilesHeading" data-csrf-token="{{ csrf_token() }}" data-delete-url-template="{{ url('/pbpd') }}/__ID__/syarat/__JENIS__/__INDEX__"></div>
+                </section>
+                @if ($canUploadSyarat)
+                    <form id="syaratUploadForm" method="POST" action="#" enctype="multipart/form-data" class="space-y-3">
+                        @csrf
+                        <h4 class="text-xs font-extrabold tracking-[.12em] text-[#5e719e]">TAMBAH BERKAS</h4>
+                        <label for="syaratFileInput" class="flex min-h-52 cursor-pointer flex-col items-center justify-center rounded-[22px] border-2 border-dashed border-[#9aafff] bg-[#f3f5ff] px-3 py-6 text-center transition hover:bg-[#eef2ff] sm:min-h-[280px] sm:rounded-[24px] sm:px-4 sm:py-8">
+                            <span class="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-[#214fe0] shadow-lg shadow-indigo-100 sm:h-16 sm:w-16">
+                                <svg class="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 16V4m0 0L7 9m5-5 5 5M5 16v4h14v-4"/></svg>
+                            </span>
+                            <strong class="text-base font-extrabold text-[#1236a5] sm:text-lg">Pilih berkas atau foto</strong>
+                            <span class="mt-1 text-sm text-[#5e719e] sm:text-base">Anda bisa memilih lebih dari satu file</span>
+                            <span class="mt-5 inline-flex max-w-full flex-wrap items-center justify-center gap-2 rounded-2xl border border-[#d5dffc] bg-white px-2 py-2 text-sm text-[#5e719e] sm:gap-3 sm:px-3 sm:py-2.5 sm:text-base">
+                                <span class="rounded-xl border-2 border-[#c5d2ff] px-3 py-2 font-bold text-[#1236a5] sm:px-4">Pilih file</span>
+                                <span id="syaratFileNames" class="max-w-36 truncate sm:max-w-56">Belum ada file dipilih</span>
+                            </span>
+                            <input id="syaratFileInput" class="sr-only" type="file" name="berkas[]" multiple required accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png">
+                        </label>
+                    </form>
+                @endif
+            </div>
+            <footer class="flex flex-col-reverse gap-2 border-t border-[#e0e7f7] bg-white px-4 py-3 sm:flex-row sm:justify-end sm:gap-3 sm:px-7 sm:py-4">
+                <button type="button" id="closeSyaratModalFooter" class="min-h-11 w-full !rounded-xl !border !border-[#c8d5ff] !bg-white px-5 !text-[#1236a5] !shadow-none hover:!bg-[#f2f5ff] hover:!shadow-none sm:w-auto">Tutup</button>
+                @if ($canUploadSyarat)
+                    <button type="submit" form="syaratUploadForm" class="inline-flex min-h-11 w-full items-center justify-center gap-2 !rounded-xl !border-0 !bg-[#214ee0] px-4 font-bold !text-white !shadow-lg !shadow-indigo-200 disabled:cursor-not-allowed disabled:opacity-50 hover:!bg-[#1739b8] hover:!shadow-lg sm:w-auto sm:px-5" id="syaratUploadButton" disabled>
+                        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 16V4m0 0L7 9m5-5 5 5M5 16v4h14v-4"/></svg>Upload berkas/foto
+                    </button>
+                @endif
+            </footer>
+        </section>
     </div>

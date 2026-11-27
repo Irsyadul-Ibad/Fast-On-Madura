@@ -100,6 +100,8 @@ Route::middleware('auth')->group(function () {
         ->middleware('permission:jaringan.upload')->name('pbpd.jaringan.result.delete');
     Route::post('/pbpd/{pelanggan}/syarat/{jenis}', [PbpdController::class, 'uploadSyarat'])
         ->middleware('permission:permintaan.create')->name('pbpd.syarat.upload');
+    Route::delete('/pbpd/{pelanggan}/syarat/{jenis}/{index}', [PbpdController::class, 'hapusSyarat'])
+        ->middleware('permission:permintaan.create')->name('pbpd.syarat.delete');
     Route::get('/pbpd/{pelanggan}/syarat/{jenis}/{index}', [PbpdController::class, 'syaratFile'])
         ->name('pbpd.syarat.file');
     Route::get('/vendor/tiang', [VendorTiangController::class, 'index'])
