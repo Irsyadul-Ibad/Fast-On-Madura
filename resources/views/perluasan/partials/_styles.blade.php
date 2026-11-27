@@ -133,7 +133,6 @@
         #detailModalPerluasan .planning-result-box h4{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:12px!important;margin:0!important;padding:0 0 9px!important;border-bottom:1px solid #e1e8fa!important;color:#1236a5!important;font-size:14px!important;line-height:1.4!important}
         #detailModalPerluasan .file-status{flex:0 0 auto!important;padding:5px 10px!important;border-radius:999px!important;background:#ffe5e5!important;color:#bd2f27!important;font-size:11px!important;font-weight:700!important;white-space:nowrap!important}
         #detailModalPerluasan .file-status.is-complete{background:#dcf5e8!important;color:#176d43!important}
-        #detailModalPerluasan .upload-owner-label{color:#60719b!important;font-size:11px!important}
         #detailModalPerluasan .planning-result-box>div[id$="Files"]{display:block!important;min-height:42px!important;padding:10px 12px!important;border:1px dashed #ccd8f7!important;border-radius:12px!important;background:#fff!important;color:#60719b!important;font-size:13px!important;line-height:1.45!important;overflow-wrap:anywhere!important}
         #detailModalPerluasan .result-empty{display:block!important;padding:1px 0!important;color:#60719b!important}
         #detailModalPerluasan .planning-result-box>div[id$="Files"] a{color:#2451dc!important;font-weight:700!important;text-decoration:underline!important;overflow-wrap:anywhere!important}

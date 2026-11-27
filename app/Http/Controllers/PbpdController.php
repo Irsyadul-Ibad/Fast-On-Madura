@@ -139,7 +139,9 @@ class PbpdController extends Controller
     public function updateKelayakan(Request $request, PelangganPbpd $pelanggan): RedirectResponse
     {
         abort_unless($this->currentUser()->role?->role_code === '5170REN', 403);
-        abort_unless($pelanggan->tahap === 'VENDOR_TIANG' && $pelanggan->pengirimanVendor()->exists(), 403);
+        $canDecideEligibility = fn (PelangganPbpd $record): bool => $record->tahap === 'PERENCANAAN'
+            || ($record->tahap === 'VENDOR_TIANG' && $record->pengirimanVendor()->exists());
+        abort_unless($canDecideEligibility($pelanggan), 403);
 
         $data = $request->validate([
             'status_kelayakan' => ['required', 'in:LAYAK,TIDAK LAYAK'],
@@ -149,12 +151,12 @@ class PbpdController extends Controller
             $pelanggan->update(['status_kelayakan' => 'LAYAK']);
             NotifikasiService::untukData($pelanggan, 'Data dinyatakan layak', 'Data '.$pelanggan->no_agenda.' dinyatakan layak oleh Perencanaan.', route('laporan'));
 
-            return back()->with('success', 'Status kelayakan berhasil disimpan. Berkas kajian kelayakan kini dapat diunggah.');
+            return back()->with('success', 'Status layak berhasil disimpan. Berkas kajian dapat diunggah setelah data dikirim ke Vendor Tiang.');
         }
 
-        $pathsToDelete = DB::transaction(function () use ($pelanggan) {
+        $pathsToDelete = DB::transaction(function () use ($pelanggan, $canDecideEligibility) {
             $pelanggan = PelangganPbpd::query()->whereKey($pelanggan->id)->lockForUpdate()->firstOrFail();
-            abort_unless($pelanggan->tahap === 'VENDOR_TIANG' && $pelanggan->pengirimanVendor()->exists(), 403);
+            abort_unless($canDecideEligibility($pelanggan), 403);
 
             $paths = [];
             $collectPaths = function (mixed $value) use (&$paths) {
@@ -590,11 +592,7 @@ class PbpdController extends Controller
                 $laporan->update(['vendor_id' => $vendor->id]);
             }
 
-            $pelangganUpdate = ['tahap' => 'VENDOR_TIANG'];
-            if ($pengirimanBaru) {
-                $pelangganUpdate['status_kelayakan'] = null;
-            }
-            $pelanggan->update($pelangganUpdate);
+            $pelanggan->update(['tahap' => 'VENDOR_TIANG']);
 
             return ['success' => true];
         });

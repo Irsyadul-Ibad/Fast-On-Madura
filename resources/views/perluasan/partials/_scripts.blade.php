@@ -169,12 +169,13 @@
                     setProcess('Jaringan', button.dataset.prosesJaringan, button.dataset.prosesJaringanDate);
                     const qualificationStatus = button.dataset.kelayakan || '';
                     setText('planningEligibilityStatus', qualificationStatus || 'Belum ditentukan');
-                    const canDecideEligibility = button.dataset.tahap === 'VENDOR_TIANG' && Boolean(button.dataset.vendorId);
+                    const hasVendorDelivery = button.dataset.tahap === 'VENDOR_TIANG' && Boolean(button.dataset.vendorId);
+                    const canDecideEligibility = button.dataset.tahap === 'PERENCANAAN' || hasVendorDelivery;
                     if (planningEligibilityForm) {
                         planningEligibilityForm.hidden = !canDecideEligibility;
                         planningEligibilityForm.action = button.dataset.kelayakanUrl;
                     }
-                    if (resultUploadForm) resultUploadForm.hidden = qualificationStatus !== 'LAYAK' || !canDecideEligibility;
+                    if (resultUploadForm) resultUploadForm.hidden = qualificationStatus !== 'LAYAK' || !hasVendorDelivery;
                     modal.hidden = false;
                     if (resultUploadForm) document.getElementById('resultPelangganId').value = button.dataset.id;
                     if (form) {

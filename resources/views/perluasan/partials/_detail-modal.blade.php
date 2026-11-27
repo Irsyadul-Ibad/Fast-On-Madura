@@ -206,7 +206,7 @@
                 <div id="vendorReportFiles">-</div>
             </div>
             <div class="planning-result-box nps-result-upload-box">
-                <h4>Berkas WO <small class="upload-owner-label">NPS</small><span class="file-status" data-file-status-for="npsWoFiles">Belum diunggah</span></h4>
+                <h4>Berkas WO NPS <span class="file-status" data-file-status-for="npsWoFiles">Belum diunggah</span></h4>
                 <div id="npsWoFiles">-</div>
                 @if ($canUploadNps)
                     <form id="npsWoUploadForm" method="POST" action="#" enctype="multipart/form-data">
