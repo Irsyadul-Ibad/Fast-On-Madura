@@ -42,8 +42,12 @@ class PerluasanController extends Controller
                 : ['PERENCANAAN'],
         };
         if ($tujuan === 'TANPA_PERLUASAN') {
-            unset($tahapLabels['SELESAI']);
-            $visibleTahaps = array_values(array_diff($visibleTahaps, ['SELESAI']));
+            if ($role?->role_code === '5170KON') {
+                $visibleTahaps[] = 'SELESAI';
+            } else {
+                unset($tahapLabels['SELESAI']);
+                $visibleTahaps = array_values(array_diff($visibleTahaps, ['SELESAI']));
+            }
         }
         $judul = match ($tujuan) {
             'JTM' => 'Perluasan JTM',

@@ -205,7 +205,8 @@
                         const stageAllowsTiang = ['PERENCANAAN', 'VENDOR_TIANG'].includes(button.dataset.tahap);
                         const hasVendorDelivery = Boolean(button.dataset.vendorId);
                         const vendorReportReceived = hasVendorDelivery && Boolean(button.dataset.laporanDate);
-                        vendorForm.hidden = !stageAllowsTiang || qualificationStatus !== 'LAYAK';
+                        vendorForm.hidden = !stageAllowsTiang;
+                        vendorForm.classList.toggle('vendor-form', stageAllowsTiang);
                         vendorForm.action = button.dataset.vendorUrl;
                         vendorForm.dataset.requiredTr = button.dataset.jmlTiangTr || '0';
                         vendorForm.dataset.requiredTm = button.dataset.jmlTiangTm || button.dataset.jmlTiang || '0';
@@ -226,6 +227,7 @@
                         const hasConstructionDelivery = button.dataset.konstruksiHasDelivery === '1';
                         const constructionReportReceived = Boolean(button.dataset.konstruksiLaporanDate);
                         constructionForm.hidden = !stageAllowsConstruction;
+                        constructionForm.classList.toggle('vendor-form', stageAllowsConstruction);
                         constructionForm.action = `{{ url('/pbpd') }}/${button.dataset.id}/kirim-konstruksi`;
                         document.getElementById('constructionVendorId').value = button.dataset.konstruksiVendorId || '';
                         document.getElementById('constructionForm').querySelector('input[name="berkas[]"]').required = !hasConstructionDelivery;
