@@ -1,6 +1,6 @@
     <div class="box kartu">
         <div class="kartu-judul">
-            <span>Daftar transaksi<small>Record dan jumlah transaksi PB/PD</small></span>
+            <span class="flex flex-col gap-1">Daftar transaksi<small class="font-normal leading-5">Record dan jumlah transaksi PB/PD</small></span>
             <span class="pill">{{ $data->total() }} data</span>
         </div>
         <div class="scroll">

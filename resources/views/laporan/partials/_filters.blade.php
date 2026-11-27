@@ -23,6 +23,6 @@
                 @endforeach
         </select>
 
-        <button type="submit" class="btn">Filter</button>
-        <a href="{{ route('laporan') }}" class="btn btn-abu">Reset</a>
+        <button type="submit" class="btn !inline-flex !h-11 !w-[70px] !min-h-11 !items-center !justify-center !px-3 !py-0 !leading-normal">Filter</button>
+        <a href="{{ route('laporan') }}" class="btn btn-abu !inline-flex !h-11 !w-[70px] !min-h-11 !items-center !justify-center !px-3 !py-0 !leading-normal">Reset</a>
     </form>

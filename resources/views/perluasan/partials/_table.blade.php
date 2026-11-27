@@ -8,7 +8,6 @@
             <table class="tabel tabel-biru">
                 <thead>
                     <tr>
-                        <th rowspan="2"><input type="checkbox" title="Pilih semua"></th>
                         <th rowspan="2">NO.</th>
                         <th rowspan="2">{{ $showBerkasUlp ? 'ULP PENGIRIM' : 'ASAL ULP' }}</th>
                         <th rowspan="2">DETAIL</th>
@@ -50,7 +49,6 @@
                             $networkDone = count($row->hasil_jaringan_paths ?? []) > 0;
                         @endphp
                         <tr>
-                            <td><input type="checkbox" value="{{ $row->id }}"></td>
                             <td>{{ $data->firstItem() + $loop->index }}.</td>
                             <td><b>{{ $row->asal_ulp }}</b></td>
                             <td>
